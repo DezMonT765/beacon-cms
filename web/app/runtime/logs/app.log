@@ -1,0 +1,183 @@
+2015-02-04 15:03:30 [127.0.0.1][-][-][error][yii\web\HttpException:404] exception 'yii\base\InvalidRouteException' with message 'Unable to resolve the request "country/index".' in D:\OpenServerNew\domains\yii2.test\vendor\yiisoft\yii2\base\Module.php:461
+Stack trace:
+#0 D:\OpenServerNew\domains\yii2.test\vendor\yiisoft\yii2\web\Application.php(83): yii\base\Module->runAction('country/index', Array)
+#1 D:\OpenServerNew\domains\yii2.test\vendor\yiisoft\yii2\base\Application.php(375): yii\web\Application->handleRequest(Object(yii\web\Request))
+#2 D:\OpenServerNew\domains\yii2.test\web\index.php(12): yii\base\Application->run()
+#3 {main}
+
+Next exception 'yii\web\NotFoundHttpException' with message 'Page not found.' in D:\OpenServerNew\domains\yii2.test\vendor\yiisoft\yii2\web\Application.php:95
+Stack trace:
+#0 D:\OpenServerNew\domains\yii2.test\vendor\yiisoft\yii2\base\Application.php(375): yii\web\Application->handleRequest(Object(yii\web\Request))
+#1 D:\OpenServerNew\domains\yii2.test\web\index.php(12): yii\base\Application->run()
+#2 {main}
+2015-02-04 15:03:30 [127.0.0.1][-][-][info][application] $_GET = [
+    'r' => 'country/index'
+]
+
+$_COOKIE = [
+    '_csrf' => '3c628f30006ca36d481cd56e049513463d81659774e553f4d2766fd8bf240d9ds:32:\"BL19FMuj7FAKg0ILs-4j5EwJONRBBV6S\";'
+]
+
+$_SERVER = [
+    'HTTP_HOST' => 'yii2.test'
+    'HTTP_USER_AGENT' => 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:35.0) Gecko/20100101 Firefox/35.0'
+    'HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+    'HTTP_ACCEPT_LANGUAGE' => 'ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3'
+    'HTTP_ACCEPT_ENCODING' => 'gzip, deflate'
+    'HTTP_COOKIE' => '_csrf=3c628f30006ca36d481cd56e049513463d81659774e553f4d2766fd8bf240d9ds%3A32%3A%22BL19FMuj7FAKg0ILs-4j5EwJONRBBV6S%22%3B'
+    'HTTP_CONNECTION' => 'keep-alive'
+    'HTTP_CACHE_CONTROL' => 'max-age=0'
+    'PATH' => 'D:\\OpenServerNew\\modules\\php\\PHP-5.5\\ext;D:\\OpenServerNew\\modules\\php\\PHP-5.5\\pear;D:\\OpenServerNew\\modules\\php\\PHP-5.5\\pear\\bin;D:\\OpenServerNew\\modules\\imagemagick;D:\\OpenServerNew\\modules\\php\\PHP-5.5;D:\\OpenServerNew\\modules\\database\\MySQL-5.5\\bin;D:\\OpenServerNew\\modules\\http\\Apache-2.4\\bin;D:\\OpenServerNew\\modules\\http\\Apache-2.4;D:\\OpenServerNew\\modules\\wget\\bin;C:\\Windows\\system32;C:\\Windows;C:\\Windows\\system32\\Wbem;C:\\Windows\\SysWOW64'
+    'SystemRoot' => 'C:\\Windows'
+    'COMSPEC' => 'C:\\Windows\\system32\\cmd.exe'
+    'PATHEXT' => '.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC;.PHAR'
+    'WINDIR' => 'C:\\Windows'
+    'SERVER_SIGNATURE' => ''
+    'SERVER_SOFTWARE' => 'Apache/2.4.9 (Win32)'
+    'SERVER_NAME' => 'yii2.test'
+    'SERVER_ADDR' => '127.0.0.1'
+    'SERVER_PORT' => '80'
+    'REMOTE_ADDR' => '127.0.0.1'
+    'DOCUMENT_ROOT' => 'D:/OpenServerNew/domains/yii2.test/web'
+    'REQUEST_SCHEME' => 'http'
+    'CONTEXT_PREFIX' => ''
+    'CONTEXT_DOCUMENT_ROOT' => 'D:/OpenServerNew/domains/yii2.test/web'
+    'SERVER_ADMIN' => '[no address given]'
+    'SCRIPT_FILENAME' => 'D:/OpenServerNew/domains/yii2.test/web/index.php'
+    'REMOTE_PORT' => '50953'
+    'GATEWAY_INTERFACE' => 'CGI/1.1'
+    'SERVER_PROTOCOL' => 'HTTP/1.1'
+    'REQUEST_METHOD' => 'GET'
+    'QUERY_STRING' => 'r=country/index'
+    'REQUEST_URI' => '/index.php?r=country/index'
+    'SCRIPT_NAME' => '/index.php'
+    'PHP_SELF' => '/index.php'
+    'REQUEST_TIME_FLOAT' => 1423047810.806
+    'REQUEST_TIME' => 1423047810
+    'argv' => [
+        0 => 'r=country/index'
+    ]
+    'argc' => 1
+]
+2015-02-04 15:03:46 [127.0.0.1][-][-][error][yii\web\HttpException:404] exception 'yii\base\InvalidRouteException' with message 'Unable to resolve the request "country/index".' in D:\OpenServerNew\domains\yii2.test\vendor\yiisoft\yii2\base\Module.php:461
+Stack trace:
+#0 D:\OpenServerNew\domains\yii2.test\vendor\yiisoft\yii2\web\Application.php(83): yii\base\Module->runAction('country/index', Array)
+#1 D:\OpenServerNew\domains\yii2.test\vendor\yiisoft\yii2\base\Application.php(375): yii\web\Application->handleRequest(Object(yii\web\Request))
+#2 D:\OpenServerNew\domains\yii2.test\web\index.php(12): yii\base\Application->run()
+#3 {main}
+
+Next exception 'yii\web\NotFoundHttpException' with message 'Page not found.' in D:\OpenServerNew\domains\yii2.test\vendor\yiisoft\yii2\web\Application.php:95
+Stack trace:
+#0 D:\OpenServerNew\domains\yii2.test\vendor\yiisoft\yii2\base\Application.php(375): yii\web\Application->handleRequest(Object(yii\web\Request))
+#1 D:\OpenServerNew\domains\yii2.test\web\index.php(12): yii\base\Application->run()
+#2 {main}
+2015-02-04 15:03:46 [127.0.0.1][-][-][info][application] $_GET = [
+    'r' => 'country/index'
+]
+
+$_COOKIE = [
+    '_csrf' => '3c628f30006ca36d481cd56e049513463d81659774e553f4d2766fd8bf240d9ds:32:\"BL19FMuj7FAKg0ILs-4j5EwJONRBBV6S\";'
+]
+
+$_SERVER = [
+    'HTTP_HOST' => 'yii2.test'
+    'HTTP_USER_AGENT' => 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:35.0) Gecko/20100101 Firefox/35.0'
+    'HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+    'HTTP_ACCEPT_LANGUAGE' => 'ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3'
+    'HTTP_ACCEPT_ENCODING' => 'gzip, deflate'
+    'HTTP_COOKIE' => '_csrf=3c628f30006ca36d481cd56e049513463d81659774e553f4d2766fd8bf240d9ds%3A32%3A%22BL19FMuj7FAKg0ILs-4j5EwJONRBBV6S%22%3B'
+    'HTTP_CONNECTION' => 'keep-alive'
+    'HTTP_CACHE_CONTROL' => 'max-age=0'
+    'PATH' => 'D:\\OpenServerNew\\modules\\php\\PHP-5.5\\ext;D:\\OpenServerNew\\modules\\php\\PHP-5.5\\pear;D:\\OpenServerNew\\modules\\php\\PHP-5.5\\pear\\bin;D:\\OpenServerNew\\modules\\imagemagick;D:\\OpenServerNew\\modules\\php\\PHP-5.5;D:\\OpenServerNew\\modules\\database\\MySQL-5.5\\bin;D:\\OpenServerNew\\modules\\http\\Apache-2.4\\bin;D:\\OpenServerNew\\modules\\http\\Apache-2.4;D:\\OpenServerNew\\modules\\wget\\bin;C:\\Windows\\system32;C:\\Windows;C:\\Windows\\system32\\Wbem;C:\\Windows\\SysWOW64'
+    'SystemRoot' => 'C:\\Windows'
+    'COMSPEC' => 'C:\\Windows\\system32\\cmd.exe'
+    'PATHEXT' => '.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC;.PHAR'
+    'WINDIR' => 'C:\\Windows'
+    'SERVER_SIGNATURE' => ''
+    'SERVER_SOFTWARE' => 'Apache/2.4.9 (Win32)'
+    'SERVER_NAME' => 'yii2.test'
+    'SERVER_ADDR' => '127.0.0.1'
+    'SERVER_PORT' => '80'
+    'REMOTE_ADDR' => '127.0.0.1'
+    'DOCUMENT_ROOT' => 'D:/OpenServerNew/domains/yii2.test/web'
+    'REQUEST_SCHEME' => 'http'
+    'CONTEXT_PREFIX' => ''
+    'CONTEXT_DOCUMENT_ROOT' => 'D:/OpenServerNew/domains/yii2.test/web'
+    'SERVER_ADMIN' => '[no address given]'
+    'SCRIPT_FILENAME' => 'D:/OpenServerNew/domains/yii2.test/web/index.php'
+    'REMOTE_PORT' => '50956'
+    'GATEWAY_INTERFACE' => 'CGI/1.1'
+    'SERVER_PROTOCOL' => 'HTTP/1.1'
+    'REQUEST_METHOD' => 'GET'
+    'QUERY_STRING' => 'r=country/index'
+    'REQUEST_URI' => '/index.php?r=country/index'
+    'SCRIPT_NAME' => '/index.php'
+    'PHP_SELF' => '/index.php'
+    'REQUEST_TIME_FLOAT' => 1423047826.852
+    'REQUEST_TIME' => 1423047826
+    'argv' => [
+        0 => 'r=country/index'
+    ]
+    'argc' => 1
+]
+2015-02-04 15:03:47 [127.0.0.1][-][-][error][yii\web\HttpException:404] exception 'yii\base\InvalidRouteException' with message 'Unable to resolve the request "country/index".' in D:\OpenServerNew\domains\yii2.test\vendor\yiisoft\yii2\base\Module.php:461
+Stack trace:
+#0 D:\OpenServerNew\domains\yii2.test\vendor\yiisoft\yii2\web\Application.php(83): yii\base\Module->runAction('country/index', Array)
+#1 D:\OpenServerNew\domains\yii2.test\vendor\yiisoft\yii2\base\Application.php(375): yii\web\Application->handleRequest(Object(yii\web\Request))
+#2 D:\OpenServerNew\domains\yii2.test\web\index.php(12): yii\base\Application->run()
+#3 {main}
+
+Next exception 'yii\web\NotFoundHttpException' with message 'Page not found.' in D:\OpenServerNew\domains\yii2.test\vendor\yiisoft\yii2\web\Application.php:95
+Stack trace:
+#0 D:\OpenServerNew\domains\yii2.test\vendor\yiisoft\yii2\base\Application.php(375): yii\web\Application->handleRequest(Object(yii\web\Request))
+#1 D:\OpenServerNew\domains\yii2.test\web\index.php(12): yii\base\Application->run()
+#2 {main}
+2015-02-04 15:03:47 [127.0.0.1][-][-][info][application] $_GET = [
+    'r' => 'country/index'
+]
+
+$_COOKIE = [
+    '_csrf' => '3c628f30006ca36d481cd56e049513463d81659774e553f4d2766fd8bf240d9ds:32:\"BL19FMuj7FAKg0ILs-4j5EwJONRBBV6S\";'
+]
+
+$_SERVER = [
+    'HTTP_HOST' => 'yii2.test'
+    'HTTP_USER_AGENT' => 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:35.0) Gecko/20100101 Firefox/35.0'
+    'HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+    'HTTP_ACCEPT_LANGUAGE' => 'ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3'
+    'HTTP_ACCEPT_ENCODING' => 'gzip, deflate'
+    'HTTP_COOKIE' => '_csrf=3c628f30006ca36d481cd56e049513463d81659774e553f4d2766fd8bf240d9ds%3A32%3A%22BL19FMuj7FAKg0ILs-4j5EwJONRBBV6S%22%3B'
+    'HTTP_CONNECTION' => 'keep-alive'
+    'HTTP_CACHE_CONTROL' => 'max-age=0'
+    'PATH' => 'D:\\OpenServerNew\\modules\\php\\PHP-5.5\\ext;D:\\OpenServerNew\\modules\\php\\PHP-5.5\\pear;D:\\OpenServerNew\\modules\\php\\PHP-5.5\\pear\\bin;D:\\OpenServerNew\\modules\\imagemagick;D:\\OpenServerNew\\modules\\php\\PHP-5.5;D:\\OpenServerNew\\modules\\database\\MySQL-5.5\\bin;D:\\OpenServerNew\\modules\\http\\Apache-2.4\\bin;D:\\OpenServerNew\\modules\\http\\Apache-2.4;D:\\OpenServerNew\\modules\\wget\\bin;C:\\Windows\\system32;C:\\Windows;C:\\Windows\\system32\\Wbem;C:\\Windows\\SysWOW64'
+    'SystemRoot' => 'C:\\Windows'
+    'COMSPEC' => 'C:\\Windows\\system32\\cmd.exe'
+    'PATHEXT' => '.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC;.PHAR'
+    'WINDIR' => 'C:\\Windows'
+    'SERVER_SIGNATURE' => ''
+    'SERVER_SOFTWARE' => 'Apache/2.4.9 (Win32)'
+    'SERVER_NAME' => 'yii2.test'
+    'SERVER_ADDR' => '127.0.0.1'
+    'SERVER_PORT' => '80'
+    'REMOTE_ADDR' => '127.0.0.1'
+    'DOCUMENT_ROOT' => 'D:/OpenServerNew/domains/yii2.test/web'
+    'REQUEST_SCHEME' => 'http'
+    'CONTEXT_PREFIX' => ''
+    'CONTEXT_DOCUMENT_ROOT' => 'D:/OpenServerNew/domains/yii2.test/web'
+    'SERVER_ADMIN' => '[no address given]'
+    'SCRIPT_FILENAME' => 'D:/OpenServerNew/domains/yii2.test/web/index.php'
+    'REMOTE_PORT' => '50956'
+    'GATEWAY_INTERFACE' => 'CGI/1.1'
+    'SERVER_PROTOCOL' => 'HTTP/1.1'
+    'REQUEST_METHOD' => 'GET'
+    'QUERY_STRING' => 'r=country/index'
+    'REQUEST_URI' => '/index.php?r=country/index'
+    'SCRIPT_NAME' => '/index.php'
+    'PHP_SELF' => '/index.php'
+    'REQUEST_TIME_FLOAT' => 1423047827.737
+    'REQUEST_TIME' => 1423047827
+    'argv' => [
+        0 => 'r=country/index'
+    ]
+    'argc' => 1
+]

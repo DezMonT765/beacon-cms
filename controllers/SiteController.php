@@ -2,15 +2,24 @@
 
 namespace app\controllers;
 
+use app\components\MainView;
+use app\components\SiteLayout;
 use Yii;
 use yii\filters\AccessControl;
-use yii\web\Controller;
-use yii\filters\VerbFilter;
-use app\models\LoginForm;
+use app\models\Users;
 use app\models\ContactForm;
 
-class SiteController extends Controller
+class SiteController extends MainController
 {
+    public function init()
+    {
+        $this->setView(new MainView());
+        $this->activeMap = [
+            'login' => [SiteLayout::login => true]  ,
+            'register' => [SiteLayout::register => true]  ,
+        ];
+    }
+
     public function behaviors()
     {
         return [
@@ -25,12 +34,10 @@ class SiteController extends Controller
                     ],
                 ],
             ],
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'logout' => ['post'],
-                ],
+            'layout' => [
+              'class' => SiteLayout::className(),
             ],
+
         ];
     }
 
@@ -58,11 +65,32 @@ class SiteController extends Controller
             return $this->goHome();
         }
 
-        $model = new LoginForm();
+        $model = new Users();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
             return $this->goBack();
         } else {
             return $this->render('login', [
+                'model' => $model,
+            ]);
+        }
+    }
+
+    public function actionRegister()
+    {
+        if(!\Yii::$app->user->isGuest)
+        {
+            return $this->goHome();
+        }
+
+        $model = new Users(['scenario'=>'register']);
+
+        if($model->load(Yii::$app->request->post()) && $model->save() &&  $model->login())
+        {
+            return $this->goHome();
+        }
+        else
+        {
+            return $this->render('register', [
                 'model' => $model,
             ]);
         }

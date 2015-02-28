@@ -2,18 +2,28 @@
 
 namespace app\controllers;
 
+use app\components\UserLayout;
 use Yii;
-use app\models\Country;
-use app\models\CountrySearch;
-use yii\web\Controller;
+use app\models\Users;
+use app\models\UsersSearch;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use app\components\MainView;
+use app\components\SiteLayout;
 
 /**
- * CountryController implements the CRUD actions for Country model.
+ * UserController implements the CRUD actions for Users model.
  */
-class CountryController extends Controller
+class UserController extends MainController
 {
+
+    public function init()
+    {
+        $this->setView(new MainView());
+        $this->activeMap = [
+            'index' => [SiteLayout::users => true],
+        ];
+    }
     public function behaviors()
     {
         return [
@@ -23,16 +33,19 @@ class CountryController extends Controller
                     'delete' => ['post'],
                 ],
             ],
+            'layout' => [
+                'class' => UserLayout::className(),
+            ],
         ];
     }
 
     /**
-     * Lists all Country models.
+     * Lists all Users models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new CountrySearch();
+        $searchModel = new UsersSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -42,8 +55,8 @@ class CountryController extends Controller
     }
 
     /**
-     * Displays a single Country model.
-     * @param string $id
+     * Displays a single Users model.
+     * @param integer $id
      * @return mixed
      */
     public function actionView($id)
@@ -54,16 +67,16 @@ class CountryController extends Controller
     }
 
     /**
-     * Creates a new Country model.
+     * Creates a new Users model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new Country();
+        $model = new Users();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->code]);
+            return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [
                 'model' => $model,
@@ -72,9 +85,9 @@ class CountryController extends Controller
     }
 
     /**
-     * Updates an existing Country model.
+     * Updates an existing Users model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param string $id
+     * @param integer $id
      * @return mixed
      */
     public function actionUpdate($id)
@@ -82,7 +95,7 @@ class CountryController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->code]);
+            return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('update', [
                 'model' => $model,
@@ -91,9 +104,9 @@ class CountryController extends Controller
     }
 
     /**
-     * Deletes an existing Country model.
+     * Deletes an existing Users model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param string $id
+     * @param integer $id
      * @return mixed
      */
     public function actionDelete($id)
@@ -104,18 +117,19 @@ class CountryController extends Controller
     }
 
     /**
-     * Finds the Country model based on its primary key value.
+     * Finds the Users model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param string $id
-     * @return Country the loaded model
+     * @param integer $id
+     * @return Users the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Country::findOne($id)) !== null) {
+        if (($model = Users::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+
 }

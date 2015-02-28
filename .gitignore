@@ -17,7 +17,6 @@ Thumbs.db
 
 # runtime,assets
 /runtime
-/assets
 
 # Mac DS_Store Files
 .DS_Store

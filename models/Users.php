@@ -165,25 +165,23 @@ class Users extends \yii\db\ActiveRecord implements IdentityInterface
         return self::findOne(['email'=>$email]);
     }
 
+
+
     public function login()
     {
-        if ($this->validate()) {
-            $user = $this->findByEmail($this->email);
-            if(!$user)
-            {
-                $this->addError('email','Your login/password is incorrect');
-                $this->addError('password','Your login/password is incorrect');
-                return false;
-            }
-            if(\Yii::$app->getSecurity()->validatePassword($this->password,$user->password))
-                return Yii::$app->user->login($user, $this->rememberMe ? 3600*24*30 : 0);
-            else
-            {
-                $this->addError('email','Your login/password is incorrect');
-                $this->addError('password','Your login/password is incorrect');
-                return false;
-            }
-        } else {
+        $user = $this->findByEmail($this->email);
+        if(!$user)
+        {
+            $this->addError('email','Your login/password is incorrect');
+            $this->addError('password','Your login/password is incorrect');
+            return false;
+        }
+        if($this->scenario == 'register')
+           $this->password = $_POST[$this->formName()]['password'];
+        if(\Yii::$app->getSecurity()->validatePassword($this->password,$user->password))
+            return Yii::$app->user->login($user, $this->rememberMe ? 3600*24*30 : 0);
+        else
+        {
             $this->addError('email','Your login/password is incorrect');
             $this->addError('password','Your login/password is incorrect');
             return false;

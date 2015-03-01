@@ -66,7 +66,7 @@ class SiteController extends MainController
         }
 
         $model = new Users();
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
+        if ($model->load(Yii::$app->request->post()) && $model->validate() && $model->login()) {
             return $this->goBack();
         } else {
             return $this->render('login', [

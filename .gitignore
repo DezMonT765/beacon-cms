@@ -18,6 +18,8 @@ Thumbs.db
 # runtime,assets
 /runtime
 
+/config/db.php
+
 # Mac DS_Store Files
 .DS_Store
 

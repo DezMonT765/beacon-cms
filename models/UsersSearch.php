@@ -12,6 +12,7 @@ use app\models\Users;
  */
 class UsersSearch extends Users
 {
+    const  PAGE_COUNT = 10;
     /**
      * @inheritdoc
      */
@@ -45,6 +46,9 @@ class UsersSearch extends Users
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'pagination' => [
+                'pageSize' => self::PAGE_COUNT,
+            ],
         ]);
 
         $this->load($params);
@@ -55,15 +59,10 @@ class UsersSearch extends Users
             return $dataProvider;
         }
 
-        $query->andFilterWhere([
-            'id' => $this->id,
-        ]);
+
 
         $query->andFilterWhere(['like', 'name', $this->name])
-            ->andFilterWhere(['like', 'email', $this->email])
-            ->andFilterWhere(['like', 'password', $this->password])
-            ->andFilterWhere(['like', 'auth_key', $this->auth_key])
-            ->andFilterWhere(['like', 'access_token', $this->access_token]);
+            ->andFilterWhere(['like', 'email', $this->email]);
 
         return $dataProvider;
     }

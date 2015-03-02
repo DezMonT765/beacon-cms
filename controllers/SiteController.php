@@ -2,7 +2,6 @@
 
 namespace app\controllers;
 
-use app\components\MainView;
 use app\components\SiteLayout;
 use Yii;
 use yii\filters\AccessControl;
@@ -13,7 +12,6 @@ class SiteController extends MainController
 {
     public function init()
     {
-        $this->setView(new MainView());
         $this->activeMap = [
             'login' => [SiteLayout::login => true]  ,
             'register' => [SiteLayout::register => true]  ,
@@ -22,7 +20,7 @@ class SiteController extends MainController
 
     public function behaviors()
     {
-        return [
+         return array_merge(parent::behaviors(), [
             'access' => [
                 'class' => AccessControl::className(),
                 'only' => ['logout'],
@@ -38,7 +36,7 @@ class SiteController extends MainController
               'class' => SiteLayout::className(),
             ],
 
-        ];
+        ]);
     }
 
     public function actions()

@@ -15,15 +15,19 @@
     "minimum-stability": "stable",
     "require": {
         "php": ">=5.4.0",
+		"fxp/composer-asset-plugin": "~1.0",
         "yiisoft/yii2": "*",
         "yiisoft/yii2-bootstrap": "*",
-        "yiisoft/yii2-swiftmailer": "*"
+        "yiisoft/yii2-swiftmailer": "*",
+		"bower-asset/select2": "^3.3.2"
+		
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",
         "yiisoft/yii2-debug": "*",
         "yiisoft/yii2-gii": "*",
         "yiisoft/yii2-faker": "*"
+		
     },
     "config": {
         "process-timeout": 1800

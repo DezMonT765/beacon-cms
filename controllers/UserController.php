@@ -6,37 +6,50 @@ use app\components\UserLayout;
 use Yii;
 use app\models\Users;
 use app\models\UsersSearch;
+use yii\filters\AccessControl;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use app\components\MainView;
-use app\components\SiteLayout;
 
 /**
  * UserController implements the CRUD actions for Users model.
  */
 class UserController extends MainController
 {
+    public $layout = 'tabbedLayout';
 
     public function init()
     {
-        $this->setView(new MainView());
         $this->activeMap = [
-            'index' => [SiteLayout::users => true],
+            'index' => [UserLayout::user_list => true],
+            'create' => [UserLayout::user_create => true],
+            'update' => [UserLayout::user_update => true],
+            'view' => [UserLayout::user_view => true],
         ];
     }
     public function behaviors()
     {
-        return [
+        return array_merge(parent::behaviors(),[
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'actions' => ['index','create','update','view','delete'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
+            'layout' => [
+                'class' => UserLayout::className(),
+            ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['post'],
                 ],
             ],
-            'layout' => [
-                'class' => UserLayout::className(),
-            ],
-        ];
+
+        ]);
     }
 
     /**

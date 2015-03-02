@@ -14,7 +14,7 @@ use \app\models\Users;
 
 class SiteLayout extends ActionFilter
 {
-
+    public $layout = 'main';
     const users = 'users';
     const beacons = 'beacons';
     const login = 'login';
@@ -25,6 +25,7 @@ class SiteLayout extends ActionFilter
         /**@var MainView $view
          */
         $view = $action->controller->getView();
+        $action->controller->layout = $this->layout;
         $view->setLayoutData($this->layout($action->controller->getTabsActivity()));
         return parent::beforeAction($action);
     }
@@ -79,7 +80,7 @@ class SiteLayout extends ActionFilter
 
         $tabs = [
             ['label'=>'Users','url'=>Url::to(['user/index']),'active'=>self::getActive($active,self::users)],
-            ['label'=>'Beacons','url'=>Url::to(['beacon/list']),'active'=>self::getActive($active,self::beacons)]
+            ['label'=>'Beacons','url'=>Url::to(['beacon/index']),'active'=>self::getActive($active,self::beacons)]
         ];
         return $tabs;
     }
@@ -102,6 +103,7 @@ class SiteLayout extends ActionFilter
         $user = Users::getLogged(true);
         return [
             ['label'=>'Hello, '.$user->email,'items'=>[
+                ['label'=>'My beacons','url'=>['profile/beacons']],
                 ['label'=>'Log out','url'=>['site/logout']]
             ]],
         ];

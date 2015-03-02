@@ -15,6 +15,9 @@ $config = [
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],
+        'view' => [
+            'class' => 'app\components\MainView',
+        ],
         'user' => [
             'identityClass' => 'app\models\Users',
             'enableAutoLogin' => true,
@@ -31,6 +34,10 @@ $config = [
                 '<controller:\w+>/<action:\w+>' => '<controller>/<action>',
             ]
         ],
+        'assetManager'=>[
+            'appendTimestamp' => true,
+        ],
+
         'mailer' => [
             'class' => 'yii\swiftmailer\Mailer',
             // send all mails to a file by default. You have to set

@@ -7,10 +7,20 @@
  */
 
 namespace app\controllers;
+use yii\filters\AccessControl;
 use yii\web\Controller;
 
 class MainController extends Controller
 {
+
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
+            ]
+        ];
+    }
     public $activeMap;
 
     public function getTabsActivity()

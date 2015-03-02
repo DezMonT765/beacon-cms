@@ -3,6 +3,8 @@
 namespace app\models;
 
 use Yii;
+use yii\helpers\FileHelper;
+use yii\web\UploadedFile;
 
 /**
  * This is the model class for table "beacons".
@@ -10,7 +12,7 @@ use Yii;
  * @property integer $id
  * @property string $title
  * @property string $description
- * @property string $picture
+ * @property string|UploadedFile $picture
  * @property string $place
  * @property string $uuid
  * @property integer $minor
@@ -21,6 +23,8 @@ use Yii;
  */
 class Beacons extends \yii\db\ActiveRecord
 {
+
+    public $pictureFile;
     /**
      * @inheritdoc
      */
@@ -29,16 +33,48 @@ class Beacons extends \yii\db\ActiveRecord
         return 'beacons';
     }
 
+    public function getImageSaveDir()
+    {
+        return Yii::$app->params['image_save_dir'];
+    }
+
+    public function getImageSavePath()
+    {
+        return self::getImageSaveDir() . $this->id . DIRECTORY_SEPARATOR;
+    }
+
+    public function getImageViewDir()
+    {
+        return Yii::$app->params['image_view_dir'];
+    }
+
+    public function getImageViewPath()
+    {
+        return self::getImageViewDir() . $this->id . '/';
+    }
+
+    public function getImage()
+    {
+        return self::getImageViewPath() . $this->picture;
+    }
+
+    public function getImageName()
+    {
+        return Yii::$app->security->generateRandomString(16) . '.';
+    }
+
     /**
      * @inheritdoc
      */
     public function rules()
     {
         return [
+            [['title','description','uuid','minor','major'],'required'],
             [['description'], 'string'],
             [['minor', 'major'], 'integer'],
             [['title', 'uuid'], 'string', 'max' => 50],
-            [['picture', 'place'], 'string', 'max' => 256]
+            [['picture'], 'string', 'max' => 64],
+            [['pictureFile'], 'file', 'extensions' => 'jpg, png', 'mimeTypes' => 'image/jpeg, image/png',],
         ];
     }
 
@@ -58,6 +94,43 @@ class Beacons extends \yii\db\ActiveRecord
             'major' => Yii::t('app', 'Major'),
         ];
     }
+    public function beforeValidate()
+    {
+        if(parent::beforeValidate())
+        {
+            $this->pictureFile = UploadedFile::getInstance($this, 'picture');
+            if($this->pictureFile instanceof UploadedFile)
+            {
+                if(is_file($this->getImageSavePath(). $this->oldAttributes['picture']))
+                {
+                    unlink($this->getImageSavePath(). $this->oldAttributes['picture']);
+                }
+                $this->picture = $this->getImageName() . $this->pictureFile->extension;
+            }
+            else
+            {
+                $this->picture = $this->oldAttributes['picture'];
+            }
+            return true;
+        }
+        else return false;
+    }
+
+    public function afterDelete()
+    {
+        FileHelper::removeDirectory($this->getImageSavePath());
+    }
+
+    public function afterSave($insert,$changedAttributes)
+    {
+        parent::afterSave($insert,$changedAttributes);
+        if(!is_dir($this->getImageSavePath()))
+        {
+            FileHelper::createDirectory($this->getImageSavePath());
+        }
+        if($this->pictureFile instanceof UploadedFile)
+            $this->pictureFile->saveAs($this->getImageSavePath() . $this->picture);
+    }
 
     /**
      * @return \yii\db\ActiveQuery
@@ -65,6 +138,12 @@ class Beacons extends \yii\db\ActiveRecord
     public function getBeaconBindings()
     {
         return $this->hasMany(BeaconBindings::className(), ['beacon_id' => 'id']);
+    }
+
+    public function getUsers()
+    {
+        return $this->hasMany(Users::className(),['id'=>'user_id'])
+            ->via('beaconBindings');
     }
 
     /**

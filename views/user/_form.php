@@ -18,9 +18,6 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'password')->passwordInput(['maxlength' => 256]) ?>
 
-    <?= $form->field($model, 'auth_key')->textInput(['maxlength' => 256]) ?>
-
-    <?= $form->field($model, 'access_token')->textInput(['maxlength' => 256]) ?>
 
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>

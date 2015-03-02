@@ -39,6 +39,7 @@ class Users extends \yii\db\ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
+            ['email','email'],
             [['email','password'],'required'],
             ['email','unique','on'=>['insert','register']],
             ['passwordConfirm','required','on'=>'register'],
@@ -86,6 +87,12 @@ class Users extends \yii\db\ActiveRecord implements IdentityInterface
     public function getBeaconBindings()
     {
         return $this->hasMany(BeaconBindings::className(), ['user_id' => 'id']);
+    }
+
+    public function getBeacons()
+    {
+        return $this->hasMany(Beacons::className(),['id'=>'beacon_id'])
+            ->via('beaconBindings');
     }
 
 

@@ -109,7 +109,8 @@ class Beacons extends \yii\db\ActiveRecord
             }
             else
             {
-                $this->picture = $this->oldAttributes['picture'];
+                if(isset($this->oldAttributes['picture']))
+                    $this->picture = $this->oldAttributes['picture'];
             }
             return true;
         }

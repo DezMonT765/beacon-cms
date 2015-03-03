@@ -2,16 +2,15 @@
 
 namespace app\models;
 
-use app\controllers\RbacController;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\Beacons;
+use app\models\Groups;
 
 /**
- * BeaconsSearch represents the model behind the search form about `app\models\Beacons`.
+ * GroupSearch represents the model behind the search form about `app\models\Groups`.
  */
-class BeaconsSearch extends Beacons
+class GroupSearch extends Groups
 {
     /**
      * @inheritdoc
@@ -19,8 +18,8 @@ class BeaconsSearch extends Beacons
     public function rules()
     {
         return [
-            [['id', 'minor', 'major'], 'integer'],
-            [['title', 'description', 'picture', 'place', 'uuid'], 'safe'],
+            [['id'], 'integer'],
+            [['token'], 'safe'],
         ];
     }
 
@@ -42,9 +41,7 @@ class BeaconsSearch extends Beacons
      */
     public function search($params)
     {
-
-        $query = Beacons::find();
-
+        $query = Groups::find();
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -60,13 +57,9 @@ class BeaconsSearch extends Beacons
 
         $query->andFilterWhere([
             'id' => $this->id,
-            'minor' => $this->minor,
-            'major' => $this->major,
         ]);
 
-        $query->andFilterWhere(['like', 'title', $this->title])
-            ->andFilterWhere(['like', 'description', $this->description])
-            ->andFilterWhere(['like', 'uuid', $this->uuid]);
+        $query->andFilterWhere(['like', 'token', $this->token]);
 
         return $dataProvider;
     }

@@ -2,11 +2,13 @@
 
 namespace app\controllers;
 
+use app\components\AdminLayout;
 use app\components\UserLayout;
 use Yii;
 use app\models\Users;
 use app\models\UsersSearch;
 use yii\filters\AccessControl;
+use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
@@ -28,20 +30,24 @@ class UserController extends MainController
     }
     public function behaviors()
     {
-        return array_merge(parent::behaviors(),[
+        $behaviors = array_merge(parent::behaviors(),[
             'access' => [
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['index','create','update','view','delete'],
+                        'actions' => ['update','view','delete'],
                         'allow' => true,
                         'roles' => ['@'],
+
+                    ],
+                    [
+                        'actions' => ['index','create'],
+                        'allow' => true,
+                        'roles' => [RbacController::superAdmin],
                     ],
                 ],
             ],
-            'layout' => [
-                'class' => UserLayout::className(),
-            ],
+
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
@@ -50,6 +56,9 @@ class UserController extends MainController
             ],
 
         ]);
+
+        $behaviors['layout'] =  ['class' => Yii::$app->user->can(RbacController::superAdmin) ? AdminLayout::className() : UserLayout::className()];
+        return $behaviors;
     }
 
     /**
@@ -67,15 +76,22 @@ class UserController extends MainController
         ]);
     }
 
+
     /**
      * Displays a single Users model.
      * @param integer $id
+     * @throws ForbiddenHttpException
+     * @throws NotFoundHttpException
      * @return mixed
      */
     public function actionView($id)
     {
+        $model = $this->findModel($id);
+        if(!Yii::$app->user->can(RbacController::manageUserAccount,['user_id'=>$model->id]))
+            throw new ForbiddenHttpException('You can not manage this account');
+
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $model,
         ]);
     }
 
@@ -97,16 +113,20 @@ class UserController extends MainController
         }
     }
 
+
     /**
      * Updates an existing Users model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
+     * @throws ForbiddenHttpException
+     * @throws NotFoundHttpException
      * @return mixed
      */
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-
+        if(!Yii::$app->user->can(RbacController::manageUserAccount,['user_id'=>$model->id]))
+            throw new ForbiddenHttpException('You can not manage this account');
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
@@ -116,16 +136,23 @@ class UserController extends MainController
         }
     }
 
+
     /**
      * Deletes an existing Users model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
+     * @throws ForbiddenHttpException
+     * @throws NotFoundHttpException
+     * @throws \Exception
      * @return mixed
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $model = $this->findModel($id);
 
+        if(!Yii::$app->user->can(RbacController::manageUserAccount,['user_id'=>$model->id]))
+            throw new ForbiddenHttpException('You can not manage this account');
+        $model->delete();
         return $this->redirect(['index']);
     }
 

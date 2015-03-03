@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use app\components\Alert;
 use Yii;
 use yii\helpers\FileHelper;
 use yii\web\UploadedFile;
@@ -23,6 +24,7 @@ use yii\web\UploadedFile;
  */
 class Beacons extends \yii\db\ActiveRecord
 {
+
 
     public $pictureFile;
     /**
@@ -131,6 +133,25 @@ class Beacons extends \yii\db\ActiveRecord
         }
         if($this->pictureFile instanceof UploadedFile)
             $this->pictureFile->saveAs($this->getImageSavePath() . $this->picture);
+        $user = Users::getLogged(true);
+        $groups = $user->getGroups()->all();
+        foreach ($groups as $group)
+        {
+            if($group instanceof Groups)
+            {
+                $beacon_bindings = BeaconBindings::findOne(['beacon_id'=>$this->id,'group_id'=>$group->id]);
+                if(!($beacon_bindings instanceof BeaconBindings))
+                {
+                    $beacon_bindings = new BeaconBindings();
+                }
+                $beacon_bindings->group_id = $group->id;
+                $beacon_bindings->beacon_id = $this->id;
+                if($beacon_bindings->save())
+                {
+                    Alert::addSuccess('Beacon has been succesfully saved');
+                }
+            }
+        }
     }
 
     /**
@@ -141,9 +162,9 @@ class Beacons extends \yii\db\ActiveRecord
         return $this->hasMany(BeaconBindings::className(), ['beacon_id' => 'id']);
     }
 
-    public function getUsers()
+    public function getGroups()
     {
-        return $this->hasMany(Users::className(),['id'=>'user_id'])
+        return $this->hasMany(Groups::className(),['id'=>'group_id'])
             ->via('beaconBindings');
     }
 

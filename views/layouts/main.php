@@ -1,4 +1,5 @@
 <?php
+use app\components\Alert;
 use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
 use yii\widgets\Breadcrumbs;
@@ -9,9 +10,10 @@ include_once('header.php');
 ?>
 <?php $this->beginBody() ?>
 <div class="wrap">
-    <?php
+   <?php
+    
     NavBar::begin([
-                      'brandLabel' => 'My Company',
+                      'brandLabel' => 'Beacon-CMS',
                       'brandUrl' => Yii::$app->homeUrl,
                       'options' => [
                           'class' => 'navbar-default navbar-fixed-top',
@@ -27,6 +29,7 @@ include_once('header.php');
     ?>
 
     <div class="container">
+        <?= Alert::printAlert($this);?>
         <?= Breadcrumbs::widget([
                                     'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
                                 ]) ?>

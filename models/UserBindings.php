@@ -5,23 +5,23 @@ namespace app\models;
 use Yii;
 
 /**
- * This is the model class for table "beacon_bindings".
+ * This is the model class for table "user_bindings".
  *
  * @property integer $id
- * @property integer $beacon_id
+ * @property integer $user_id
  * @property integer $group_id
  *
- * @property Beacons $beacon
+ * @property Users $user
  * @property Groups $group
  */
-class BeaconBindings extends \yii\db\ActiveRecord
+class UserBindings extends \yii\db\ActiveRecord
 {
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return 'beacon_bindings';
+        return 'user_bindings';
     }
 
     /**
@@ -30,7 +30,7 @@ class BeaconBindings extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id', 'beacon_id', 'group_id'], 'integer']
+            [['id', 'user_id', 'group_id'], 'integer']
         ];
     }
 
@@ -41,24 +41,24 @@ class BeaconBindings extends \yii\db\ActiveRecord
     {
         return [
             'id' => Yii::t('app', 'ID'),
-            'beacon_id' => Yii::t('app', 'Beacon ID'),
-            'group_id' => Yii::t('app', 'User ID'),
+            'user_id' => Yii::t('app', 'User ID'),
+            'group_id' => Yii::t('app', 'Group ID'),
         ];
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getBeacon()
+    public function getUser()
     {
-        return $this->hasOne(Beacons::className(), ['id' => 'beacon_id']);
+        return $this->hasOne(Users::className(), ['id' => 'user_id']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getGroups()
+    public function getGroup()
     {
-        return $this->hasOne(Users::className(), ['id' => 'group_id']);
+        return $this->hasOne(Groups::className(), ['id' => 'group_id']);
     }
 }

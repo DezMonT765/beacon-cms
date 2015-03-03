@@ -8,6 +8,7 @@
 
 namespace app\components;
 
+use app\controllers\RbacController;
 use yii\base\ActionFilter;
 use \yii\helpers\Url;
 use \app\models\Users;
@@ -19,6 +20,9 @@ class SiteLayout extends ActionFilter
     const beacons = 'beacons';
     const login = 'login';
     const register = 'register';
+    const groups = 'groups';
+
+    const profile = 'profile';
 
     public function beforeAction($action)
     {
@@ -42,8 +46,13 @@ class SiteLayout extends ActionFilter
                 'right_nav' => self::getGuestRightNav($active),
             ];
                 break;
-            case 'Authorized' : $nav_bar = [
+            case RbacController::user : $nav_bar = [
                 'left_nav' => self::getLeftTabs($active),
+                'right_nav' => self::getRightNav($active),
+            ];
+                break;
+            case RbacController::superAdmin : $nav_bar = [
+                'left_nav' => self::getAdminLeftTabs($active),
                 'right_nav' => self::getRightNav($active),
             ];
         }
@@ -62,7 +71,9 @@ class SiteLayout extends ActionFilter
         if(\Yii::$app->user->isGuest)
             return "Guest";
         else
-            return "Authorized";
+            if(\Yii::$app->user->can(RbacController::superAdmin))
+                return RbacController::superAdmin;
+            else return RbacController::user;
 
     }
 
@@ -77,10 +88,24 @@ class SiteLayout extends ActionFilter
     public static function getLeftTabs($active)
     {
 
+        $tabs = [
+            ['label'=>'My Beacons','url'=>Url::to(['beacon/index']),'active'=>self::getActive($active,self::beacons)]
+        ];
+        if(self::getActive($active,self::profile))
+        {
+               $user = Users::getLogged(true);
+               $tabs[] =
+                   ['label'=>'My profile','url'=>Url::to(['user/view','id'=>$user->id]),'active'=>self::getActive($active,self::profile)];
+        }
+        return $tabs;
+    }
 
+    public static function getAdminLeftTabs($active)
+    {
         $tabs = [
             ['label'=>'Users','url'=>Url::to(['user/index']),'active'=>self::getActive($active,self::users)],
-            ['label'=>'Beacons','url'=>Url::to(['beacon/index']),'active'=>self::getActive($active,self::beacons)]
+            ['label'=>'Beacons','url'=>Url::to(['beacon/index']),'active'=>self::getActive($active,self::beacons)],
+            ['label'=>'Groups','url'=>Url::to(['group/index']),'active'=>self::getActive($active,self::groups)],
         ];
         return $tabs;
     }
@@ -103,7 +128,7 @@ class SiteLayout extends ActionFilter
         $user = Users::getLogged(true);
         return [
             ['label'=>'Hello, '.$user->email,'items'=>[
-                ['label'=>'My beacons','url'=>['profile/beacons']],
+                ['label'=>'My profile','url'=>Url::to(['user/view','id'=>$user->id])],
                 ['label'=>'Log out','url'=>['site/logout']]
             ]],
         ];

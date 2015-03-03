@@ -20,7 +20,7 @@ class SiteController extends MainController
 
     public function behaviors()
     {
-         return array_merge(parent::behaviors(), [
+         $behaviors =  array_merge(parent::behaviors(), [
             'access' => [
                 'class' => AccessControl::className(),
                 'only' => ['logout'],
@@ -37,6 +37,9 @@ class SiteController extends MainController
             ],
 
         ]);
+
+        return $behaviors;
+
     }
 
     public function actions()

@@ -26,6 +26,13 @@ return [
             ],
         ],
         'db' => $db,
+        'authManager' => [
+            'class' => 'yii\rbac\DbManager',
+            'cache' => 'apcCache'
+        ],
+        'apcCache' => [
+            'class' => 'yii\caching\ApcCache',
+        ],
     ],
     'params' => $params,
 ];

@@ -37,6 +37,12 @@ $config = [
         'assetManager'=>[
             'appendTimestamp' => true,
         ],
+        'authManager' => [
+            'class' => yii\rbac\DbManager::className(),
+        ],
+        'apcCache' => [
+            'class' => yii\caching\MemCache::className(),
+        ],
 
         'mailer' => [
             'class' => 'yii\swiftmailer\Mailer',

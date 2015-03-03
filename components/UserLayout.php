@@ -20,27 +20,18 @@ class UserLayout extends SiteLayout
     const user_update = 'user_update';
     public static function layout($active = array())
     {
-        $active = array_merge($active,[SiteLayout::users => true]);
+        $active = array_merge($active,[SiteLayout::users => true,SiteLayout::profile => true]);
         $nav_bar = parent::layout($active);
-        $nav_bar['tabs'] = self::getUserTabs($active);
+        $nav_bar['tabs'] = static::getUserTabs($active);
         return $nav_bar;
     }
 
     public static function getUserTabs($active = [])
     {
-
-        $tabs =  [
-            ['label'=>'List','url'=>Url::to(['user/index']),'active'=>self::getActive($active,self::user_list)],
-            ['label'=>'Create','url'=>Url::to(['user/create']),'active'=>self::getActive($active,self::user_create)]
-        ];
-
-        if(self::getActive($active,self::user_update))
-            $tabs[] =
-                ['label'=>'Update','url'=>Url::to(['user/update'] + $_GET),'active'=>self::getActive($active,self::user_update)];
-
-        if(self::getActive($active,self::user_view))
-            $tabs[] =
-                ['label'=>'View','url'=>Url::to(['user/view'] + $_GET),'active'=>self::getActive($active,self::user_view)];
+            $tabs = [
+                ['label'=>'View','url'=>Url::to(['user/view'] + $_GET),'active'=>self::getActive($active,self::user_view)],
+                ['label'=>'Update','url'=>Url::to(['user/update'] + $_GET),'active'=>self::getActive($active,self::user_update)],
+            ];
 
         return $tabs;
     }

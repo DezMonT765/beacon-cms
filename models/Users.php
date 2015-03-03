@@ -2,9 +2,14 @@
 
 namespace app\models;
 
+use app\components\Alert;
+use app\controllers\RbacController;
 use Yii;
+use yii\db\ActiveQuery;
+use yii\rbac\Role;
 use yii\web\IdentityInterface;
 use yii\web\NotFoundHttpException;
+use yii\web\User;
 
 /**
  * This is the model class for table "users".
@@ -15,6 +20,8 @@ use yii\web\NotFoundHttpException;
  * @property string $password
  * @property string $auth_key
  * @property string $access_token
+ * @property string $role
+ * @property string $logged
  *
  * @property BeaconBindings[] $beaconBindings
  */
@@ -25,6 +32,7 @@ class Users extends \yii\db\ActiveRecord implements IdentityInterface
     private static $_is_need_update = false;
     public $rememberMe;
     public $passwordConfirm;
+    public $group_token = null;
     /**
      * @inheritdoc
      */
@@ -42,13 +50,28 @@ class Users extends \yii\db\ActiveRecord implements IdentityInterface
             ['email','email'],
             [['email','password'],'required'],
             ['email','unique','on'=>['insert','register']],
-            ['passwordConfirm','required','on'=>'register'],
+            [['passwordConfirm','group_token'],'required','on'=>'register'],
             ['passwordConfirm','compare','compareAttribute'=>'password','on'=>'register'],
             ['rememberMe', 'boolean'],
+            [['group_token'], 'string', 'max' => 64],
             [['name', 'email'], 'string', 'max' => 50],
             [['password', 'auth_key', 'access_token'], 'string', 'max' => 256],
 
         ];
+    }
+
+    public function beforeValidate()
+    {
+        if(parent::beforeValidate())
+        {
+            $this->logged = date('Y-m-d H:i:s');
+            if(empty($this->role) || is_null($this->role))
+            {
+                $this->role = RbacController::user;
+            }
+            return true;
+        }
+        return false;
     }
 
     public function beforeSave($insert)
@@ -62,6 +85,43 @@ class Users extends \yii\db\ActiveRecord implements IdentityInterface
         }
         return false;
     }
+
+    public function afterSave($insert,$oldAttributes)
+    {
+        /**@var \yii\rbac\DbManager $auth*/
+        $auth = Yii::$app->authManager;
+        if(!$auth->getAssignment($this->role,$this->id))
+        {
+            $role = $auth->getRole($this->role);
+            if($role instanceof Role)
+            {
+                $auth->assign($role, $this->id);
+                $auth->invalidateCache();
+            }
+        }
+        $group = Groups::findOne(['token'=>$this->group_token]);
+        if($group instanceof Groups)
+        {
+
+            $user_binding = UserBindings::findOne(['user_id'=>$this->id,'group_id'=>$group->id]);
+            if(!($user_binding instanceof UserBindings))
+                $user_binding = new UserBindings();
+            $user_binding->user_id = $this->id;
+            $user_binding->group_id = $group->id;
+            if($user_binding->save())
+            {
+                Alert::addSuccess('User has been successfully joined to new group');
+            }
+
+        }
+        else
+            Alert::addError('Invalid group');
+
+
+
+
+    }
+
 
 
 
@@ -84,16 +144,21 @@ class Users extends \yii\db\ActiveRecord implements IdentityInterface
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getBeaconBindings()
+    public function getUserBindings()
     {
-        return $this->hasMany(BeaconBindings::className(), ['user_id' => 'id']);
+        return $this->hasMany(UserBindings::className(), ['user_id' => 'id']);
     }
 
-    public function getBeacons()
+    /**@return ActiveQuery*/
+    public function getGroups()
     {
-        return $this->hasMany(Beacons::className(),['id'=>'beacon_id'])
-            ->via('beaconBindings');
+        return $this->hasMany(Groups::className(),['id'=>'group_id'])
+            ->via('userBindings');
     }
+
+
+
+
 
 
     /**
@@ -186,7 +251,10 @@ class Users extends \yii\db\ActiveRecord implements IdentityInterface
         if($this->scenario == 'register')
            $this->password = $_POST[$this->formName()]['password'];
         if(\Yii::$app->getSecurity()->validatePassword($this->password,$user->password))
-            return Yii::$app->user->login($user, $this->rememberMe ? 3600*24*30 : 0);
+        {
+            $user->save();
+            return Yii::$app->user->login($user, $this->rememberMe ? 3600 * 24 * 30 : 0);
+        }
         else
         {
             $this->addError('email','Your login/password is incorrect');
@@ -196,6 +264,11 @@ class Users extends \yii\db\ActiveRecord implements IdentityInterface
     }
 
 
+    /**
+     * @param bool $safe
+     * @return null|Users
+     * @throws NotFoundHttpException
+     */
     public static  function getLogged($safe = false)
     {
         if(!self::$_logged_user || self::$_is_need_update)

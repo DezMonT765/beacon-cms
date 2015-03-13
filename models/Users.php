@@ -112,13 +112,7 @@ class Users extends \yii\db\ActiveRecord implements IdentityInterface
             {
                 Alert::addSuccess('User has been successfully joined to new group');
             }
-
         }
-
-
-
-
-
     }
 
 

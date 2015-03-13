@@ -42,8 +42,23 @@ class BeaconsSearch extends Beacons
      */
     public function search($params)
     {
-
         $query = Beacons::find();
+        if(!Yii::$app->user->can(RbacController::superAdmin))
+        {
+            $user = Users::getLogged(true);
+            $query->joinWith([
+                                 'groups' => function($query) use ($user)
+                                 {
+                                     $query->joinWith([
+                                                          'users'=>function($query) use ($user)
+                                                        {
+                                                            $query->andFilterWhere(['users.id'=>$user->id]);
+                                                        }
+                                                      ]);
+                                 }
+                             ]);
+        }
+
 
 
         $dataProvider = new ActiveDataProvider([
@@ -57,6 +72,8 @@ class BeaconsSearch extends Beacons
             // $query->where('0=1');
             return $dataProvider;
         }
+
+
 
         $query->andFilterWhere([
             'id' => $this->id,

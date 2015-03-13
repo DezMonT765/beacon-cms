@@ -18,7 +18,7 @@ class UserLayout extends SiteLayout
     const user_create = 'user_create';
     const user_view = 'user_view';
     const user_update = 'user_update';
-    public static function layout($active = array())
+    public static function layout($active = [])
     {
         $active = array_merge($active,[SiteLayout::users => true,SiteLayout::profile => true]);
         $nav_bar = parent::layout($active);

@@ -16,8 +16,6 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'email')->textInput(['maxlength' => 50]) ?>
 
-    <?= $form->field($model, 'password')->passwordInput(['maxlength' => 256]) ?>
-
     <?= $form->field($model, 'group_token')->textInput(['maxlength' => 64]) ?>
 
 

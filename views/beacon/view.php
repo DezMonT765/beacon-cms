@@ -20,7 +20,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'description:text',
             [
               'label' => 'Picture',
-              'value' => Html::img($model->getImage()),
+              'value' => Html::img($model->getImage(),['width'=>250]),
               'format'=>'html'
             ],
             'place',

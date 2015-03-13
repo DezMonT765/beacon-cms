@@ -79,4 +79,15 @@ class Groups extends \yii\db\ActiveRecord
         return $this->hasMany(Beacons::className(),['id'=>'beacon_id'])
             ->via('beaconBindings');
     }
+
+    public function getUserBindings()
+    {
+        return $this->hasMany(UserBindings::className(),['group_id'=>'id']);
+    }
+
+    public function getUsers()
+    {
+        return $this->hasMany(Users::className(),['id'=>'user_id'])
+            ->via('userBindings');
+    }
 }

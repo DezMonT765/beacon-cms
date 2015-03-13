@@ -18,5 +18,8 @@ $this->title = $model->name;
             'email:email',
         ],
     ]) ?>
-
+    <legend>My groups</legend>
+    <?php foreach ($model->groups as $group):?>
+        <div class="well"><? echo $group->name?></div>
+    <?php endforeach ?>
 </div>

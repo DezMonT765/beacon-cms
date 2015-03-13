@@ -103,11 +103,16 @@ class Beacons extends \yii\db\ActiveRecord
             $this->pictureFile = UploadedFile::getInstance($this, 'picture');
             if($this->pictureFile instanceof UploadedFile)
             {
-                if(is_file($this->getImageSavePath(). $this->oldAttributes['picture']))
+                if(!$this->isNewRecord)
                 {
-                    unlink($this->getImageSavePath(). $this->oldAttributes['picture']);
+
+                    if(is_file($this->getImageSavePath(). $this->oldAttributes['picture']))
+                    {
+                        unlink($this->getImageSavePath(). $this->oldAttributes['picture']);
+                    }
+                    $this->picture = $this->getImageName() . $this->pictureFile->extension;
+
                 }
-                $this->picture = $this->getImageName() . $this->pictureFile->extension;
             }
             else
             {

@@ -110,9 +110,8 @@ class Beacons extends \yii\db\ActiveRecord
                     {
                         unlink($this->getImageSavePath(). $this->oldAttributes['picture']);
                     }
-                    $this->picture = $this->getImageName() . $this->pictureFile->extension;
-
                 }
+                $this->picture = $this->getImageName() . $this->pictureFile->extension;
             }
             else
             {

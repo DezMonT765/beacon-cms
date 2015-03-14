@@ -20,6 +20,6 @@ $this->title = $model->name;
     ]) ?>
     <legend>My groups</legend>
     <?php foreach ($model->groups as $group):?>
-        <div class="well"><? echo $group->name?></div>
+        <div class="well"><?php echo $group->name?></div>
     <?php endforeach ?>
 </div>

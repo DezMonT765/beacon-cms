@@ -7,6 +7,7 @@ use Yii;
 use yii\filters\AccessControl;
 use app\models\Users;
 use app\models\ContactForm;
+use yii\helpers\Url;
 
 class SiteController extends MainController
 {
@@ -63,12 +64,12 @@ class SiteController extends MainController
     public function actionLogin()
     {
         if (!\Yii::$app->user->isGuest) {
-            return $this->goHome();
+            return $this->redirect(Url::to('beacon'));
         }
 
         $model = new Users();
         if ($model->load(Yii::$app->request->post()) && $model->validate() && $model->login()) {
-            return $this->goBack();
+            return $this->redirect(Url::to('beacon'));
         } else {
             return $this->render('login', [
                 'model' => $model,

@@ -8,6 +8,7 @@
 
 namespace app\components;
 
+use app\controllers\MainController;
 use app\controllers\RbacController;
 use yii\base\ActionFilter;
 use \yii\helpers\Url;
@@ -27,10 +28,12 @@ class SiteLayout extends ActionFilter
     public function beforeAction($action)
     {
         /**@var MainView $view
+         * @var MainController $controller
          */
+        $controller = $action->controller;
         $view = $action->controller->getView();
         $action->controller->layout = $this->layout;
-        $view->setLayoutData($this->layout($action->controller->getTabsActivity()));
+        $view->setLayoutData($this->layout($controller->getTabsActivity()));
         return parent::beforeAction($action);
     }
 

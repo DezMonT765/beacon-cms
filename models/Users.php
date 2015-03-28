@@ -6,10 +6,10 @@ use app\components\Alert;
 use app\controllers\RbacController;
 use Yii;
 use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 use yii\rbac\Role;
 use yii\web\IdentityInterface;
 use yii\web\NotFoundHttpException;
-use yii\web\User;
 
 /**
  * This is the model class for table "users".
@@ -25,7 +25,7 @@ use yii\web\User;
  *
  * @property BeaconBindings[] $beaconBindings
  */
-class Users extends \yii\db\ActiveRecord implements IdentityInterface
+class Users extends ActiveRecord implements IdentityInterface
 {
 
     private static $_logged_user = null;
@@ -51,6 +51,7 @@ class Users extends \yii\db\ActiveRecord implements IdentityInterface
             [['email','password'],'required'],
             ['email','unique','on'=>['insert','register']],
             [['passwordConfirm','group_token'],'required','on'=>'register'],
+            ['group_token','exist','targetClass'=>Groups::className(),'targetAttribute'=>'token','on'=>'register'],
             ['passwordConfirm','compare','compareAttribute'=>'password','on'=>'register'],
             ['rememberMe', 'boolean'],
             [['group_token'], 'string', 'max' => 64],

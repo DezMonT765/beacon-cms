@@ -28,6 +28,54 @@ use yii\web\NotFoundHttpException;
 class Users extends ActiveRecord implements IdentityInterface
 {
 
+    const STATUS_INACTIVE = 0;
+    const STATUS_ACTIVE = 1;
+
+    public static $statuses = [
+        self::STATUS_ACTIVE => 'Active',
+        self::STATUS_INACTIVE => 'Inactive'
+    ];
+
+    public static function  getStatus($status)
+    {
+        return (isset(self::$statuses[$status]) ? self::$statuses[$status] : null);
+    }
+
+    public function getCurrentStatus()
+    {
+        return (isset(self::$statuses[$this->status]) ? self::$statuses[$this->status] : null);
+    }
+
+    public static function  getRole($role)
+    {
+        return (isset(self::$roles[$role]) ? self::$roles[$role] : null);
+    }
+
+    public function getCurrentRole()
+    {
+        return (isset(self::$roles[$this->role]) ? self::$roles[$this->role] : null);
+    }
+
+    public function getAvailableGroups()
+    {
+        $role_groups =  [
+            RbacController::user => [],
+            RbacController::admin => [RbacController::user => 'User'],
+            RbacController::super_admin =>[RbacController::admin => 'Admin', RbacController::user => 'User'],
+        ];
+        return $role_groups[$this->role];
+    }
+
+    public static $roles = [
+        RbacController::user => 'User',
+        RbacController::admin => 'Admin',
+        RbacController::super_admin => 'Super Admin',
+    ];
+
+    public static $status_colors = [
+        self::STATUS_INACTIVE  => 'red',
+        self::STATUS_ACTIVE => 'green'
+    ];
     private static $_logged_user = null;
     private static $_is_need_update = false;
     public $rememberMe;
@@ -88,17 +136,17 @@ class Users extends ActiveRecord implements IdentityInterface
     protected function resolveRoles()
     {
         /**@var \yii\rbac\DbManager $auth*/
-        $auth = Yii::$app->authManager;
-        if(!$auth->getAssignment($this->role,$this->id))
-        {
-            $role = $auth->getRole($this->role);
-            if($role instanceof Role)
-            {
-                $auth->revokeAll($this->id);
-                $auth->assign($role, $this->id);
-                $auth->invalidateCache();
-            }
-        }
+//        $auth = Yii::$app->authManager;
+//        if(!$auth->getAssignment($this->role,$this->id))
+//        {
+//            $role = $auth->getRole($this->role);
+//            if($role instanceof Role)
+//            {
+//                $auth->revokeAll($this->id);
+//                $auth->assign($role, $this->id);
+//                $auth->invalidateCache();
+//            }
+//        }
     }
 
     public function afterSave($insert,$oldAttributes)
@@ -168,7 +216,7 @@ class Users extends ActiveRecord implements IdentityInterface
      */
     public static function findIdentity($id)
     {
-        return static::findOne($id);
+        return static::findOne(['id'=>$id,'status'=>self::STATUS_ACTIVE]);
     }
 
 
@@ -232,7 +280,7 @@ class Users extends ActiveRecord implements IdentityInterface
 
     public static  function findByEmail($email)
     {
-        return self::findOne(['email'=>$email]);
+        return self::findOne(['email'=>$email,'status'=>self::STATUS_ACTIVE]);
     }
 
 
@@ -278,5 +326,75 @@ class Users extends ActiveRecord implements IdentityInterface
             }
         }
         return self::$_logged_user ;
+    }
+
+    public function getEditableRoles()
+    {
+        $editable_roles = [
+          RbacController::super_admin => [RbacController::admin,RbacController::user],
+          RbacController::admin => [RbacController::user],
+          RbacController::user => []
+        ];
+        return isset($editable_roles[$this->role]) ? $editable_roles[$this->role] : [];
+    }
+
+    public function  canEdit($checking_role)
+    {
+        foreach (self::getEditableRoles() as  $role)
+        {
+            if($checking_role == $role)
+                return true;
+        }
+        return false;
+    }
+
+    public function canDelete($checking_role)
+    {
+        return self::canEdit($checking_role);
+    }
+
+    public function canEditBeacon(Beacons $beacon)
+    {
+        $beacon_query = self::getBeaconsQuery();
+        $beacon_query->andFilterWhere(['id'=>$beacon->id]);
+        $result = $beacon_query->one();
+        return ($result instanceof Beacons);
+    }
+
+    public function getBeaconsQuery()
+    {
+        $query = Beacons::find();
+        $user = $this;
+        $query->joinWith([
+                             'groups' => function(ActiveQuery $query) use ($user)
+                             {
+                                 $query->joinWith([
+                                                      'users'=>function(ActiveQuery $query) use ($user)
+                                                      {
+                                                          $query->andFilterWhere(['users.id'=>$user->id]);
+                                                      }
+                                                  ]);
+                             }
+                         ]);
+        return $query;
+    }
+
+    /**
+     * Validates password
+     *
+     * @param string $password password to validate
+     * @return boolean if password provided is valid for current user
+     */
+    public function validatePassword($password)
+    {
+        return Yii::$app->security->validatePassword($password, $this->password);
+    }
+
+    /**
+     * Generates "remember me" authentication key
+     */
+    public function generateAuthKey()
+    {
+        $this->auth_key = Yii::$app->security->generateRandomString();
     }
 }

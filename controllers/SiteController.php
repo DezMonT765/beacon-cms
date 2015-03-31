@@ -3,7 +3,8 @@
 namespace app\controllers;
 
 use app\commands\RbacController;
-use app\components\SiteLayout;
+use app\filters\SiteLayout;
+use app\models\LoginForm;
 use Yii;
 use yii\filters\AccessControl;
 use app\models\Users;
@@ -12,13 +13,6 @@ use yii\helpers\Url;
 
 class SiteController extends MainController
 {
-    public function init()
-    {
-        $this->activeMap = [
-            'login' => [SiteLayout::login => true]  ,
-            'register' => [SiteLayout::register => true]  ,
-        ];
-    }
 
     public function behaviors()
     {
@@ -68,9 +62,9 @@ class SiteController extends MainController
             return $this->redirect(Url::to('/beacon'));
         }
 
-        $model = new Users();
-        if ($model->load(Yii::$app->request->post()) && $model->validate() && $model->login()) {
-            return $this->redirect(Url::to('/beacon'));
+        $model = new LoginForm();
+        if ($model->load(Yii::$app->request->post()) && $model->login()) {
+            return $this->goBack();
         } else {
             return $this->render('login', [
                 'model' => $model,
@@ -125,9 +119,32 @@ class SiteController extends MainController
         return $this->render('about');
     }
 
+
+
     public function actionTest()
     {
-        $auth = Yii::$app->authManager;
-        var_dump($auth->getChildren(RbacController::superAdmin));
+        var_dump(self::generateRoleCondition(RbacController::$role_hierarchy,RbacController::user));
+    }
+
+
+
+    protected  function  generateRoleCondition($roles,$checking_role,$condition = false)
+    {
+        foreach ($roles as $role=>$parents)
+        {
+//            $condition = $condition || ($role == $checking_role);
+            if(is_array($parents))
+            {
+                $condition = self::generateRoleCondition($parents, $checking_role, $condition);
+                $condition = $condition || $role == $checking_role;
+            }
+            else
+            {
+                $condition = $condition || ($role == $checking_role);
+            }
+
+
+        }
+        return $condition;
     }
 }

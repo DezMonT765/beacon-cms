@@ -42,7 +42,7 @@ class BeaconsSearch extends Beacons
     public function search($params)
     {
         $query = Beacons::find();
-        if(!Yii::$app->user->can(RbacController::superAdmin))
+        if(!Yii::$app->user->can(RbacController::admin))
         {
             $user = Users::getLogged(true);
             $query->joinWith([
@@ -86,4 +86,5 @@ class BeaconsSearch extends Beacons
 
         return $dataProvider;
     }
+
 }

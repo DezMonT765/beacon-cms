@@ -3,8 +3,9 @@
 namespace app\controllers;
 
 use app\commands\RbacController;
-use app\components\AdminLayout;
-use app\components\UserLayout;
+use app\filters\AdminLayout;
+use app\filters\UserLayout;
+use app\actions\UserEditableAction;
 use Yii;
 use app\models\Users;
 use app\models\UsersSearch;
@@ -18,17 +19,7 @@ use yii\filters\VerbFilter;
  */
 class UserController extends MainController
 {
-    public $layout = 'tabbedLayout';
 
-    public function init()
-    {
-        $this->activeMap = [
-            'index' => [UserLayout::user_list => true],
-            'create' => [UserLayout::user_create => true],
-            'update' => [UserLayout::user_update => true],
-            'view' => [UserLayout::user_view => true],
-        ];
-    }
     public function behaviors()
     {
         $behaviors = array_merge(parent::behaviors(),[
@@ -36,7 +27,7 @@ class UserController extends MainController
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['update','view','delete'],
+                        'actions' => ['update','view','delete','available-groups','ajaxUpdate'],
                         'allow' => true,
                         'roles' => ['@'],
 
@@ -44,7 +35,7 @@ class UserController extends MainController
                     [
                         'actions' => ['index','create'],
                         'allow' => true,
-                        'roles' => [RbacController::superAdmin],
+                        'roles' => [RbacController::create_profile],
                     ],
                 ],
             ],
@@ -58,8 +49,19 @@ class UserController extends MainController
 
         ]);
 
-        $behaviors['layout'] =  ['class' => Yii::$app->user->can(RbacController::superAdmin) ? AdminLayout::className() : UserLayout::className()];
+        $behaviors['layout'] =  ['class' => Yii::$app->user->can(RbacController::admin) ? AdminLayout::className() : UserLayout::className()];
         return $behaviors;
+    }
+
+    public function actions()
+    {
+        return  [
+            'ajaxUpdate' => [
+                'class' => UserEditableAction::className(),
+                'modelClass' => Users::className(),
+                'forceCreate' => false
+            ]
+        ];
     }
 
     /**
@@ -88,9 +90,7 @@ class UserController extends MainController
     public function actionView($id)
     {
         $model = $this->findModel($id);
-        if(!Yii::$app->user->can(RbacController::manageUserAccount,['user_id'=>$model->id]))
-            throw new ForbiddenHttpException('You can not manage this account');
-
+        self::checkAccess(RbacController::update_profile,['user'=>$model]);
         return $this->render('view', [
             'model' => $model,
         ]);
@@ -104,7 +104,6 @@ class UserController extends MainController
     public function actionCreate()
     {
         $model = new Users();
-
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
@@ -126,8 +125,7 @@ class UserController extends MainController
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        if(!Yii::$app->user->can(RbacController::manageUserAccount,['user_id'=>$model->id]))
-            throw new ForbiddenHttpException('You can not manage this account');
+        self::checkAccess(RbacController::update_profile,['user'=>$model]);
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
@@ -150,9 +148,7 @@ class UserController extends MainController
     public function actionDelete($id)
     {
         $model = $this->findModel($id);
-
-        if(!Yii::$app->user->can(RbacController::manageUserAccount,['user_id'=>$model->id]))
-            throw new ForbiddenHttpException('You can not manage this account');
+        self::checkAccess(RbacController::delete_profile,['user'=>$model]);
         $model->delete();
         return $this->redirect(['index']);
     }
@@ -172,5 +168,13 @@ class UserController extends MainController
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+
+    public function actionAvailableGroups()
+    {
+        /**@var Users $user*/
+        $user = Yii::$app->user->identity;
+        return json_encode($user->getAvailableGroups());
+    }
+
 
 }

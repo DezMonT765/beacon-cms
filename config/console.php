@@ -29,7 +29,7 @@ return [
         ],
         'authManager' => [
             'class' => 'yii\rbac\DbManager',
-            'cache' => 'apcCache'
+            'cache'=>'cache'
         ],
         'apcCache' => [
             'class' => 'yii\caching\ApcCache',

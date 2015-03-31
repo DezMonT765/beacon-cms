@@ -1,5 +1,6 @@
 <?php
 use app\components\Alert;
+use app\filters\SiteLayout;
 use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
 use yii\widgets\Breadcrumbs;
@@ -21,10 +22,10 @@ include_once('header.php');
                   ]);
     echo Nav::widget([
                          'options' => ['class' => 'navbar-nav navbar-left'],
-                         'items' =>$this->getLayoutData('left_nav')]);
+                         'items' =>$this->getLayoutData(SiteLayout::place_left_nav)]);
     echo Nav::widget([
                          'options' => ['class' => 'navbar-nav navbar-right'],
-                         'items' =>$this->getLayoutData('right_nav')]);
+                         'items' =>$this->getLayoutData(SiteLayout::place_right_nav)]);
     NavBar::end();
     ?>
 

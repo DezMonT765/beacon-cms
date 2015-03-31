@@ -1,5 +1,6 @@
 <?php
 
+use app\models\Users;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\helpers\Url;
@@ -10,29 +11,65 @@ use yii\helpers\Url;
 
 $this->title = Yii::t('app', 'Users');
 ?>
-<div class="users-index">
-
+<div class="user-index">
     <br>
-
     <?= GridView::widget([
                              'dataProvider' => $dataProvider,
                              'filterModel' => $searchModel,
                              'columns' => [
+                                 ['class' => 'yii\grid\SerialColumn'],
+
                                  [
-                                     'class' => \yii\grid\DataColumn::className(),
-                                     'attribute' => 'name',
-                                     'value' => function($model)
+                                     'attribute'=>'email',
+                                     'format'=>'html',
+                                     'value'=>function($data)
                                      {
-                                         return Html::a($model->name,Url::to(['update','id'=>$model->id]));
-                                     },
-                                     'format' => 'html',
-                                     'label' => 'Name',
+                                         return Html::a($data->email,Url::to(['update','id'=>$data->id]));
+                                     }
                                  ],
-                                 'email:email',
-                                 // 'access_token',
+                                 [
+                                     'class'=>\dosamigos\grid\EditableColumn::className(),
+                                     'filter' => Users::$statuses,
+                                     'attribute'=>'status',
+                                     'url'=>['ajaxUpdate'],
+                                     'type'=>'select',
+                                     'value' => function($data){
+                                         return Users::getStatus($data->status);
+                                     },
+                                     'editableOptions'=>[
+                                         'source' => Users::$statuses
+                                     ]
+                                 ],
+                                 [
+                                     'class'=>\dosamigos\grid\EditableColumn::className(),
+                                     'filter' => Users::$roles,
+                                     'attribute'=>'role',
+                                     'url'=>['ajaxUpdate'],
+                                     'value' => function($data){
+                                         return Users::getRole($data->role);
+                                     },
+                                     'type'=>'select',
+                                     'editableOptions'=>
+                                         [
+                                             'source' => Url::to('available-groups'),
+                                             'sourceCache' => false
+                                         ]
+                                 ],
+
+
 
                                  ['class' => 'yii\grid\ActionColumn'],
                              ],
                          ]); ?>
 
 </div>
+<script>
+    function colors(value, sourceData) {
+        alert(1);
+        var selected = $.grep(sourceData, function (o) {
+                return value == o.value;
+            }),
+            colors = '<?=json_encode(Users::$status_colors)?>';
+        $(this).text(selected[0].text).css("color", colors[value]);
+    }
+</script>

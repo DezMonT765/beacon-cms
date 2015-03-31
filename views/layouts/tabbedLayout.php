@@ -1,5 +1,7 @@
 <?php
 use app\components\Alert;
+use app\filters\AdminLayout;
+use app\filters\TabbedLayout;
 use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
 /* @var $this \app\components\MainView */
@@ -18,10 +20,10 @@ include_once('header.php');
                   ]);
     echo Nav::widget([
                          'options' => ['class' => 'navbar-nav navbar-left'],
-                         'items' =>$this->getLayoutData('left_nav')]);
+                         'items' =>$this->getLayoutData(AdminLayout::place_left_nav)]);
     echo Nav::widget([
                          'options' => ['class' => 'navbar-nav navbar-right'],
-                         'items' =>$this->getLayoutData('right_nav')]);
+                         'items' =>$this->getLayoutData(AdminLayout::place_right_nav)]);
     NavBar::end();
     ?>
 
@@ -30,7 +32,7 @@ include_once('header.php');
         <?= Nav::widget(
             [
                 'options' => ['class'=>'nav-tabs'],
-                'items' =>$this->getLayoutData('tabs')
+                'items' =>$this->getLayoutData(TabbedLayout::place_tabs)
             ]) ?>
         <?= $content ?>
     </div>

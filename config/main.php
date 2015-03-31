@@ -1,4 +1,5 @@
 <?php
+use app\commands\RbacController;
 
 $params = array_merge(
     require(__DIR__ . '/params.php'),
@@ -38,7 +39,8 @@ $config = [
         ],
         'authManager' => [
             'class' => yii\rbac\DbManager::className(),
-            'cache'=>'cache'
+            'cache'=>'cache',
+            'defaultRoles'=>['super_admin','admin', 'user'],
         ],
         'apcCache' => [
             'class' => yii\caching\MemCache::className(),

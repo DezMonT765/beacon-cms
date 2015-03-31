@@ -2,79 +2,97 @@
 /**
  * Created by PhpStorm.
  * User: DezMonT
- * Date: 03.03.2015
- * Time: 13:55
+ * Date: 24.03.2015
+ * Time: 12:44
  */
 
 namespace app\commands;
-use app\rbac\OwnAccount;
-use app\rbac\OwnBeacon;
+
+use app\rbac\CanDelete;
+use app\rbac\CanEdit;
+use app\rbac\CanEditBeacon;
+use app\rbac\UserGroupRule;
+use Yii;
 use yii\console\Controller;
 use yii\rbac\DbManager;
+
 class RbacController extends Controller
 {
-    const manageBeacon = 'manageBeacon';
-    const manageUserAccount = 'manageUserAccount';
-    const superAdmin = 'superAdmin';
-    const manageOwnBeacon = 'manageOwnBeacon';
-    const manageOwnAccount = 'manageOwnAccount';
+    const super_admin = 'super_admin';
+    const admin = 'admin';
     const user = 'user';
-    const MANAGE_BEACON = 'manageBeacon';
+    const create_beacon = 'create_beacon';
+    const update_beacon = 'update_beacon';
+    const delete_beacon = 'delete_beacon';
+
+    const create_profile = 'create_profile';
+    const update_profile = 'update_profile';
+    const delete_profile = 'delete_profile';
+
+
     public function actionInit()
     {
         /**@var DbManager $auth*/
-        $auth = \Yii::$app->authManager;
+        $auth = Yii::$app->authManager;
         $auth->removeAll();
         $auth->invalidateCache();
 
-        // add "createPost" permission
-        $manageBeacon = $auth->createPermission(self::manageBeacon);
-        $manageBeacon->description = 'Manage a beacon';
-        $auth->add($manageBeacon);
+        $create_profile = $auth->createPermission(self::create_profile);
+        $auth->add($create_profile);
 
-        // add "updatePost" permission
-        $manageUserAccount = $auth->createPermission(self::manageUserAccount);
-        $manageUserAccount->description = 'Manage user account';
-        $auth->add($manageUserAccount);
+        $can_edit = new CanEdit();
+        $auth->add($can_edit);
+
+        $update_profile = $auth->createPermission(self::update_profile);
+        $update_profile->ruleName = $can_edit->name;
+        $auth->add($update_profile);
+
+        $can_delete = new CanDelete();
+        $auth->add($can_delete);
+        $delete_profile = $auth->createPermission(self::delete_profile);
+        $delete_profile->ruleName = $can_delete->name;
+        $auth->add($delete_profile);
+
+        $create_beacon = $auth->createPermission(self::create_beacon);
+        $auth->add($create_beacon);
+
+        $delete_beacon = $auth->createPermission(self::delete_beacon);
+        $auth->add($delete_beacon);
+
+        $can_edit_beacon = new CanEditBeacon();
+        $auth->add($can_edit_beacon);
+        $update_beacon = $auth->createPermission(self::update_beacon);
+        $update_beacon->ruleName = $can_edit_beacon->name;
+        $auth->add($update_beacon);
 
 
-        $superAdmin = $auth->createRole('superAdmin');
-        $auth->add($superAdmin);
-        $auth->addChild($superAdmin, $manageBeacon);
-        $auth->addChild($superAdmin,$manageUserAccount);
-
-
-
-        $ownBeaconRule = new OwnBeacon();
-        $auth->add($ownBeaconRule);
-
-        $manageOwnBeacon = $auth->createPermission(self::manageOwnBeacon);
-        $manageOwnBeacon->description = 'Manage own beacon';
-        $manageOwnBeacon->ruleName = $ownBeaconRule->name;
-        $auth->add($manageOwnBeacon);
-
-        $auth->addChild($manageOwnBeacon,$manageBeacon);
-
-        $ownAccountRule = new OwnAccount();
-        $auth->add($ownAccountRule);
-
-        $manageOwnAccount = $auth->createPermission(self::manageOwnAccount);
-        $manageOwnAccount->description = 'Manage own account';
-        $manageOwnAccount->ruleName = $ownAccountRule->name;
-        $auth->add($manageOwnAccount);
-
-        $auth->addChild($manageOwnAccount,$manageUserAccount);
-
+        $user_group_rule = new UserGroupRule();
+        $auth->add($user_group_rule);
         $user = $auth->createRole(self::user);
+        $user->ruleName = $user_group_rule->name;
         $auth->add($user);
+        $auth->addChild($user,$update_beacon);
+        $auth->addChild($user,$update_profile);
 
-        $auth->addChild($user,$manageOwnBeacon);
-        $auth->addChild($user,$manageOwnAccount);
+        $admin = $auth->createRole(self::admin);
+        $admin->ruleName = $user_group_rule->name;
+        $auth->add($admin);
+        $auth->addChild($admin,$user);
+        $auth->addChild($admin,$delete_beacon);
+        $auth->addChild($admin,$delete_profile);
+        $auth->addChild($admin,$create_beacon);
+        $auth->addChild($admin,$create_profile);
 
-        // add "author" role and give this role
+        $superAdmin = $auth->createRole(self::super_admin);
+        $superAdmin->ruleName = $user_group_rule->name;
+        $auth->add($superAdmin);
+        $auth->addChild($superAdmin,$admin);
+
     }
 
     public static $role_hierarchy = [
-        RbacController::user
+        self::user => self::admin,
+        self::admin => self::super_admin,
+        self::super_admin => null
     ];
 }

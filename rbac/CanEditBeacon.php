@@ -8,10 +8,12 @@
 
 namespace app\rbac;
 
+use app\models\Users;
+use Yii;
 use yii\rbac\Item;
 use yii\rbac\Rule;
 
-class OwnBeacon extends Rule
+class CanEditBeacon extends Rule
 {
     public $name = 'ownBeacon';
     /**
@@ -25,6 +27,8 @@ class OwnBeacon extends Rule
      */
     public function execute($user, $item, $params)
     {
-        return (isset($params['beacon']) && isset($params['group'])) ? $params['beacon']->isInGroup($params['group']) : false;
+        /**@var Users $user*/
+        $user = Yii::$app->user->identity;
+        return (isset($params['beacon'])) ? $user->canEditBeacon($params['beacon']) : false;
     }
 }

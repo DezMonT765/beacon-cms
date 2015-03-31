@@ -9,7 +9,7 @@
 namespace app\components;
 
 use app\controllers\MainController;
-use app\controllers\RbacController;
+use app\commands\RbacController;
 use yii\base\ActionFilter;
 use \yii\helpers\Url;
 use \app\models\Users;

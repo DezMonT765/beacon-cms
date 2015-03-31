@@ -6,11 +6,12 @@
  * Time: 13:55
  */
 
-namespace app\controllers;
+namespace app\commands;
 use app\rbac\OwnAccount;
 use app\rbac\OwnBeacon;
+use yii\console\Controller;
 use yii\rbac\DbManager;
-class RbacController extends \yii\base\Controller
+class RbacController extends Controller
 {
     const manageBeacon = 'manageBeacon';
     const manageUserAccount = 'manageUserAccount';
@@ -72,4 +73,8 @@ class RbacController extends \yii\base\Controller
 
         // add "author" role and give this role
     }
+
+    public static $role_hierarchy = [
+        RbacController::user
+    ];
 }

@@ -3,7 +3,7 @@
 namespace app\models;
 
 use app\components\Alert;
-use app\controllers\RbacController;
+use app\commands\RbacController;
 use Yii;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
@@ -50,6 +50,7 @@ class Users extends ActiveRecord implements IdentityInterface
             ['email','email'],
             [['email','password'],'required'],
             ['email','unique','on'=>['insert','register']],
+            ['role','default','value'=> RbacController::user],
             [['passwordConfirm','group_token'],'required','on'=>'register'],
             ['group_token','exist','targetClass'=>Groups::className(),'targetAttribute'=>'token','on'=>'register'],
             ['passwordConfirm','compare','compareAttribute'=>'password','on'=>'register'],
@@ -61,33 +62,30 @@ class Users extends ActiveRecord implements IdentityInterface
         ];
     }
 
-    public function beforeValidate()
+    public function afterFind()
     {
-        if(parent::beforeValidate())
-        {
-            $this->logged = date('Y-m-d H:i:s');
-            if(empty($this->role) || is_null($this->role))
-            {
-                $this->role = RbacController::user;
-            }
-            return true;
+        self::resolveRoles();
+    }
+
+
+    public function afterValidate()
+    {
+        if ($this->isNewRecord) {
+            $this->auth_key = Yii::$app->getSecurity()->generateRandomString();
+            $this->password = Yii::$app->getSecurity()->generatePasswordHash($this->password);
         }
-        return false;
     }
 
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
-            if ($this->isNewRecord) {
-                $this->auth_key = Yii::$app->getSecurity()->generateRandomString();
-                $this->password = Yii::$app->getSecurity()->generatePasswordHash($this->password);
-            }
+
             return true;
         }
         return false;
     }
 
-    public function afterSave($insert,$oldAttributes)
+    protected function resolveRoles()
     {
         /**@var \yii\rbac\DbManager $auth*/
         $auth = Yii::$app->authManager;
@@ -96,10 +94,16 @@ class Users extends ActiveRecord implements IdentityInterface
             $role = $auth->getRole($this->role);
             if($role instanceof Role)
             {
+                $auth->revokeAll($this->id);
                 $auth->assign($role, $this->id);
                 $auth->invalidateCache();
             }
         }
+    }
+
+    public function afterSave($insert,$oldAttributes)
+    {
+        self::resolveRoles();
         $group = Groups::findOne(['token'=>$this->group_token]);
         if($group instanceof Groups)
         {

@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\commands\RbacController;
 use app\components\SiteLayout;
 use Yii;
 use yii\filters\AccessControl;
@@ -64,12 +65,12 @@ class SiteController extends MainController
     public function actionLogin()
     {
         if (!\Yii::$app->user->isGuest) {
-            return $this->redirect(Url::to('beacon'));
+            return $this->redirect(Url::to('/beacon'));
         }
 
         $model = new Users();
         if ($model->load(Yii::$app->request->post()) && $model->validate() && $model->login()) {
-            return $this->redirect(Url::to('beacon'));
+            return $this->redirect(Url::to('/beacon'));
         } else {
             return $this->render('login', [
                 'model' => $model,
@@ -122,5 +123,11 @@ class SiteController extends MainController
     public function actionAbout()
     {
         return $this->render('about');
+    }
+
+    public function actionTest()
+    {
+        $auth = Yii::$app->authManager;
+        var_dump($auth->getChildren(RbacController::superAdmin));
     }
 }

@@ -2,11 +2,10 @@
 
 namespace app\models;
 
-use app\controllers\RbacController;
+use app\commands\RbacController;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\Beacons;
 
 /**
  * BeaconsSearch represents the model behind the search form about `app\models\Beacons`.

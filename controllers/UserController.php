@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\commands\RbacController;
 use app\components\AdminLayout;
 use app\components\UserLayout;
 use Yii;

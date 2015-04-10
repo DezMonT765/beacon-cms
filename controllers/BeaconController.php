@@ -2,7 +2,7 @@
 
 namespace app\controllers;
 
-use app\components\BeaconLayout;
+use app\filters\BeaconLayout;
 use Yii;
 use app\models\Beacons;
 use app\models\BeaconsSearch;
@@ -16,15 +16,7 @@ use yii\filters\VerbFilter;
 class BeaconController extends MainController
 {
 
-    public function init()
-    {
-        $this->activeMap = [
-            'index' => [BeaconLayout::beacon_list => true],
-            'create' => [BeaconLayout::beacon_create => true],
-            'update' => [BeaconLayout::beacon_update => true],
-            'view' => [BeaconLayout::beacon_view => true],
-        ];
-    }
+
     public function behaviors()
     {
         return [

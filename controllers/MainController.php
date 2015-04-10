@@ -8,6 +8,7 @@
 
 namespace app\controllers;
 use Yii;
+use yii\db\ActiveRecord;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\ForbiddenHttpException;
@@ -43,5 +44,43 @@ class MainController extends Controller
             }
         }
 
+    }
+
+
+    public function selectionList($model_class,$attribute,callable $return_wrap = null)
+    {
+        /** @var ActiveRecord $model_class */
+        $value = Yii::$app->request->getQueryParam('value');
+        $model = new $model_class;
+        $models = $model->searchByAttribute($attribute,$value);
+        $model_array = [];
+        foreach ($models as $model)
+        {
+            $model_array[] =['id'=>$model->id,'text'=> is_null($return_wrap) ? $model->name : $return_wrap($model) ];
+        }
+        echo json_encode(['more'=>false,'results'=>$model_array]);
+    }
+
+    public function selectionById($model_class,callable $return_wrap = null)
+    {
+        /** @var ActiveRecord $model_class */
+        $id = Yii::$app->request->getQueryParam('id');
+        $model = new $model_class;
+        $ids = explode(',',$id);
+        $models = $model->searchByIds($ids);
+        $model_array = [];
+        if(count($models) == 1)
+        {
+            $model = array_shift($models);
+            $model_array = ['id'=>$model->id,'text'=> is_null($return_wrap) ? $model->name : $return_wrap($model)];
+        }
+        else
+        {
+            foreach ($models as $model)
+            {
+                $model_array[] =['id'=>$model->id,'text'=> is_null($return_wrap) ? $model->name : $return_wrap($model)];
+            }
+        }
+        echo json_encode(['more'=>false,'results'=>$model_array]);
     }
 }

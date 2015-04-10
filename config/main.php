@@ -1,5 +1,6 @@
 <?php
-use app\commands\RbacController;
+require_once('../components/MainView.php');
+use app\components\MainView;
 
 $params = array_merge(
     require(__DIR__ . '/params.php'),
@@ -22,6 +23,31 @@ $config = [
             'identityClass' => 'app\models\Users',
             'enableAutoLogin' => true,
         ],
+        'assetManager' => [
+            'bundles' =>[
+                \yii\web\JqueryAsset::className() => [
+                    'js'=> [
+                        "http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js",
+                        "http://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"
+                    ],
+                    'jsOptions' =>
+                    [
+                        'position' => MainView::POS_HEAD,
+                    ],
+                ],
+                \yii\bootstrap\BootstrapAsset::className() => [
+                    'baseUrl' => '@web',
+                    'basePath' => '@webroot',
+//                    'css'=>['css/lumen.min.css'],
+//                    'css' => ['https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css'],
+                    'css' => ['css/bootstrap.min.css']
+                ],
+                \yii\bootstrap\BootstrapPluginAsset::className() =>[
+                    'js' => ['https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js'],
+                ]
+            ],
+            'appendTimestamp' => true,
+        ],
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
@@ -33,9 +59,6 @@ $config = [
                 '<controller:\w+>/<action:\w+>/<id:\d+>' => '<controller>/<action>',
                 '<controller:\w+>/<action:\w+>' => '<controller>/<action>',
             ]
-        ],
-        'assetManager'=>[
-            'appendTimestamp' => true,
         ],
         'authManager' => [
             'class' => yii\rbac\DbManager::className(),

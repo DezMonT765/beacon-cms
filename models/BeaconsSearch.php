@@ -49,7 +49,7 @@ class BeaconsSearch extends Beacons
                                  'groups' => function($query) use ($user)
                                  {
                                      $query->joinWith([
-                                                          'users'=>function($query) use ($user)
+                                                        'users'=>function($query) use ($user)
                                                         {
                                                             $query->andFilterWhere(['users.id'=>$user->id]);
                                                         }

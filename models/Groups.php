@@ -3,17 +3,23 @@
 namespace app\models;
 
 use Yii;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "groups".
  *
  * @property integer $id
- * @property string $token
+ * @property string $alias
  * @property string $name
+ * @property string $uuid
+ * @property int $major
+ * @property int $minor
+ * @property string $place
+ * @property string $description
  *
  * @property BeaconBindings[] $beaconBindings
  */
-class Groups extends \yii\db\ActiveRecord
+class Groups extends ActiveRecord
 {
     /**
      * @inheritdoc
@@ -32,28 +38,19 @@ class Groups extends \yii\db\ActiveRecord
     {
         return [
             [['id'], 'integer'],
-            [['name'], 'required'],
+            [['name','alias'], 'required'],
             [['name'], 'string', 'max' => 64],
-            [['token'], 'string', 'max' => 64],
-            [['token'], 'unique' ],
+            [['alias'], 'string', 'max' => 64],
+            [['alias'], 'unique' ],
+            [['major','minor'],'integer'],
+            ['place','string','max'=>256],
+            ['description','safe']
         ];
     }
 
 
 
 
-    public function beforeSave($insert)
-    {
-        if(parent::beforeSave($insert))
-        {
-            if($this->isNewRecord)
-            {
-                if($this->scenario != 'search')
-                    $this->token = Yii::$app->security->generateRandomString(64);
-            }
-            return true;
-        }
-    }
 
     /**
      * @inheritdoc
@@ -89,5 +86,19 @@ class Groups extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Users::className(),['id'=>'user_id'])
             ->via('userBindings');
+    }
+
+    public function searchByAttribute($attribute,$value)
+    {
+        $query = self::find();
+        $query->filterWhere(['like',$attribute, $value]);
+        return $query->all();
+    }
+
+    public function searchByIds(array $ids)
+    {
+        $query = self::find();
+        $query->filterWhere(['id'=>$ids]);
+        return $query->all();
     }
 }

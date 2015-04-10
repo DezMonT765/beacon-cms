@@ -17,7 +17,6 @@ namespace app\components;
 
 use RecursiveArrayIterator;
 use RecursiveIteratorIterator;
-use yii\helpers\Html;
 use yii;
 
 class Alert
@@ -53,7 +52,7 @@ class Alert
 
     public static $colors = array(
         self::SUCCESS => 'success',
-        self::WARNING => 'info',
+        self::WARNING => 'warning',
         self::ERROR => 'danger',
         self::NONE => 'info'
     );
@@ -232,7 +231,7 @@ class Alert
         $success = count(self::getAlertStore(self::SUCCESS));
         $error = count(self::getAlertStore(self::ERROR));
 
-        $succ = (int)($success >=1 && $warning == 0 && $error == 0);
+        $succ = (int)($success >=1 && $warning === 0 && $error === 0);
         $warn = (int)(($success >= 1 && $error >= 1) || $warning >=1);
         $err = (int)($success == 0 && $warning == 0 && $error >=1);
         return self::$general_statuses[$succ.$warn.$err];
@@ -258,7 +257,7 @@ class Alert
         return  $title_message;
     }
 
-    static function  recursiveFind(array $array, $needle)
+    public static function recursiveFind(array $array, $needle)
     {
         $iterator  = new RecursiveArrayIterator($array);
         $recursive = new RecursiveIteratorIterator($iterator,

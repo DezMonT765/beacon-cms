@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "1c10b6ec6f3eba406fb155f1d2ea638e",
+    "hash": "d2c571ae3df9877ceafeedebe036fd82",
     "packages": [
         {
             "name": "2amigos/yii2-dosamigos-asset-bundle",
@@ -94,51 +94,6 @@
             "time": "2015-02-20 15:13:36"
         },
         {
-            "name": "2amigos/yii2-grid-view-library",
-            "version": "0.1.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/2amigos/yii2-grid-view-library.git",
-                "reference": "31ca114deaf337b3e799cf1e8f963c372e4873a8"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/2amigos/yii2-grid-view-library/zipball/31ca114deaf337b3e799cf1e8f963c372e4873a8",
-                "reference": "31ca114deaf337b3e799cf1e8f963c372e4873a8",
-                "shasum": ""
-            },
-            "require": {
-                "2amigos/yii2-dosamigos-asset-bundle": "0.1.*",
-                "2amigos/yii2-editable-widget": "*",
-                "yiisoft/yii2": "*"
-            },
-            "type": "yii2-extension",
-            "autoload": {
-                "psr-4": {
-                    "dosamigos\\grid\\": ""
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "authors": [
-                {
-                    "name": "Antonio Ramirez",
-                    "email": "ramirez.cobos@gmail.com",
-                    "homepage": "http://2amigos.us"
-                }
-            ],
-            "description": "GridView Widget Extensions for Yii2.",
-            "keywords": [
-                "extension",
-                "grid",
-                "widget",
-                "yii"
-            ],
-            "time": "2014-12-17 09:28:22"
-        },
-        {
             "name": "bower-asset/bootstrap",
             "version": "v3.3.4",
             "source": {
@@ -189,6 +144,43 @@
                 "responsive",
                 "web"
             ]
+        },
+        {
+            "name": "bower-asset/fontawesome",
+            "version": "v4.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/FortAwesome/Font-Awesome.git",
+                "reference": "a65bd93d81e9e6bd5ebfa41757a4474960b973b4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/FortAwesome/Font-Awesome/zipball/a65bd93d81e9e6bd5ebfa41757a4474960b973b4",
+                "reference": "a65bd93d81e9e6bd5ebfa41757a4474960b973b4",
+                "shasum": ""
+            },
+            "type": "bower-asset-library",
+            "extra": {
+                "bower-asset-main": [
+                    "./css/font-awesome.css",
+                    "./fonts/*"
+                ],
+                "bower-asset-ignore": [
+                    "*/.*",
+                    "*.json",
+                    "src",
+                    "*.yml",
+                    "Gemfile",
+                    "Gemfile.lock",
+                    "*.md"
+                ]
+            },
+            "license": [
+                "OFL-1.1",
+                "MIT",
+                "CC-BY-3.0"
+            ],
+            "description": "Font Awesome"
         },
         {
             "name": "bower-asset/jquery",
@@ -342,6 +334,48 @@
             }
         },
         {
+            "name": "bower-asset/select2-skins",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/themepixels/select2-skins.git",
+                "reference": "1275367409c5365a4f20de8527c57936da503443"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/themepixels/select2-skins/zipball/1275367409c5365a4f20de8527c57936da503443",
+                "reference": "1275367409c5365a4f20de8527c57936da503443",
+                "shasum": ""
+            },
+            "require": {
+                "bower-asset/fontawesome": ">=4.2.0,<4.3"
+            },
+            "require-dev": {
+                "bower-asset/bootstrap": ">=3.3.0,<3.4"
+            },
+            "type": "bower-asset-library",
+            "extra": {
+                "bower-asset-main": "select2-skins.css",
+                "bower-asset-ignore": [
+                    "**/.*",
+                    "node_modules",
+                    "bower_components",
+                    "test",
+                    "tests"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "A css skins for select2 with sizes and colors.",
+            "keywords": [
+                "dropdown",
+                "form",
+                "select2"
+            ],
+            "time": "2015-01-02 02:34:23"
+        },
+        {
             "name": "bower-asset/yii2-pjax",
             "version": "v2.0.4",
             "source": {
@@ -435,6 +469,53 @@
             "time": "2015-03-06 05:21:16"
         },
         {
+            "name": "dezmont765/yii2-grid-view-library",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/DezMonT765/yii2-grid-view-library.git",
+                "reference": "caab1dfc71bc3210ce9babb6937969f106686930"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/DezMonT765/yii2-grid-view-library/zipball/caab1dfc71bc3210ce9babb6937969f106686930",
+                "reference": "caab1dfc71bc3210ce9babb6937969f106686930",
+                "shasum": ""
+            },
+            "require": {
+                "2amigos/yii2-dosamigos-asset-bundle": "0.1.*",
+                "2amigos/yii2-editable-widget": "*",
+                "yiisoft/yii2": "*"
+            },
+            "type": "yii2-extension",
+            "autoload": {
+                "psr-4": {
+                    "dosamigos\\grid\\": ""
+                }
+            },
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Antonio Ramirez",
+                    "email": "ramirez.cobos@gmail.com",
+                    "homepage": "http://2amigos.us"
+                }
+            ],
+            "description": "GridView Widget Extensions for Yii2.",
+            "keywords": [
+                "extension",
+                "grid",
+                "widget",
+                "yii"
+            ],
+            "support": {
+                "source": "https://github.com/DezMonT765/yii2-grid-view-library/tree/master"
+            },
+            "time": "2015-04-04 15:31:03"
+        },
+        {
             "name": "ezyang/htmlpurifier",
             "version": "v4.6.0",
             "source": {
@@ -480,112 +561,104 @@
             "time": "2013-11-30 08:25:19"
         },
         {
-            "name": "fxp/composer-asset-plugin",
-            "version": "v1.0.0",
+            "name": "phpmailer/phpmailer",
+            "version": "v5.2.9",
             "source": {
                 "type": "git",
-                "url": "https://github.com/francoispluchino/composer-asset-plugin.git",
-                "reference": "dbc856439a09f07987de673aa8a264c1b88b0c6b"
+                "url": "https://github.com/PHPMailer/PHPMailer.git",
+                "reference": "73b61679809615850706f1dbf88e6df2ddc05745"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/francoispluchino/composer-asset-plugin/zipball/dbc856439a09f07987de673aa8a264c1b88b0c6b",
-                "reference": "dbc856439a09f07987de673aa8a264c1b88b0c6b",
+                "url": "https://api.github.com/repos/PHPMailer/PHPMailer/zipball/73b61679809615850706f1dbf88e6df2ddc05745",
+                "reference": "73b61679809615850706f1dbf88e6df2ddc05745",
                 "shasum": ""
             },
             "require": {
-                "composer-plugin-api": "1.0.0",
-                "php": ">=5.3.3"
+                "php": ">=5.0.0"
             },
             "require-dev": {
-                "composer/composer": "~1.0@dev"
-            },
-            "type": "composer-plugin",
-            "extra": {
-                "class": "Fxp\\Composer\\AssetPlugin\\FxpAssetPlugin",
-                "branch-alias": {
-                    "dev-master": "1.0-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Fxp\\Composer\\AssetPlugin\\": ""
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "François Pluchino",
-                    "email": "francois.pluchino@gmail.com"
-                }
-            ],
-            "description": "NPM/Bower Dependency Manager for Composer",
-            "homepage": "https://github.com/francoispluchino/composer-asset-plugin",
-            "keywords": [
-                "asset",
-                "bower",
-                "composer",
-                "dependency manager",
-                "nodejs",
-                "npm",
-                "package"
-            ],
-            "time": "2015-01-25 13:24:06"
-        },
-        {
-            "name": "swiftmailer/swiftmailer",
-            "version": "v5.4.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/swiftmailer/swiftmailer.git",
-                "reference": "31454f258f10329ae7c48763eb898a75c39e0a9f"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/swiftmailer/swiftmailer/zipball/31454f258f10329ae7c48763eb898a75c39e0a9f",
-                "reference": "31454f258f10329ae7c48763eb898a75c39e0a9f",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.3"
-            },
-            "require-dev": {
-                "mockery/mockery": "~0.9.1"
+                "phpdocumentor/phpdocumentor": "*",
+                "phpunit/phpunit": "4.1.*"
             },
             "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "5.4-dev"
-                }
-            },
             "autoload": {
-                "files": [
-                    "lib/swift_required.php"
+                "classmap": [
+                    "class.phpmailer.php",
+                    "class.pop3.php",
+                    "class.smtp.php"
                 ]
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "MIT"
+                "LGPL-2.1"
             ],
             "authors": [
                 {
-                    "name": "Chris Corbyn"
+                    "name": "Jim Jagielski",
+                    "email": "jimjag@gmail.com"
                 },
                 {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
+                    "name": "Marcus Bointon",
+                    "email": "phpmailer@synchromedia.co.uk"
+                },
+                {
+                    "name": "Andy Prevost",
+                    "email": "codeworxtech@users.sourceforge.net"
+                },
+                {
+                    "name": "Brent R. Matzelle"
                 }
             ],
-            "description": "Swiftmailer, free feature-rich PHP mailer",
-            "homepage": "http://swiftmailer.org",
-            "keywords": [
-                "mail",
-                "mailer"
+            "description": "PHPMailer is a full-featured email creation and transfer class for PHP",
+            "time": "2014-09-26 18:33:30"
+        },
+        {
+            "name": "soundasleep/html2text",
+            "version": "0.2.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/soundasleep/html2text.git",
+                "reference": "a5548bbac80f3c39c53513a9630779943eb253de"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/soundasleep/html2text/zipball/a5548bbac80f3c39c53513a9630779943eb253de",
+                "reference": "a5548bbac80f3c39c53513a9630779943eb253de",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.2"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.4"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Html2Text\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "EPL-1.0"
             ],
-            "time": "2015-03-14 06:06:39"
+            "authors": [
+                {
+                    "name": "Jevon Wright",
+                    "homepage": "https://jevon.org",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A PHP script to convert HTML into a plain text format",
+            "homepage": "https://github.com/soundasleep/html2text",
+            "keywords": [
+                "email",
+                "html",
+                "php",
+                "text"
+            ],
+            "time": "2014-12-15 03:08:50"
         },
         {
             "name": "yiisoft/yii2",
@@ -769,54 +842,53 @@
             "time": "2015-03-01 06:22:44"
         },
         {
-            "name": "yiisoft/yii2-swiftmailer",
-            "version": "2.0.3",
+            "name": "zyx/zyx-phpmailer",
+            "version": "dev-log-fix",
             "source": {
                 "type": "git",
-                "url": "https://github.com/yiisoft/yii2-swiftmailer.git",
-                "reference": "cb5f0a70d871b409bef7333fc3e0d262fb57eb5c"
+                "url": "https://github.com/DezMonT765/zyx-phpmailer.git",
+                "reference": "a872bd5f73fed182198c6efc25c73b7c972a2a5f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yiisoft/yii2-swiftmailer/zipball/cb5f0a70d871b409bef7333fc3e0d262fb57eb5c",
-                "reference": "cb5f0a70d871b409bef7333fc3e0d262fb57eb5c",
+                "url": "https://api.github.com/repos/DezMonT765/zyx-phpmailer/zipball/a872bd5f73fed182198c6efc25c73b7c972a2a5f",
+                "reference": "a872bd5f73fed182198c6efc25c73b7c972a2a5f",
                 "shasum": ""
             },
             "require": {
-                "swiftmailer/swiftmailer": "*",
+                "phpmailer/phpmailer": "*",
+                "soundasleep/html2text": "*",
                 "yiisoft/yii2": "*"
             },
             "type": "yii2-extension",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.0.x-dev"
-                }
-            },
             "autoload": {
                 "psr-4": {
-                    "yii\\swiftmailer\\": ""
+                    "zyx\\phpmailer\\": ""
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "BSD-3-Clause"
             ],
             "authors": [
                 {
-                    "name": "Paul Klimov",
-                    "email": "klimov.paul@gmail.com"
+                    "name": "Serge Postrash aka SDKiller",
+                    "email": "jexy.ru@gmail.com"
                 }
             ],
-            "description": "The SwiftMailer integration for the Yii framework",
+            "description": "PHPMailer integration for Yii 2 framework",
             "keywords": [
                 "email",
                 "mail",
                 "mailer",
-                "swift",
-                "swiftmailer",
+                "phpmailer",
                 "yii2"
             ],
-            "time": "2015-03-01 06:22:44"
+            "support": {
+                "issues": "https://github.com/SDKiller/zyx-phpmailer/issues",
+                "wiki": "https://github.com/SDKiller/zyx-phpmailer/wiki",
+                "source": "https://github.com/SDKiller/zyx-phpmailer"
+            },
+            "time": "2015-04-07 19:15:43"
         }
     ],
     "packages-dev": [
@@ -1120,7 +1192,11 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "dezmont765/yii2-grid-view-library": 20,
+        "zyx/zyx-phpmailer": 20,
+        "bower-asset/select2-skins": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

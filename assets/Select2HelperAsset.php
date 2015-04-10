@@ -7,6 +7,7 @@
 
 namespace app\assets;
 
+use app\components\MainView;
 use yii\web\AssetBundle;
 
 /**
@@ -15,13 +16,15 @@ use yii\web\AssetBundle;
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @since 2.0
  */
-class BootstrapAsset extends AssetBundle
+class Select2HelperAsset extends AssetBundle
 {
-    public $sourcePath = '@bower/bootstrap/dist';
+    public $baseUrl = '@web';
+    public $basePath = '@webroot';
     public $js = [
-        'js/bootstrap.min.js',
+        'js/initSelect2.js',
     ];
-    public $css = [
-        'css/bootstrap.min.css',
+
+    public $jsOptions = [
+      'position' => MainView::POS_HEAD
     ];
 }

@@ -4,6 +4,7 @@ namespace app\models;
 
 use app\components\Alert;
 use Yii;
+use yii\db\ActiveRecord;
 use yii\helpers\FileHelper;
 use yii\web\UploadedFile;
 
@@ -22,7 +23,7 @@ use yii\web\UploadedFile;
  * @property BeaconBindings[] $beaconBindings
  * @property BeaconStatistic $beaconStatistic
  */
-class Beacons extends \yii\db\ActiveRecord
+class Beacons extends ActiveRecord
 {
 
 

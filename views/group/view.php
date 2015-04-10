@@ -19,7 +19,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'attributes' => [
             'id',
             'name',
-            'token',
+            'alias',
         ],
     ]) ?>
 

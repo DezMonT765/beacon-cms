@@ -2,12 +2,13 @@
 
 namespace app\models;
 
+//use app\components\Alert;
+//use app\commands\RbacController;
 use app\components\Alert;
-use app\commands\RbacController;
 use Yii;
+use yii\data\ActiveDataProvider;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
-use yii\rbac\Role;
 use yii\web\IdentityInterface;
 use yii\web\NotFoundHttpException;
 
@@ -22,12 +23,19 @@ use yii\web\NotFoundHttpException;
  * @property string $access_token
  * @property string $role
  * @property string $logged
+ * @property string $groupsToBind
  *
+ *
+ * relations
  * @property BeaconBindings[] $beaconBindings
+ * @property BeaconBindings[] $groups
  */
 class Users extends ActiveRecord implements IdentityInterface
 {
 
+    const super_admin = 'super_admin';
+    const admin = 'admin';
+    const user = 'user';
     const STATUS_INACTIVE = 0;
     const STATUS_ACTIVE = 1;
 
@@ -35,6 +43,31 @@ class Users extends ActiveRecord implements IdentityInterface
         self::STATUS_ACTIVE => 'Active',
         self::STATUS_INACTIVE => 'Inactive'
     ];
+
+    public function setGroupsToBind($groups)
+    {
+        $this->groupsToBind = explode(',',$groups);
+    }
+
+    public function getGroupsToBind()
+    {
+        if(is_array($this->groupsToBind))
+        {
+            $result = implode(',', $this->groupsToBind);
+            return $result;
+        }
+        elseif(is_array($this->groups) && count($this->groups))
+        {
+            $groupsToBind = [];
+            foreach ($this->groups as $group)
+            {
+                $groupsToBind[] = $group->id;
+            }
+            $result = implode(',',$groupsToBind);
+            return $result;
+        }
+        else return null;
+    }
 
     public static function  getStatus($status)
     {
@@ -56,20 +89,13 @@ class Users extends ActiveRecord implements IdentityInterface
         return (isset(self::$roles[$this->role]) ? self::$roles[$this->role] : null);
     }
 
-    public function getAvailableGroups()
-    {
-        $role_groups =  [
-            RbacController::user => [],
-            RbacController::admin => [RbacController::user => 'User'],
-            RbacController::super_admin =>[RbacController::admin => 'Admin', RbacController::user => 'User'],
-        ];
-        return $role_groups[$this->role];
-    }
+
+
 
     public static $roles = [
-        RbacController::user => 'User',
-        RbacController::admin => 'Admin',
-        RbacController::super_admin => 'Super Admin',
+        self::user => 'User',
+        self::admin => 'Admin',
+        self::super_admin => 'Super Admin',
     ];
 
     public static $status_colors = [
@@ -80,7 +106,7 @@ class Users extends ActiveRecord implements IdentityInterface
     private static $_is_need_update = false;
     public $rememberMe;
     public $passwordConfirm;
-    public $group_token = null;
+    public $group_alias = null;
     /**
      * @inheritdoc
      */
@@ -97,78 +123,59 @@ class Users extends ActiveRecord implements IdentityInterface
         return [
             ['email','email'],
             [['email','password'],'required'],
-            ['email','unique','on'=>['insert','register']],
-            ['role','default','value'=> RbacController::user],
-            [['passwordConfirm','group_token'],'required','on'=>'register'],
-            ['group_token','exist','targetClass'=>Groups::className(),'targetAttribute'=>'token','on'=>'register'],
-            ['passwordConfirm','compare','compareAttribute'=>'password','on'=>'register'],
+            ['email','unique','on'=>['create','register']],
+            ['role','default','value'=> self::user],
+            [['passwordConfirm'],'required','on'=>['create','register']],
+            ['passwordConfirm','compare','compareAttribute'=>'password','on'=>['create','register']],
+            ['groupsToBind','safe'],
+            ['group_alias','exist','targetClass'=>Groups::className(),'targetAttribute'=>'alias','on'=>'register'],
+            ['role','in','range'=>!Yii::$app->user->isGuest ? array_flip(Yii::$app->user->identity->getEditableRoles()) : array_flip(self::$roles)],
+            ['status', 'default', 'value' => self::STATUS_ACTIVE],
+            ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_INACTIVE]],
             ['rememberMe', 'boolean'],
-            [['group_token'], 'string', 'max' => 64],
             [['name', 'email'], 'string', 'max' => 50],
             [['password', 'auth_key', 'access_token'], 'string', 'max' => 256],
 
         ];
     }
 
-    public function afterFind()
-    {
-        self::resolveRoles();
-    }
 
 
-    public function afterValidate()
+    public function beforeSave($insert)
     {
+        parent::beforeSave(true);
         if ($this->isNewRecord) {
             $this->auth_key = Yii::$app->getSecurity()->generateRandomString();
             $this->password = Yii::$app->getSecurity()->generatePasswordHash($this->password);
         }
+
+        return true;
     }
 
-    public function beforeSave($insert)
+    public function saveGroups()
     {
-        if (parent::beforeSave($insert)) {
-
-            return true;
-        }
-        return false;
-    }
-
-    protected function resolveRoles()
-    {
-        /**@var \yii\rbac\DbManager $auth*/
-//        $auth = Yii::$app->authManager;
-//        if(!$auth->getAssignment($this->role,$this->id))
-//        {
-//            $role = $auth->getRole($this->role);
-//            if($role instanceof Role)
-//            {
-//                $auth->revokeAll($this->id);
-//                $auth->assign($role, $this->id);
-//                $auth->invalidateCache();
-//            }
-//        }
-    }
-
-    public function afterSave($insert,$oldAttributes)
-    {
-        self::resolveRoles();
-        $group = Groups::findOne(['token'=>$this->group_token]);
-        if($group instanceof Groups)
+        UserBindings::deleteAll(['user_id'=>$this->id]);
+        $groups = Groups::findAll(['id'=>$this->groupsToBind]);
+        foreach ($groups as $group)
         {
-
-            $user_binding = UserBindings::findOne(['user_id'=>$this->id,'group_id'=>$group->id]);
-            if(!($user_binding instanceof UserBindings))
-                $user_binding = new UserBindings();
-            $user_binding->user_id = $this->id;
-            $user_binding->group_id = $group->id;
-            if($user_binding->save())
+            if($group instanceof Groups)
             {
-                Alert::addSuccess('User has been successfully joined to new group');
+
+                $user_binding = UserBindings::findOne(['user_id'=>$this->id,'group_id'=>$group->id]);
+                if(!($user_binding instanceof UserBindings))
+                    $user_binding = new UserBindings();
+                $user_binding->user_id = $this->id;
+                $user_binding->group_id = $group->id;
+                $user_binding->save();
             }
         }
     }
 
 
+    public function afterSave($insert,$oldAttributes)
+    {
+        self::saveGroups();
+    }
 
 
     /**
@@ -203,7 +210,21 @@ class Users extends ActiveRecord implements IdentityInterface
     }
 
 
-
+    public function getGroupsProvider()
+    {
+        $dataProvider = new ActiveDataProvider([
+                                                   'query' => Groups::find()->joinWith([
+                                                                                           'users'=>function($query)
+                                                                                           {
+                                                                                               $query->andFilterWhere(['users.id'=>$this->id]);
+                                                                                           }
+                                                                                       ]),
+                                                   'pagination' => [
+                                                       'pageSize' => 5,
+                                                   ],
+                                               ]);
+        return $dataProvider;
+    }
 
 
 
@@ -331,16 +352,16 @@ class Users extends ActiveRecord implements IdentityInterface
     public function getEditableRoles()
     {
         $editable_roles = [
-          RbacController::super_admin => [RbacController::admin,RbacController::user],
-          RbacController::admin => [RbacController::user],
-          RbacController::user => []
+          self::super_admin => [self::admin => 'Admin',self::user => 'User'],
+          self::admin => [self::user => 'User'],
+          self::user => [self::user => 'User']
         ];
         return isset($editable_roles[$this->role]) ? $editable_roles[$this->role] : [];
     }
 
     public function  canEdit($checking_role)
     {
-        foreach (self::getEditableRoles() as  $role)
+        foreach (self::getEditableRoles() as  $role => $label)
         {
             if($checking_role == $role)
                 return true;

@@ -2,12 +2,12 @@
 
 namespace app\controllers;
 
-use app\components\GroupLayout;
+use app\commands\RbacController;
+use app\filters\GroupLayout;
 use Yii;
 use app\models\Groups;
 use app\models\GroupSearch;
 use yii\filters\AccessControl;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
@@ -17,15 +17,6 @@ use yii\filters\VerbFilter;
 class GroupController extends MainController
 {
 
-    public function init()
-    {
-        $this->activeMap = [
-            'index' => [GroupLayout::group_list => true],
-            'create' => [GroupLayout::group_create => true],
-            'update' => [GroupLayout::group_update => true],
-            'view' => [GroupLayout::group_view => true],
-        ];
-    }
     public function behaviors()
     {
         return [
@@ -39,9 +30,8 @@ class GroupController extends MainController
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['index','create','update','view','delete'],
                         'allow' => true,
-                        'roles' => ['superAdmin'],
+                        'roles' => [RbacController::admin],
                     ],
                 ],
             ],
@@ -143,4 +133,16 @@ class GroupController extends MainController
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+
+
+    public function actionGetSelectionList()
+    {
+        parent::selectionList(Groups::className(),'name');
+    }
+
+    public function actionGetSelectionById()
+    {
+        self::selectionById(Groups::className());
+    }
+
 }

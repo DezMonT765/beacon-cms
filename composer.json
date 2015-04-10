@@ -13,14 +13,23 @@
         "source": "https://github.com/yiisoft/yii2"
     },
     "minimum-stability": "stable",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/DezMonT765/yii2-grid-view-library"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/DezMonT765/zyx-phpmailer"
+        }
+    ],
     "require": {
         "php": ">=5.4.0",
-		"fxp/composer-asset-plugin": "~1.0",
         "yiisoft/yii2": "*",
         "yiisoft/yii2-bootstrap": "*",
-        "yiisoft/yii2-swiftmailer": "*",
-        "bower-asset/select2": "3.5.2",
-        "2amigos/yii2-grid-view-library" : "*"
+        "dezmont765/yii2-grid-view-library" : "dev-master",
+        "zyx/zyx-phpmailer": "dev-log-fix",
+        "bower-asset/select2-skins": "dev-master"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",

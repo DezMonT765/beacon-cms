@@ -91,7 +91,7 @@ class UserController extends MainController
     {
         $model = $this->findModel($id);
         self::checkAccess(RbacController::update_profile,['user'=>$model]);
-        return $this->render('view', [
+        return $this->render('user-view', [
             'model' => $model,
         ]);
     }
@@ -103,11 +103,11 @@ class UserController extends MainController
      */
     public function actionCreate()
     {
-        $model = new Users();
+        $model = new Users(['scenario'=>'create']);
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
-            return $this->render('create', [
+            return $this->render('user-form', [
                 'model' => $model,
             ]);
         }
@@ -129,7 +129,7 @@ class UserController extends MainController
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
-            return $this->render('update', [
+            return $this->render('user-form', [
                 'model' => $model,
             ]);
         }
@@ -169,11 +169,11 @@ class UserController extends MainController
         }
     }
 
-    public function actionAvailableGroups()
+    public function actionEditableRoles()
     {
         /**@var Users $user*/
         $user = Yii::$app->user->identity;
-        return json_encode($user->getAvailableGroups());
+        return json_encode($user->getEditableRoles());
     }
 
 

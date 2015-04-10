@@ -20,7 +20,7 @@ $this->title = Yii::t('app', 'Groups');
             ['class' => 'yii\grid\SerialColumn'],
 
             'name',
-            'token',
+            'alias',
 
             ['class' => 'yii\grid\ActionColumn'],
         ],

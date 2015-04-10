@@ -7,6 +7,7 @@
 
 namespace app\assets;
 
+use app\components\MainView;
 use yii\web\AssetBundle;
 
 /**
@@ -17,11 +18,22 @@ use yii\web\AssetBundle;
  */
 class Select2Asset extends AssetBundle
 {
-    public $sourcePath = '@bower/bootstrap/dist';
+    public $sourcePath = '@bower/';
     public $js = [
-        'js/bootstrap.min.js',
+        'select2/select2.min.js',
     ];
     public $css = [
-        'css/bootstrap.min.css',
+        'fontawesome/css/font-awesome.min.css',
+        'select2/select2.css',
+        'select2-skins/select2-skins.css',
+    ];
+
+    public $depends = [
+        'app\assets\AppAsset',
+        'app\assets\Select2HelperAsset'
+    ];
+
+    public $jsOptions = [
+        'position' => MainView::POS_HEAD
     ];
 }

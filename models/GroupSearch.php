@@ -19,7 +19,7 @@ class GroupSearch extends Groups
     {
         return [
             [['id'], 'integer'],
-            [['token'], 'safe'],
+            [['alias','name'], 'safe'],
         ];
     }
 
@@ -59,7 +59,7 @@ class GroupSearch extends Groups
             'id' => $this->id,
         ]);
 
-        $query->andFilterWhere(['like', 'token', $this->token]);
+        $query->andFilterWhere(['like', 'alias', $this->alias]);
 
         return $dataProvider;
     }

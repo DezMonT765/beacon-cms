@@ -20,6 +20,8 @@ use yii\filters\VerbFilter;
 class UserController extends MainController
 {
 
+    public $defaultAction = 'list';
+
     public function behaviors()
     {
         $behaviors = array_merge(parent::behaviors(),[
@@ -27,13 +29,13 @@ class UserController extends MainController
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['update','view','delete','available-groups','ajaxUpdate'],
+                        'actions' => ['update','view','delete','available-groups','ajax-update'],
                         'allow' => true,
                         'roles' => ['@'],
 
                     ],
                     [
-                        'actions' => ['index','create'],
+                        'actions' => ['list','create'],
                         'allow' => true,
                         'roles' => [RbacController::create_profile],
                     ],
@@ -56,7 +58,7 @@ class UserController extends MainController
     public function actions()
     {
         return  [
-            'ajaxUpdate' => [
+            'ajax-update' => [
                 'class' => UserEditableAction::className(),
                 'modelClass' => Users::className(),
                 'forceCreate' => false
@@ -68,12 +70,12 @@ class UserController extends MainController
      * Lists all Users models.
      * @return mixed
      */
-    public function actionIndex()
+    public function actionList()
     {
         $searchModel = new UsersSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-        return $this->render('index', [
+        return $this->render('user-list', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
@@ -150,7 +152,7 @@ class UserController extends MainController
         $model = $this->findModel($id);
         self::checkAccess(RbacController::delete_profile,['user'=>$model]);
         $model->delete();
-        return $this->redirect(['index']);
+        return $this->redirect(['list']);
     }
 
     /**

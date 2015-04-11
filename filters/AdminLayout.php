@@ -19,7 +19,7 @@ class AdminLayout extends UserLayout
     {
 
         $tabs =  [
-            ['label'=>'List','url'=>Url::to(['user/index']),'active'=>self::getActive($active,TabbedLayout::listing())],
+            ['label'=>'List','url'=>Url::to(['user/list']),'active'=>self::getActive($active,TabbedLayout::listing())],
             ['label'=>'Create','url'=>Url::to(['user/create']),'active'=>self::getActive($active,TabbedLayout::create())]
         ];
 

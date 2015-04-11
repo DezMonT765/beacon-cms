@@ -20,6 +20,11 @@ $this->params['breadcrumbs'][] = $this->title;
             'id',
             'name',
             'alias',
+            'uuid',
+            'major',
+            'minor',
+            'place',
+            'description',
         ],
     ]) ?>
 

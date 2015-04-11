@@ -17,6 +17,7 @@ class BeaconController extends MainController
 {
 
 
+    public $defaultAction = 'list';
     public function behaviors()
     {
         return [
@@ -24,7 +25,7 @@ class BeaconController extends MainController
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['index','create','update','view','delete'],
+                        'actions' => ['list','create','update','view','delete'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -46,12 +47,12 @@ class BeaconController extends MainController
      * Lists all Beacons models.
      * @return mixed
      */
-    public function actionIndex()
+    public function actionList()
     {
         $searchModel = new BeaconsSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-        return $this->render('index', [
+        return $this->render('beacon-list', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
@@ -64,7 +65,7 @@ class BeaconController extends MainController
      */
     public function actionView($id)
     {
-        return $this->render('view', [
+        return $this->render('beacon-view', [
             'model' => $this->findModel($id),
         ]);
     }
@@ -81,7 +82,7 @@ class BeaconController extends MainController
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
-            return $this->render('create', [
+            return $this->render('beacon-form', [
                 'model' => $model,
             ]);
         }
@@ -100,7 +101,7 @@ class BeaconController extends MainController
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
-            return $this->render('update', [
+            return $this->render('beacon-form', [
                 'model' => $model,
             ]);
         }
@@ -116,7 +117,7 @@ class BeaconController extends MainController
     {
         $this->findModel($id)->delete();
 
-        return $this->redirect(['index']);
+        return $this->redirect(['list']);
     }
 
     /**

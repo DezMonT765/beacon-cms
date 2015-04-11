@@ -3,10 +3,12 @@
 namespace app\controllers;
 
 use app\commands\RbacController;
+use app\components\Alert;
 use app\filters\GroupLayout;
 use Yii;
 use app\models\Groups;
 use app\models\GroupSearch;
+use yii\console\Response;
 use yii\filters\AccessControl;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -16,6 +18,8 @@ use yii\filters\VerbFilter;
  */
 class GroupController extends MainController
 {
+    public $defaultAction = 'list';
+
 
     public function behaviors()
     {
@@ -41,20 +45,21 @@ class GroupController extends MainController
         ];
     }
 
+
     /**
      * Lists all Groups models.
      * @return mixed
      */
-    public function actionIndex()
+    public function actionList()
     {
         $searchModel = new GroupSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
-        return $this->render('index', [
+        return $this->render('group-list', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
+
 
     /**
      * Displays a single Groups model.
@@ -63,10 +68,36 @@ class GroupController extends MainController
      */
     public function actionView($id)
     {
-        return $this->render('view', [
+        return $this->render('group-view', [
             'model' => $this->findModel($id),
         ]);
     }
+
+
+    public function actionMassDelete()
+    {
+        if(isset($_POST['keys']))
+        {
+            foreach ($_POST['keys'] as $key)
+            {
+                $model = $this->findModel($key);
+                if($model)
+                {
+                    if($model->delete()){
+                        Alert::addSuccess("Items has been successfully deleted");
+                    }
+                }
+            }
+        }
+    }
+
+    public function actionAsAjax($id)
+    {
+        $model = $this->findModel($id);
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        return $model->toArray();
+    }
+
 
     /**
      * Creates a new Groups model.
@@ -76,15 +107,18 @@ class GroupController extends MainController
     public function actionCreate()
     {
         $model = new Groups();
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if($model->load(Yii::$app->request->post()) && $model->save())
+        {
             return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('create', [
+        }
+        else
+        {
+            return $this->render('group-form', [
                 'model' => $model,
             ]);
         }
     }
+
 
     /**
      * Updates an existing Groups model.
@@ -95,15 +129,18 @@ class GroupController extends MainController
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if($model->load(Yii::$app->request->post()) && $model->save())
+        {
             return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('update', [
+        }
+        else
+        {
+            return $this->render('group-form', [
                 'model' => $model,
             ]);
         }
     }
+
 
     /**
      * Deletes an existing Groups model.
@@ -114,9 +151,9 @@ class GroupController extends MainController
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
+        return $this->redirect(['list']);
     }
+
 
     /**
      * Finds the Groups model based on its primary key value.
@@ -127,9 +164,12 @@ class GroupController extends MainController
      */
     protected function findModel($id)
     {
-        if (($model = Groups::findOne($id)) !== null) {
+        if(($model = Groups::findOne($id)) !== null)
+        {
             return $model;
-        } else {
+        }
+        else
+        {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
@@ -137,12 +177,12 @@ class GroupController extends MainController
 
     public function actionGetSelectionList()
     {
-        parent::selectionList(Groups::className(),'name');
+        parent::selectionList(Groups::className(), 'name');
     }
+
 
     public function actionGetSelectionById()
     {
         self::selectionById(Groups::className());
     }
-
 }

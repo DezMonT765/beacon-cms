@@ -160,10 +160,7 @@ class Users extends ActiveRecord implements IdentityInterface
         {
             if($group instanceof Groups)
             {
-
-                $user_binding = UserBindings::findOne(['user_id'=>$this->id,'group_id'=>$group->id]);
-                if(!($user_binding instanceof UserBindings))
-                    $user_binding = new UserBindings();
+                $user_binding = new UserBindings();
                 $user_binding->user_id = $this->id;
                 $user_binding->group_id = $group->id;
                 $user_binding->save();
@@ -338,15 +335,13 @@ class Users extends ActiveRecord implements IdentityInterface
      */
     public static  function getLogged($safe = false)
     {
-        if(!self::$_logged_user || self::$_is_need_update)
+
+        $user = Yii::$app->user->identity;
+        if($safe && !($user instanceof Users))
         {
-            self::$_logged_user = self::findOne(['id'=>Yii::$app->user->id]);
-            if($safe && !(self::$_logged_user  instanceof Users))
-            {
-                throw new NotFoundHttpException;
-            }
+            throw new NotFoundHttpException;
         }
-        return self::$_logged_user ;
+        return $user;
     }
 
     public function getEditableRoles()

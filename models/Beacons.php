@@ -19,6 +19,7 @@ use yii\web\UploadedFile;
  * @property string $uuid
  * @property integer $minor
  * @property integer $major
+ * @property string $groupToBind
  *
  * @property BeaconBindings[] $beaconBindings
  * @property BeaconStatistic $beaconStatistic
@@ -34,6 +35,29 @@ class Beacons extends ActiveRecord
     public static function tableName()
     {
         return 'beacons';
+    }
+
+    public function setGroupToBind($group)
+    {
+        $this->groupToBind = $group;
+    }
+
+    public function getGroupToBind()
+    {
+        if($this->groupToBind !== null)
+        {
+           return $this->groupToBind;
+        }
+        else
+        {
+            $group = $this->getGroups()->one();
+            if($group instanceof Groups)
+            {
+                $result = $group->id;
+                return $result;
+            }
+            else return '';
+        }
     }
 
     public function getImageSaveDir()
@@ -72,12 +96,13 @@ class Beacons extends ActiveRecord
     public function rules()
     {
         return [
-            [['title','description','uuid','minor','major'],'required'],
+            [['title','description','uuid','minor','major','place'],'required'],
             [['description'], 'string'],
             [['minor', 'major'], 'integer'],
             [['title', 'uuid'], 'string', 'max' => 50],
             [['picture'], 'string', 'max' => 64],
             [['pictureFile'], 'file', 'extensions' => 'jpg, png', 'mimeTypes' => 'image/jpeg, image/png',],
+            ['groupToBind','safe']
         ];
     }
 
@@ -129,6 +154,19 @@ class Beacons extends ActiveRecord
         FileHelper::removeDirectory($this->getImageSavePath());
     }
 
+    public function saveGroup()
+    {
+        BeaconBindings::deleteAll(['beacon_id'=>$this->id]);
+        $group = Groups::findOne(['id'=>$this->groupToBind]);
+        if($group instanceof Groups)
+        {
+            $beacon_binding = new BeaconBindings();
+            $beacon_binding->beacon_id = $this->id;
+            $beacon_binding->group_id = $group->id;
+            $beacon_binding->save();
+        }
+    }
+
     public function afterSave($insert,$changedAttributes)
     {
         parent::afterSave($insert,$changedAttributes);
@@ -138,25 +176,7 @@ class Beacons extends ActiveRecord
         }
         if($this->pictureFile instanceof UploadedFile)
             $this->pictureFile->saveAs($this->getImageSavePath() . $this->picture);
-        $user = Users::getLogged(true);
-        $groups = $user->getGroups()->all();
-        foreach ($groups as $group)
-        {
-            if($group instanceof Groups)
-            {
-                $beacon_bindings = BeaconBindings::findOne(['beacon_id'=>$this->id,'group_id'=>$group->id]);
-                if(!($beacon_bindings instanceof BeaconBindings))
-                {
-                    $beacon_bindings = new BeaconBindings();
-                }
-                $beacon_bindings->group_id = $group->id;
-                $beacon_bindings->beacon_id = $this->id;
-                if($beacon_bindings->save())
-                {
-                    Alert::addSuccess('Beacon has been succesfully saved');
-                }
-            }
-        }
+        self::saveGroup();
     }
 
     /**

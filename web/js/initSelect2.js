@@ -7,7 +7,7 @@
  */
 function initSelect(elem,listUrl,idsUrl,isMultiple,width){
     var width = width || '50%';
-    elem.select2({
+    return elem.select2({
         containerCssClass: 'tpx-select2-container',
         dropdownCssClass: 'tpx-select2-drop',
         width: width,

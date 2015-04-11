@@ -22,7 +22,7 @@ class TabbedLayout extends SiteLayout
     {
 
         return [
-            'index' => [TabbedLayout::listing()],
+            'list' => [TabbedLayout::listing()],
             'create' => [TabbedLayout::create()],
             'update' => [TabbedLayout::update()],
             'view' => [TabbedLayout::view()],

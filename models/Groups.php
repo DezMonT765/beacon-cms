@@ -42,6 +42,7 @@ class Groups extends ActiveRecord
             [['name'], 'string', 'max' => 64],
             [['alias'], 'string', 'max' => 64],
             [['alias'], 'unique' ],
+            ['uuid', 'string','max'=>64],
             [['major','minor'],'integer'],
             ['place','string','max'=>256],
             ['description','safe']

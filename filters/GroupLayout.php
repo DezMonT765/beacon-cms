@@ -24,7 +24,7 @@ class GroupLayout extends TabbedLayout
     public static function getTabs($active = [])
     {
         $tabs =  [
-            ['label'=>'List','url'=>Url::to(['group/index']),'active'=>self::getActive($active,TabbedLayout::listing())],
+            ['label'=>'List','url'=>Url::to(['group/list']),'active'=>self::getActive($active,TabbedLayout::listing())],
             ['label'=>'Create','url'=>Url::to(['group/create']),'active'=>self::getActive($active,TabbedLayout::create())]
         ];
 

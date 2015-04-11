@@ -23,7 +23,7 @@ class BeaconLayout extends TabbedLayout
     {
 
         $tabs =  [
-            ['label'=>'List','url'=>Url::to(['beacon/index']),'active'=>self::getActive($active,TabbedLayout::listing())],
+            ['label'=>'List','url'=>Url::to(['beacon/list']),'active'=>self::getActive($active,TabbedLayout::listing())],
             ['label'=>'Create','url'=>Url::to(['beacon/create']),'active'=>self::getActive($active,TabbedLayout::create())]
         ];
 

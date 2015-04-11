@@ -91,3 +91,8 @@ a.desc:after {
 }
 
 .required label:after {content: " *"; color: red;}
+
+textarea
+{
+    resize: none;
+}

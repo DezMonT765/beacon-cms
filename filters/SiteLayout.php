@@ -93,9 +93,9 @@ class SiteLayout extends LayoutFilter
     public static function getAdminLeftTabs($active)
     {
         $tabs = [
-            ['label'=>'Users','url'=>Url::to(['user/index']),'active'=>self::getActive($active,self::users())],
-            ['label'=>'Beacons','url'=>Url::to(['beacon/index']),'active'=>self::getActive($active,self::beacons())],
-            ['label'=>'Groups','url'=>Url::to(['group/index']),'active'=>self::getActive($active,self::groups())],
+            ['label'=>'Users','url'=>Url::to(['user/list']),'active'=>self::getActive($active,self::users())],
+            ['label'=>'Beacons','url'=>Url::to(['beacon/list']),'active'=>self::getActive($active,self::beacons())],
+            ['label'=>'Groups','url'=>Url::to(['group/list']),'active'=>self::getActive($active,self::groups())],
         ];
         return $tabs;
     }

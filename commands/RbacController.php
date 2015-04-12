@@ -23,6 +23,7 @@ class RbacController extends Controller
     const user = 'user';
     const create_beacon = 'create_beacon';
     const update_beacon = 'update_beacon';
+    const user_update_beacon = 'user_update_beacon';
     const delete_beacon = 'delete_beacon';
 
     const create_profile = 'create_profile';
@@ -61,9 +62,14 @@ class RbacController extends Controller
 
         $can_edit_beacon = new CanEditBeacon();
         $auth->add($can_edit_beacon);
+
         $update_beacon = $auth->createPermission(self::update_beacon);
-        $update_beacon->ruleName = $can_edit_beacon->name;
         $auth->add($update_beacon);
+
+        $user_update_beacon = $auth->createPermission(self::user_update_beacon);
+        $user_update_beacon->ruleName = $can_edit_beacon->name;
+        $auth->add($user_update_beacon);
+        $auth->addChild($user_update_beacon,$update_beacon);
 
 
         $user_group_rule = new UserGroupRule();
@@ -71,13 +77,14 @@ class RbacController extends Controller
         $user = $auth->createRole(self::user);
         $user->ruleName = $user_group_rule->name;
         $auth->add($user);
-        $auth->addChild($user,$update_beacon);
+        $auth->addChild($user,$user_update_beacon);
         $auth->addChild($user,$update_profile);
 
         $admin = $auth->createRole(self::admin);
         $admin->ruleName = $user_group_rule->name;
         $auth->add($admin);
         $auth->addChild($admin,$user);
+        $auth->addChild($admin,$update_beacon);
         $auth->addChild($admin,$delete_beacon);
         $auth->addChild($admin,$delete_profile);
         $auth->addChild($admin,$create_beacon);

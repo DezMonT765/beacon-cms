@@ -11,12 +11,12 @@ namespace app\filters;
 
 use yii\helpers\Url;
 
-class BeaconLayout extends TabbedLayout
+class UserBeaconLayout extends TabbedLayout
 {
 
     public static function layout($active = [])
     {
-        return parent::layout(array_merge($active,[self::beacons()]));
+        return parent::layout(array_merge($active,[SiteLayout::beacons()]));
     }
 
     public static function getTabs($active = [])
@@ -24,7 +24,6 @@ class BeaconLayout extends TabbedLayout
 
         $tabs =  [
             ['label'=>'List','url'=>Url::to(['beacon/list']),'active'=>self::getActive($active,TabbedLayout::listing())],
-            ['label'=>'Create','url'=>Url::to(['beacon/create']),'active'=>self::getActive($active,TabbedLayout::create())]
         ];
 
         if(self::getActive($active,TabbedLayout::update()))

@@ -70,8 +70,8 @@ class SiteLayout extends LayoutFilter
     public static function getGuestLeftTabs($active)
     {
         return [
-            ['label'=>'Login','url'=>Url::to(['site/login']),'active'=>self::getActive($active,self::login())],
-            ['label'=>'Register','url'=>Url::to(['site/register']),'active'=>self::getActive($active,self::register())]
+            ['label'=>'Login','url'=>Url::to(['site/login']),'active'=>self::getActive($active,SiteLayout::login())],
+            ['label'=>'Register','url'=>Url::to(['site/register']),'active'=>self::getActive($active,SiteLayout::register())]
         ];
     }
 
@@ -79,13 +79,13 @@ class SiteLayout extends LayoutFilter
     {
 
         $tabs = [
-            ['label'=>'My Beacons','url'=>Url::to(['beacon/index']),'active'=>self::getActive($active,self::beacons())]
+            ['label'=>'My Beacons','url'=>Url::to(['beacon/list']),'active'=>self::getActive($active,SiteLayout::beacons())]
         ];
         if(self::getActive($active,self::profile()))
         {
                $user = Users::getLogged(true);
                $tabs[] =
-                   ['label'=>'My profile','url'=>Url::to(['user/view','id'=>$user->id]),'active'=>self::getActive($active,self::profile())];
+                   ['label'=>'My profile','url'=>Url::to(['user/view','id'=>$user->id]),'active'=>self::getActive($active,SiteLayout::profile())];
         }
         return $tabs;
     }
@@ -93,9 +93,9 @@ class SiteLayout extends LayoutFilter
     public static function getAdminLeftTabs($active)
     {
         $tabs = [
-            ['label'=>'Users','url'=>Url::to(['user/list']),'active'=>self::getActive($active,self::users())],
-            ['label'=>'Beacons','url'=>Url::to(['beacon/list']),'active'=>self::getActive($active,self::beacons())],
-            ['label'=>'Groups','url'=>Url::to(['group/list']),'active'=>self::getActive($active,self::groups())],
+            ['label'=>'Users','url'=>Url::to(['user/list']),'active'=>self::getActive($active,SiteLayout::users())],
+            ['label'=>'Beacons','url'=>Url::to(['beacon/list']),'active'=>self::getActive($active,SiteLayout::beacons())],
+            ['label'=>'Groups','url'=>Url::to(['group/list']),'active'=>self::getActive($active,SiteLayout::groups())],
         ];
         return $tabs;
     }
@@ -104,8 +104,8 @@ class SiteLayout extends LayoutFilter
     public static  function getGuestRightNav($active)
     {
         return [
-            ['label'=>'Login','url'=>Url::to(['site/login']),'active'=>self::getActive($active,self::login())],
-            ['label'=>'Register','url'=>Url::to(['site/register']),'active'=>self::getActive($active,self::register())]
+            ['label'=>'Login','url'=>Url::to(['site/login']),'active'=>self::getActive($active,SiteLayout::login())],
+            ['label'=>'Register','url'=>Url::to(['site/register']),'active'=>self::getActive($active,SiteLayout::register())]
         ];
     }
 

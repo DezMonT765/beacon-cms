@@ -1,6 +1,7 @@
 <?php
 use app\components\Alert;
 use app\filters\SiteLayout;
+use app\filters\SubTabbedLayout;
 use app\filters\TabbedLayout;
 use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
@@ -34,7 +35,16 @@ include_once('header.php');
                 'options' => ['class'=>'nav-tabs'],
                 'items' =>$this->getLayoutData(TabbedLayout::place_tabs)
             ]) ?>
-        <?= $content ?>
+        <div class="col-md-2">
+            <?= Nav::widget(
+                [
+                    'options' => ['class'=>'nav-tabs nav-stacked'],
+                    'items' =>$this->getLayoutData(SubTabbedLayout::place_left_sub_tabs)
+                ]) ?>
+        </div>
+        <div class="col-md-10">
+            <?= $content ?>
+        </div>
     </div>
 </div>
 <?php include_once('footer.php');?>

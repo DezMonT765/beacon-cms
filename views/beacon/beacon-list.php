@@ -24,7 +24,9 @@ $this->title = Yii::t('app', 'Beacons');
             'place',
              'uuid',
 
-            ['class' => 'yii\grid\ActionColumn'],
+            ['class' => 'yii\grid\ActionColumn',
+             'controller' => 'beacon'
+            ],
         ],
     ]); ?>
 

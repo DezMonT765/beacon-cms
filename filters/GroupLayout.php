@@ -10,13 +10,13 @@ namespace app\filters;
 
 use yii\helpers\Url;
 
-class GroupLayout extends TabbedLayout
+class GroupLayout extends SubTabbedLayout
 {
     public $layout = 'tabbedLayout';
 
     public static function layout($active = array())
     {
-        $active = array_merge($active,[self::groups()]);
+        $active = array_merge($active,[SiteLayout::groups()]);
         $nav_bar = parent::layout($active);
         return $nav_bar;
     }
@@ -30,11 +30,9 @@ class GroupLayout extends TabbedLayout
 
         if(self::getActive($active,TabbedLayout::update()))
             $tabs[] =
-                ['label'=>'Update','url'=>Url::to(['group/update'] + $_GET),'active'=>self::getActive($active,TabbedLayout::update())];
+                ['label'=>'Manage','url'=>Url::to(['group/update'] + $_GET),'active'=>self::getActive($active,TabbedLayout::update())];
 
-        if(self::getActive($active,TabbedLayout::view()))
-            $tabs[] =
-                ['label'=>'View','url'=>Url::to(['group/view'] + $_GET),'active'=>self::getActive($active,TabbedLayout::view())];
+
 
         return $tabs;
     }

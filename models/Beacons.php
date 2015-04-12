@@ -2,9 +2,7 @@
 
 namespace app\models;
 
-use app\components\Alert;
 use Yii;
-use yii\db\ActiveRecord;
 use yii\helpers\FileHelper;
 use yii\web\UploadedFile;
 
@@ -24,7 +22,7 @@ use yii\web\UploadedFile;
  * @property BeaconBindings[] $beaconBindings
  * @property BeaconStatistic $beaconStatistic
  */
-class Beacons extends ActiveRecord
+class Beacons extends MainActiveRecord
 {
 
 
@@ -96,7 +94,8 @@ class Beacons extends ActiveRecord
     public function rules()
     {
         return [
-            [['title','description','uuid','minor','major','place'],'required'],
+            ['name','unique'],
+            [['name','title','description','uuid','minor','major','place'],'required'],
             [['description'], 'string'],
             [['minor', 'major'], 'integer'],
             [['title', 'uuid'], 'string', 'max' => 50],

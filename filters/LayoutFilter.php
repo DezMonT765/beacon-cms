@@ -17,6 +17,7 @@ class LayoutFilter extends ActionFilter
 {
     public $layout = 'main';
 
+    public static $role = null;
 
     public static  function getActiveMap()
     {
@@ -54,30 +55,45 @@ class LayoutFilter extends ActionFilter
      */
     public static function getRole()
     {
-        if(\Yii::$app->user->isGuest)
-            return "Guest";
-        else
+        if(self::$role === null)
         {
-            switch(\Yii::$app->user->identity->role)
+            if(\Yii::$app->user->isGuest)
             {
-                case RbacController::super_admin:
-                    return RbacController::super_admin;
-                    break;
-                case RbacController::admin:
-                    return RbacController::admin;
-                    break;
-                case RbacController::user:
-                    return RbacController::user;
-                    break;
+                self::$role = "Guest";
+            }
+            else
+            {
+                switch (\Yii::$app->user->identity->role)
+                {
+                    case RbacController::super_admin:
+                        self::$role = RbacController::super_admin;
+                        break;
+                    case RbacController::admin:
+                        self::$role = RbacController::admin;
+                        break;
+                    case RbacController::user:
+                        self::$role = RbacController::user;
+                        break;
+                }
             }
         }
-
+        return self::$role;
     }
 
-    public static  function getActive($active,$tab)
+    public static  function getActive($active,$tabs)
     {
         $active = array_flip($active);
-        return (isset($active[$tab]) ? true : false);
+        if(is_array($tabs))
+        {
+            $result = false;
+            foreach ($tabs as $tab)
+            {
+                $result |= isset($active[$tab]);
+            }
+            return $result;
+        }
+        else
+        return (isset($active[$tabs]) ? true : false);
     }
 
     public static function __callStatic($name,$attributes)

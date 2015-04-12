@@ -17,14 +17,15 @@ class UserLayout extends TabbedLayout
 
     public static function layout($active = [])
     {
-        return parent::layout(array_merge($active,[self::users()]));
+        return  parent::layout(array_merge($active,[SiteLayout::users()]));
+
     }
 
     public static function getTabs($active = [])
     {
             $tabs = [
-                ['label'=>'View','url'=>Url::to(['user/view'] + $_GET),'active'=>self::getActive($active,self::view())],
-                ['label'=>'Update','url'=>Url::to(['user/update'] + $_GET),'active'=>self::getActive($active,self::update())],
+                ['label'=>'View','url'=>Url::to(['user/view'] + $_GET),'active'=>self::getActive($active,TabbedLayout::view())],
+                ['label'=>'Update','url'=>Url::to(['user/update'] + $_GET),'active'=>self::getActive($active,TabbedLayout::update())],
             ];
 
         return $tabs;

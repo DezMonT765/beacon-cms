@@ -22,7 +22,9 @@ use yii\widgets\ActiveForm;
     <?= $form->field($model, 'password')->passwordInput() ?>
     <?= $form->field($model, 'passwordConfirm')->passwordInput() ?>
     <?php endif?>
+        <?php if(Yii::$app->user->can(\app\commands\RbacController::admin)):?>
     <?= $form->field($model, 'groupsToBind')->textInput(['class'=>'']) ?>
+        <?php endif?>
     <?= $form->field($model, 'role')->dropDownList(Yii::$app->user->identity->getEditableRoles()) ?>
 
 

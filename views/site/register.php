@@ -19,20 +19,18 @@ $this->params['breadcrumbs'][] = $this->title;
                                         'id' => 'register-form',
                                         'options' => ['class' => 'form-horizontal'],
                                         'fieldConfig' => [
-                                            'template' => "{label}\n<div class=\"col-lg-3\">{input}</div>\n<div class=\"col-lg-8\">{error}</div>",
-                                            'labelOptions' => ['class' => 'col-lg-1 control-label'],
                                         ],
                                     ]); ?>
+    <div class="col-md-6">
     <?= $form->errorSummary($model);?>
     <?= $form->field($model, 'email') ?>
 
     <?= $form->field($model, 'password')->passwordInput() ?>
     <?= $form->field($model, 'passwordConfirm')->passwordInput() ?>
-    <?= $form->field($model, 'group_token') ?>
-
+    </div>
 
     <div class="form-group">
-        <div class="col-lg-offset-1 col-lg-11">
+        <div class="col-lg-12">
             <?= Html::submitButton('Register', ['class' => 'btn btn-primary', 'name' => 'login-button']) ?>
         </div>
     </div>

@@ -85,6 +85,10 @@ $config = [
                 ],
             ],
         ],
+
+        'db' => [
+            'enableSchemaCache' => true,
+        ]
     ],
     'params' => $params,
 ];

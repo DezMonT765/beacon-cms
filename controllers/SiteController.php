@@ -5,6 +5,7 @@ namespace app\controllers;
 use app\commands\RbacController;
 use app\filters\SiteLayout;
 use app\models\LoginForm;
+use app\models\RegisterForm;
 use Yii;
 use yii\filters\AccessControl;
 use app\models\Users;
@@ -79,18 +80,18 @@ class SiteController extends MainController
             return $this->goHome();
         }
 
-        $model = new Users(['scenario'=>'register']);
+        $model = new RegisterForm();
+        if ($model->load(Yii::$app->request->post())) {
+            if ($user = $model->register()) {
+                if (Yii::$app->user->login($user)) {
+                    return $this->goHome();
+                }
+            }
+        }
 
-        if($model->load(Yii::$app->request->post()) && $model->save() &&  $model->login())
-        {
-            return $this->goHome();
-        }
-        else
-        {
-            return $this->render('register', [
-                'model' => $model,
-            ]);
-        }
+        return $this->render('register', [
+            'model' => $model,
+        ]);
     }
 
     public function actionLogout()

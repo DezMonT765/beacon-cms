@@ -22,6 +22,7 @@ use yii\widgets\ActiveForm;
                                         ]); ?>
         <fieldset class="col-md-6" style="border-right:1px solid #afafaf;">
             <legend>System</legend>
+            <?= $form->field($model, 'name')->textInput() ?>
             <?= $form->field($model, 'groupToBind')->textInput(['class' => '']) ?>
 
             <?= $form->field($model, 'uuid')->textInput(['maxlength' => 50]) ?>

@@ -4,8 +4,12 @@ namespace app\controllers;
 
 use app\commands\RbacController;
 use app\filters\AdminLayout;
+use app\filters\AdminUserLayout;
+use app\filters\AdminUserManageLayout;
 use app\filters\UserLayout;
 use app\actions\UserEditableAction;
+use app\filters\UserManageLayout;
+use app\models\BeaconsSearch;
 use Yii;
 use app\models\Users;
 use app\models\UsersSearch;
@@ -39,6 +43,11 @@ class UserController extends MainController
                         'allow' => true,
                         'roles' => [RbacController::create_profile],
                     ],
+                    [
+                        'actions' => ['beacons'],
+                        'allow'=>true,
+                        'roles' => [RbacController::admin]
+                    ]
                 ],
             ],
 
@@ -51,7 +60,14 @@ class UserController extends MainController
 
         ]);
 
-        $behaviors['layout'] =  ['class' => Yii::$app->user->can(RbacController::admin) ? AdminLayout::className() : UserLayout::className()];
+        $behaviors['layout'] =  Yii::$app->user->can(RbacController::admin) ?
+            ['class' => AdminUserLayout::className(),'only'=>['list','create']] :
+            ['class' => UserLayout::className()];
+
+        if(Yii::$app->user->can(RbacController::admin))
+        {
+            $behaviors['manage-layout'] = ['class' => AdminUserManageLayout::className(), 'except' => ['list', 'create']];
+        }
         return $behaviors;
     }
 
@@ -77,6 +93,19 @@ class UserController extends MainController
 
         return $this->render('user-list', [
             'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    public function actionBeacons($id)
+    {
+        $searchModel = new BeaconsSearch();
+
+        $searchModel->load(Yii::$app->request->queryParams);
+        $dataProvider = $searchModel->search($id);
+
+        return $this->render('/beacon/beacon-list', [
+            'searchModel' => new BeaconsSearch(),
             'dataProvider' => $dataProvider,
         ]);
     }

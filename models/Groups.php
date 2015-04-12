@@ -3,7 +3,6 @@
 namespace app\models;
 
 use Yii;
-use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "groups".
@@ -18,8 +17,9 @@ use yii\db\ActiveRecord;
  * @property string $description
  *
  * @property BeaconBindings[] $beaconBindings
+ * @property Beacons $beacons
  */
-class Groups extends ActiveRecord
+class Groups extends MainActiveRecord
 {
     /**
      * @inheritdoc
@@ -48,6 +48,8 @@ class Groups extends ActiveRecord
             ['description','safe']
         ];
     }
+
+
 
 
 
@@ -89,17 +91,9 @@ class Groups extends ActiveRecord
             ->via('userBindings');
     }
 
-    public function searchByAttribute($attribute,$value)
-    {
-        $query = self::find();
-        $query->filterWhere(['like',$attribute, $value]);
-        return $query->all();
-    }
 
-    public function searchByIds(array $ids)
-    {
-        $query = self::find();
-        $query->filterWhere(['id'=>$ids]);
-        return $query->all();
-    }
+
+
+
+
 }

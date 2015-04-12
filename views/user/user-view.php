@@ -28,7 +28,7 @@ $this->title = $model->name;
             'email:email',
         ],
     ]) ?>
-
+    <legend>Groups</legend>
     <?= \yii\widgets\ListView::widget([
         'dataProvider'=>$model->getGroupsProvider(),
         'itemView' => 'small-group'

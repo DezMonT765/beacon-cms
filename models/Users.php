@@ -371,15 +371,17 @@ class Users extends ActiveRecord implements IdentityInterface
 
     public function canEditBeacon(Beacons $beacon)
     {
+
         $beacon_query = self::getBeaconsQuery();
-        $beacon_query->andFilterWhere(['id'=>$beacon->id]);
+        $beacon_query->andFilterWhere(['beacons.id'=>$beacon->id]);
         $result = $beacon_query->one();
         return ($result instanceof Beacons);
     }
 
-    public function getBeaconsQuery()
+    public function getBeaconsQuery($query = null)
     {
-        $query = Beacons::find();
+        if($query == null)
+            $query = Beacons::find();
         $user = $this;
         $query->joinWith([
                              'groups' => function(ActiveQuery $query) use ($user)

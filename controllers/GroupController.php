@@ -5,6 +5,8 @@ namespace app\controllers;
 use app\commands\RbacController;
 use app\components\Alert;
 use app\filters\GroupLayout;
+use app\filters\GroupManageLayout;
+use app\models\BeaconsSearch;
 use Yii;
 use app\models\Groups;
 use app\models\GroupSearch;
@@ -23,7 +25,7 @@ class GroupController extends MainController
 
     public function behaviors()
     {
-        return [
+        $behaviors =  [
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
@@ -41,8 +43,15 @@ class GroupController extends MainController
             ],
             'layout' => [
                 'class' => GroupLayout::className(),
+                'only' => ['list','create']
             ],
+            'manage-layout' => [
+                'class' => GroupManageLayout::className(),
+                'except' => ['list','create']
+            ]
         ];
+
+        return $behaviors;
     }
 
 
@@ -184,5 +193,18 @@ class GroupController extends MainController
     public function actionGetSelectionById()
     {
         self::selectionById(Groups::className());
+    }
+
+    public function actionBeacons($id)
+    {
+        $searchModel = new BeaconsSearch();
+
+        $searchModel->load(Yii::$app->request->queryParams);
+        $dataProvider = $searchModel->search(null,$id);
+
+        return $this->render('/beacon/beacon-list', [
+            'searchModel' => new BeaconsSearch(),
+            'dataProvider' => $dataProvider,
+        ]);
     }
 }

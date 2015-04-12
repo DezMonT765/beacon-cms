@@ -2,7 +2,9 @@
 
 namespace app\controllers;
 
-use app\filters\BeaconLayout;
+use app\commands\RbacController;
+use app\filters\AdminBeaconLayout;
+use app\filters\UserBeaconLayout;
 use Yii;
 use app\models\Beacons;
 use app\models\BeaconsSearch;
@@ -20,20 +22,23 @@ class BeaconController extends MainController
     public $defaultAction = 'list';
     public function behaviors()
     {
-        return [
+        $behaviors =  [
             'access' => [
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['list','create','update','view','delete'],
+                        'actions' => ['list','update','view','get-selection-by-id','get-selection-list'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
+                    [
+                        'actions' => ['create','delete'],
+                        'allow' => true,
+                        'roles'=>[RbacController::admin],
+                    ],
                 ],
             ],
-            'layout' => [
-                'class' => BeaconLayout::className(),
-            ],
+
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
@@ -41,6 +46,9 @@ class BeaconController extends MainController
                 ],
             ],
         ];
+
+        $behaviors['layout'] =  ['class' => Yii::$app->user->can(RbacController::admin) ? AdminBeaconLayout::className() : UserBeaconLayout::className()];
+        return $behaviors;
     }
 
     /**
@@ -50,7 +58,8 @@ class BeaconController extends MainController
     public function actionList()
     {
         $searchModel = new BeaconsSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $searchModel->load(Yii::$app->request->queryParams);
+        $dataProvider = $searchModel->search();
 
         return $this->render('beacon-list', [
             'searchModel' => $searchModel,
@@ -65,8 +74,10 @@ class BeaconController extends MainController
      */
     public function actionView($id)
     {
+        $model = $this->findModel($id);
+        self::checkAccess(RbacController::update_beacon,['beacon'=>$model]);
         return $this->render('beacon-view', [
-            'model' => $this->findModel($id),
+            'model' => $model,
         ]);
     }
 
@@ -97,7 +108,7 @@ class BeaconController extends MainController
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-
+        self::checkAccess(RbacController::update_beacon,['beacon'=>$model]);
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
@@ -134,5 +145,16 @@ class BeaconController extends MainController
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    public function actionGetSelectionList()
+    {
+        parent::selectionList(Beacons::className(), 'name');
+    }
+
+
+    public function actionGetSelectionById()
+    {
+        self::selectionById(Beacons::className());
     }
 }

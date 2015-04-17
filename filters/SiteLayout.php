@@ -18,6 +18,7 @@ use \app\models\Users;
  * @method static login()
  * @method static register()
  * @method static groups()
+ * @method static translations()
  */
 class SiteLayout extends LayoutFilter
 {
@@ -96,6 +97,7 @@ class SiteLayout extends LayoutFilter
             ['label'=>'Users','url'=>Url::to(['user/list']),'active'=>self::getActive($active,SiteLayout::users())],
             ['label'=>'Beacons','url'=>Url::to(['beacon/list']),'active'=>self::getActive($active,SiteLayout::beacons())],
             ['label'=>'Groups','url'=>Url::to(['group/list']),'active'=>self::getActive($active,SiteLayout::groups())],
+            ['label'=>'Translation','url'=>Url::to(['translation/list']),'active'=>self::getActive($active,SiteLayout::translations())],
         ];
         return $tabs;
     }

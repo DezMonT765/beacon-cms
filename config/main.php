@@ -1,6 +1,8 @@
 <?php
 require_once('../components/MainView.php');
+require_once('../models/Languages.php');
 use app\components\MainView;
+use app\models\Languages;
 
 $params = array_merge(
     require(__DIR__ . '/params.php'),
@@ -9,6 +11,7 @@ $params = array_merge(
 
 $config = [
     'id' => 'basic',
+    'language' => 'ru-RU',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'defaultRoute' => 'site/login',
@@ -88,6 +91,24 @@ $config = [
 
         'db' => [
             'enableSchemaCache' => true,
+        ],
+        'session' => [
+            'class' => 'yii\web\DbSession'
+        ],
+        'i18n' => [
+            'translations' => [
+                '*' => [
+                    'class' => 'yii\i18n\DbMessageSource',
+                    //'basePath' => '@app/messages',
+                    //'sourceLanguage' => 'en-US',
+                ],
+            ],
+        ],
+        'languagepicker' => [
+            'class' => '\lajax\languagepicker\widgets\LanguagePicker',
+            'languages' => function(){
+                return Languages::getLanguageNames(true);
+            }
         ]
     ],
     'params' => $params,

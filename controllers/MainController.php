@@ -12,6 +12,7 @@ use yii\db\ActiveRecord;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\ForbiddenHttpException;
+use yii\web\NotFoundHttpException;
 
 class MainController extends Controller
 {
@@ -82,5 +83,19 @@ class MainController extends Controller
             }
         }
         echo json_encode(['more'=>false,'results'=>$model_array]);
+    }
+
+    /* @param $model_class
+    * @param $id
+    * @throws NotFoundHttpException
+    * @return mixed  $model
+    */
+    protected function findModel($model_class,$id)
+    {
+        if (($model = $model_class::findOne($id)) !== null) {
+            return $model;
+        } else {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
     }
 }

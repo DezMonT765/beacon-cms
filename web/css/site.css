@@ -96,3 +96,12 @@ textarea
 {
     resize: none;
 }
+
+.mrg-10
+{
+    margin: 10px;
+}
+.left-mrg-10
+{
+    margin-left : 10px;
+}

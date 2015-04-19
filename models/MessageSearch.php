@@ -40,13 +40,9 @@ class MessageSearch extends Message
 
     public function setOriginCategory($category)
     {
-        $this->sourceCategory = $category;
+        $this->originCategory = $category;
     }
 
-
-    /**
-     * @inheritdoc
-     */
 
 
     /**
@@ -93,8 +89,8 @@ class MessageSearch extends Message
 
 
        $query->joinWith(['sourceMessage'=>function(ActiveQuery $query) {
-           $query->andFilterWhere(['message' => $this->originMessage])
-               ->andFilterWhere(['category'=>$this->originCategory]);
+           $query->andFilterWhere(['like','sourceMessage.message', $this->originMessage])
+               ->andFilterWhere(['sourceMessage.category'=>$this->originCategory]);
        }]);
 
        $query->andFilterWhere(['like', 'language', $this->language])

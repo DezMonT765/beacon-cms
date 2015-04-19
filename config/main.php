@@ -15,6 +15,10 @@ $config = [
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'defaultRoute' => 'site/login',
+    'aliases' => [
+        '@file_save_dir' => '@app/files/',
+        '@file_view_url' => '/files/'
+    ],
     'components' => [
         'cache' => [
             'class' => 'yii\caching\FileCache',

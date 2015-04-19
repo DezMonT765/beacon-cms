@@ -34,7 +34,9 @@
         "dezmont765/yii2-grid-view-library" : "dev-master",
         "zyx/zyx-phpmailer": "dev-log-fix",
         "bower-asset/select2-skins": "dev-master",
-        "lajax/yii2-language-picker": "dev-master"
+        "lajax/yii2-language-picker": "dev-master",
+        "phpoffice/phpexcel" : "dev-master",
+        "php-excel-reader/spreadsheet-reader": "dev-master"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",

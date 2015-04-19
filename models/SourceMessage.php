@@ -2,8 +2,9 @@
 
 namespace app\models;
 
+use app\components\Alert;
+use app\components\xlsImport;
 use Yii;
-use yii\db\ActiveRecord;
 use yii\i18n\DbMessageSource;
 
 /**
@@ -15,8 +16,10 @@ use yii\i18n\DbMessageSource;
  *
  * @property Message[] $messages
  */
-class SourceMessage extends ActiveRecord
+class SourceMessage extends MainActiveRecord
 {
+    public $translation;
+    public $language;
     /**
      * @inheritdoc
      */
@@ -37,8 +40,37 @@ class SourceMessage extends ActiveRecord
     {
         return [
             [['message'], 'string'],
-            [['category'], 'string', 'max' => 32]
+            [['category'], 'string', 'max' => 32],
+            [['category','translation'],'required','on'=>xlsImport::XLS_IMPORT],
         ];
+    }
+
+    public function beforeSave($insert)
+    {
+        parent::beforeSave($insert);
+        self::initLocalTransaction();
+        return true;
+    }
+
+    public function afterSave($insert)
+    {
+        if($insert)
+        {
+            $message = new Message();
+            $message->id = $this->id;
+            $message->language = $this->language;
+            $message->translation = $this->translation;
+            if($message->save())
+            {
+                Alert::addSuccess(Yii::t('messages','Translation has been saved'));
+                self::commitLocalTransaction();
+                return true;
+
+            }
+            else Alert::addError(Yii::t('messages','Translation has not been saved'),$message->errors);
+        }
+        self::rollbackLocalTransaction();
+        return false;
     }
 
     /**

@@ -31,7 +31,7 @@ class TranslationController extends MainController
         $search = new MessageSearch();
         $translationForm = new TranslationForm();
         $translationForm->language = Yii::$app->request->getQueryParam('language', Yii::$app->language);
-        $search->load(Yii::$app->request->post());
+        $search->load(Yii::$app->request->get());
         $search->language =  $translationForm->language;
         $data_provider = $search->search();
         return $this->render('translation-list',['data_provider'=>$data_provider,'search_model'=>$search,'translationForm'=>$translationForm]);

@@ -23,6 +23,9 @@ $this->title = Yii::t('app', 'Translations');
                                                                  'active' => $translationForm->language,
                                                              ]); ?>
     </div>
+    <div class="mrg-10">
+<!--        --><?//= $this->render('translation-load',['model' => $translationLoad])?>
+    </div>
     <?= $this->render('translation-form',['model'=>$translationForm]) ;?>
     <?= GridView::widget([
                              'dataProvider' => $data_provider,

@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "fc76bfcf72414eaa1418baaeda2352d2",
+    "hash": "0036fb10e047d9fd8ecb804921f9fd93",
     "packages": [
         {
             "name": "2amigos/yii2-dosamigos-asset-bundle",
@@ -609,6 +609,54 @@
             "time": "2015-04-07 14:33:15"
         },
         {
+            "name": "php-excel-reader/spreadsheet-reader",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/rafsoaken/php-excel-reader.git",
+                "reference": "bb043649bef10cebc395569893e7b916f4775571"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/rafsoaken/php-excel-reader/zipball/bb043649bef10cebc395569893e7b916f4775571",
+                "reference": "bb043649bef10cebc395569893e7b916f4775571",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "PHPExcelReader": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "PHP license version 3.0"
+            ],
+            "authors": [
+                {
+                    "name": "Vadim Tkachenko"
+                },
+                {
+                    "name": "David Sanders"
+                },
+                {
+                    "name": "Matt Kruse"
+                }
+            ],
+            "description": "PHPExcelReader/SpreadsheetReader - A class for reading Microsoft Excel (97/2003) Spreadsheets.",
+            "homepage": "http://code.google.com/p/php-excel-reader/",
+            "keywords": [
+                "excel",
+                "php",
+                "reader",
+                "spreadsheet"
+            ],
+            "time": "2015-02-06 10:25:35"
+        },
+        {
             "name": "phpmailer/phpmailer",
             "version": "v5.2.9",
             "source": {
@@ -660,6 +708,63 @@
             ],
             "description": "PHPMailer is a full-featured email creation and transfer class for PHP",
             "time": "2014-09-26 18:33:30"
+        },
+        {
+            "name": "phpoffice/phpexcel",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/PHPOffice/PHPExcel.git",
+                "reference": "c40bb233bfa59fe8aadc6f3714cf500ec2c38e0f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/PHPOffice/PHPExcel/zipball/c40bb233bfa59fe8aadc6f3714cf500ec2c38e0f",
+                "reference": "c40bb233bfa59fe8aadc6f3714cf500ec2c38e0f",
+                "shasum": ""
+            },
+            "require": {
+                "ext-xml": "*",
+                "ext-xmlwriter": "*",
+                "php": ">=5.2.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "PHPExcel": "Classes/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL"
+            ],
+            "authors": [
+                {
+                    "name": "Maarten Balliauw",
+                    "homepage": "http://blog.maartenballiauw.be"
+                },
+                {
+                    "name": "Mark Baker"
+                },
+                {
+                    "name": "Franck Lefevre",
+                    "homepage": "http://blog.rootslabs.net"
+                },
+                {
+                    "name": "Erik Tilt"
+                }
+            ],
+            "description": "PHPExcel - OpenXML - Read, Create and Write Spreadsheet documents in PHP - Spreadsheet engine",
+            "homepage": "http://phpexcel.codeplex.com",
+            "keywords": [
+                "OpenXML",
+                "excel",
+                "php",
+                "spreadsheet",
+                "xls",
+                "xlsx"
+            ],
+            "time": "2014-12-18 21:56:47"
         },
         {
             "name": "phpspec/php-diff",
@@ -1244,7 +1349,9 @@
         "dezmont765/yii2-grid-view-library": 20,
         "zyx/zyx-phpmailer": 20,
         "bower-asset/select2-skins": 20,
-        "lajax/yii2-language-picker": 20
+        "lajax/yii2-language-picker": 20,
+        "phpoffice/phpexcel": 20,
+        "php-excel-reader/spreadsheet-reader": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

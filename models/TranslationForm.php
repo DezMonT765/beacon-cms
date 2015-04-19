@@ -33,26 +33,12 @@ class TranslationForm extends \yii\base\Model
             return false;
         }
         $sourceMessage = new SourceMessage();
+        $sourceMessage->language = $this->language;
         $sourceMessage->category = $this->category;
         $sourceMessage->message = $this->source_message;
-        $transaction = Yii::$app->db->beginTransaction();
-        if($sourceMessage->save())
-        {
-            $message = new Message();
-            $message->id = $sourceMessage->id;
-            $message->language = $this->language;
-            $message->translation = $this->translation;
-            if($message->save())
-            {
-                Alert::addSuccess(Yii::t('messages','Translation has been saved'));
-                $transaction->commit();
-                return true;
-
-            }
-            else Alert::addError(Yii::t('messages','Translation has not been saved'),$message->errors);
-        }
-        else Alert::addError(Yii::t('messages','Translation has not been saved'),$sourceMessage->errors);
-        $transaction->rollBack();
+        $sourceMessage->translation = $this->translation;
+        if(!$sourceMessage->save())
+             Alert::addError(Yii::t('messages','Translation has not been saved'),$sourceMessage->errors);
         return false;
     }
 

@@ -20,6 +20,7 @@ use yii\widgets\ActiveForm;
                                             'enableClientValidation' => true,
                                             'options' => ['enctype' => 'multipart/form-data']
                                         ]); ?>
+        <?php if(Yii::$app->user->can(\app\commands\RbacController::admin)):?>
         <fieldset class="col-md-6" style="border-right:1px solid #afafaf;">
             <legend>System</legend>
             <?= $form->field($model, 'name')->textInput() ?>
@@ -31,6 +32,7 @@ use yii\widgets\ActiveForm;
             <?= $form->field($model, 'minor')->textInput() ?>
             <?= $form->field($model, 'place')->textInput(['maxlength' => 256]) ?>
         </fieldset>
+        <?endif?>
         <fieldset class="col-md-6">
             <legend>Content</legend>
             <?= $form->field($model, 'title')->textInput(['maxlength' => 50]) ?>

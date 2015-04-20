@@ -25,7 +25,8 @@ class MessageSearch extends Message
 
     public function getOriginMessage()
     {
-        return $this->sourceMessage->message;
+        $origin =  $this->sourceMessage->message;
+        return $origin;
     }
 
     public function setOriginMessage($message)
@@ -75,7 +76,11 @@ class MessageSearch extends Message
                                                         'originCategory' => [
                                                             'asc'=>['sourceMessage.category'=>SORT_ASC],
                                                             'desc'=>['sourceMessage.category'=>SORT_DESC],
-                                                            ]
+                                                            ],
+                                                        'translation' => [
+                                                            'asc'=>['translation'=>SORT_ASC],
+                                                            'desc'=>['translation'=>SORT_DESC],
+                                                        ]
                                                       ]
                                                   ]
                                               ]);

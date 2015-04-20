@@ -22,6 +22,7 @@ class TranslationLayout extends TabbedLayout
     {
         $tabs = [
             ['label'=>'List of translations','url'=>Url::to(['translation/list'] + $_GET),'active'=>self::getActive($active,TabbedLayout::listing())],
+            ['label'=>'Translation import','url'=>Url::to(['translation/import'] + $_GET),'active'=>self::getActive($active,TabbedLayout::listing())],
         ];
         return $tabs;
     }

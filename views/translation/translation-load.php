@@ -11,21 +11,22 @@ use yii\helpers\Url;
 ?>
 
 <?php $form = ActiveForm::begin(['layout'=>'inline',
-                                 'action'=>Url::to(['translation/create']),
+                                 'action'=>Url::to(['translation/load']),
                                  'fieldConfig' => [
                                      'template' => "<span class='left-mrg-10'>{input}\n{hint}\n{error}</span>",
                                      'inputTemplate' => '{input}',
                                  ],
+                                 'options' => [
+                                     'enctype' => 'multipart/form-data'
+                                 ]
                                 ]); ?>
 <?= $form->errorSummary($model);?>
 
-<?= $form->field($model, 'category')->textInput(['placeholder'=>$model->getAttributeLabel('category')]) ?>
-<?= $form->field($model, 'source_message')->textInput(['placeholder'=>$model->getAttributeLabel('source_message'),'style'=>'width:300px;']) ?>
-<?= $form->field($model, 'translation')->textInput(['placeholder'=>$model->getAttributeLabel('translation'),'style'=>'width:300px;']) ?>
+<?= $form->field($model, 'file')->fileInput(['placeholder'=>$model->getAttributeLabel('file')]) ?>
 <?= $form->field($model, 'language')->hiddenInput(['style'=>'display:none']) ?>
 
 
-    <?= Html::submitButton(Yii::t('app', '+') , ['class' =>  'btn btn-success']) ?>
+    <?= Html::submitButton(Yii::t('app', "<span class='glyphicon glyphicon-upload'></span>") , ['class' =>  'btn btn-success']) ?>
 
 <?php ActiveForm::end(); ?>
 <br>

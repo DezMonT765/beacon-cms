@@ -1,9 +1,13 @@
 <?php
 namespace app\components;
 use app\controllers\MainController;
+use InvalidArgumentException;
+use Yii;
 use yii\base\Component;
 use yii\base\Exception;
+use yii\helpers\FileHelper;
 use yii\helpers\Url;
+use yii\web\Response;
 use yii\web\UploadedFile;
 
 /**
@@ -29,10 +33,12 @@ class xlsImport extends Component
     {
         return [
           'saveBehavior' => [
-              'class'=>'xlsSaveBehavior'
+              'class'=>'app\components\xlsSaveBehavior'
           ]
         ];
     }
+
+
 
     protected $base_url;
 
@@ -71,20 +77,26 @@ class xlsImport extends Component
 
     private $xls_reader_class;
 
+    public $file_model;
+
+    public $file_attribute;
+
     /** @var  FieldWrap[] a field wrap array
      */
     protected $field_wrap_array;
 
-    public function __construct(&$controller,$base_url,$modelName, $xls_reader_class)
+    public function __construct(&$controller,$base_url,$modelName, $xls_reader_class,$file_model,$file_attribute)
     {
         Yii::setAlias('@xls_save_dir','@app/files');
         $this->controller = $controller;
         $this->modelName = $modelName;
         $this->base_url = $base_url;
-        $this->$xls_reader_class = $xls_reader_class;
+        $this->xls_reader_class = $xls_reader_class;
         $this->error = null;
         $this->errors = array();
         $this->warnings = array();
+        $this->file_model = $file_model;
+        $this->file_attribute = $file_attribute;
         $this->attachBehaviors($this->behaviors());
     }
 
@@ -144,46 +156,48 @@ class xlsImport extends Component
     }
     const XLS_FILE = 'xls_file';
 
-    public function checkFileType()
+    public function isFileValid()
     {
-
-        return is_null($this->file_type) || isset(self::$types[$this->file_type]) || array_key_exists($this->file_type,self::$types);
+        $result = is_null($this->file_type) || isset(self::$types[$this->file_type]) || array_key_exists($this->file_type,self::$types);
+        return $result;
     }
 
     public static $types = [
         'application/vnd.ms-excel' => true,
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => true
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => true,
     ];
 
 
     public function prepareFile()
     {
-        $xls_file = UploadedFile::getInstanceByName(self::XLS_FILE);
+        $xls_file = UploadedFile::getInstance($this->file_model,$this->file_attribute);
         if($xls_file instanceof UploadedFile)
         {
             $this->file_name = Yii::getAlias('@xls_save_dir').'xls-import.'.$xls_file->extension;
             if(!is_dir(Yii::getAlias('@xls_save_dir')))
-              \yii\helpers\FileHelper::createDirectory(Yii::getAlias('@xls_save_dir'));
+              FileHelper::createDirectory(Yii::getAlias('@xls_save_dir'));
             $xls_file->saveAs($this->file_name);
             $this->file_size = $xls_file->size;
             $this->file_type = $xls_file->type;
-            if($this->checkFileType())
+            if(!$this->isFileValid())
             {
                 Alert::addError(Yii::t('messages','Invalid filetype'));
-               return $this->controller->redirect(Url::to([$this->base_url]));
+               return false;
             }
             set_time_limit(0);
         }
         else
         {
             Alert::addError(Yii::t('messages','Nothing to upload'));
-            return $this->controller->redirect(Url::to([$this->base_url]));
+            return false;
         }
+        return true;
     }
 
     public function run()
     {
-        $this->prepareFile();
+        if(!self::prepareFile())
+            return false;
         self::setIsUpdate((isset($_POST['is_update']) ? $_POST['is_update'] : false));
         $this->transaction = Yii::$app->getDb()->beginTransaction();
         $this->xlsRowToDb();
@@ -192,17 +206,23 @@ class xlsImport extends Component
             $this->transaction->rollback();
             $error_array = array();
             if(count($this->errors))
+            {
                 $error_array[] = $this->errors;
+            }
             if(count($this->error))
+            {
                 $error_array[] = $this->error;
-            Alert::addError(Yii::t('messages','Your request ends with errors'),$error_array);
+            }
+            Alert::addError(Yii::t('messages', 'Your request ends with errors'), $error_array);
             return $this->controller->redirect(Url::to([$this->base_url]));
         }
         else
         {
             $this->transaction->commit();
             if(count($this->warnings))
-                Alert::addWarning(Yii::t('messages','Your request ends with warnings'),$this->warnings);
+            {
+                Alert::addWarning(Yii::t('messages', 'Your request ends with warnings'), $this->warnings);
+            }
             return $this->controller->redirect(Url::to([$this->base_url]));
         }
 
@@ -212,6 +232,7 @@ class xlsImport extends Component
 
     protected function getAttributes($model_attributes)
     {
+        $model_attributes = array_flip($model_attributes);
         foreach ($this->ignore_attributes as $ignore=>$value)
         {
             if(isset($model_attributes[$ignore]) || array_key_exists($ignore,$model_attributes))
@@ -281,18 +302,18 @@ class xlsImport extends Component
     protected  function validateData($title,$modelName)
     {
         $model = new $modelName(['scenario'=>self::XLS_IMPORT]);
-        $keys = self::getAttributes($model->attributes);
+        $keys = self::getAttributes($model->safeAttributes());
         $diff1 = array_diff($keys,$title);
         $diff2 = array_diff($title,$keys);
         if(count($diff1))
         {
             $this->errors[] = 'Attributes: ' .implode(',',$diff1) . " - are missing";
-            throw new Exception(Yii::t('messages','You try to upload a wrong data-model. The title-row in your xls sheet must be : ').self::getAttributesString($model->attributes));
+            throw new Exception(Yii::t('messages','You try to upload a wrong data-model. The title-row in your xls sheet must be : ').self::getAttributesString($model->safeAttributes()));
         }
         if(count($diff2))
         {
             $this->errors[] = 'Attributes: ' .implode(',',$diff2) . " - are missing";
-            throw new Exception(Yii::t('messages','You try to upload a wrong data-model. The title-row in your xls sheet must be equal : ').self::getAttributesString($model->attributes));
+            throw new Exception(Yii::t('messages','You try to upload a wrong data-model. The title-row in your xls sheet must be equal : ').self::getAttributesString($model->safeAttributes()));
         }
         $sk = serialize($keys);
         $st = serialize($title);

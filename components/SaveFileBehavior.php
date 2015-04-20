@@ -1,4 +1,7 @@
 <?php
+namespace app\components;
+use Yii;
+use yii\base\Behavior;
 use yii\db\ActiveRecord;
 use yii\helpers\FileHelper;
 use yii\web\UploadedFile;
@@ -13,7 +16,7 @@ use yii\web\UploadedFile;
  * you need to define 2 aliases file_save_dir and file_view_dir
  */
 
-class SaveFileBehavior extends \yii\base\Behavior
+class SaveFileBehavior extends Behavior
 {
     public $file_attribute;
 

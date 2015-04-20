@@ -30,10 +30,7 @@ class MainActiveRecord extends ActiveRecord
 
     protected function initLocalTransaction()
     {
-        if(Yii::$app->db->transaction)
-        {
-            $this->transaction = Yii::$app->db->transaction;
-        }
+            $this->transaction = Yii::$app->db->beginTransaction();
     }
 
     protected  function commitLocalTransaction()
@@ -54,7 +51,7 @@ class MainActiveRecord extends ActiveRecord
 
     protected function isLocalTransactionAccessible()
     {
-        $is_accessible = !is_null($this->transaction) && $this->transaction->active;
+        $is_accessible = !is_null($this->transaction);
         return  $is_accessible;
     }
 

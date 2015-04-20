@@ -6,6 +6,7 @@ use app\components\Alert;
 use app\components\xlsImport;
 use Yii;
 use yii\i18n\DbMessageSource;
+use yii\web\BadRequestHttpException;
 
 /**
  * This is the model class for table "source_message".
@@ -13,13 +14,40 @@ use yii\i18n\DbMessageSource;
  * @property integer $id
  * @property string $category
  * @property string $message
+ * @property string $messageTranslation
  *
  * @property Message[] $messages
  */
 class SourceMessage extends MainActiveRecord
 {
-    public $translation;
+
     public $language;
+
+    public function getMessageTranslation()
+    {
+        if(!empty($this->messageTranslation))
+            return $this->messageTranslation;
+        else
+        {
+            $translation = isset($this->messages[0]) ? $this->messages[0]->translation : null;
+            return $translation;
+        }
+    }
+
+
+    public function setMessageTranslation($translation)
+    {
+        $this->attributes;
+        $this->messageTranslation = $translation;
+    }
+
+    public function scenarios()
+    {
+        return array_merge(parent::scenarios(), [
+            xlsImport::XLS_IMPORT => ['category','message','messageTranslation']
+        ]);
+    }
+
     /**
      * @inheritdoc
      */
@@ -39,9 +67,10 @@ class SourceMessage extends MainActiveRecord
     public function rules()
     {
         return [
+            [['category','message','messageTranslation'],'required'],
             [['message'], 'string'],
             [['category'], 'string', 'max' => 32],
-            [['category','translation'],'required','on'=>xlsImport::XLS_IMPORT],
+            ['id','safe']
         ];
     }
 
@@ -57,20 +86,28 @@ class SourceMessage extends MainActiveRecord
         if($insert)
         {
             $message = new Message();
-            $message->id = $this->id;
-            $message->language = $this->language;
-            $message->translation = $this->translation;
-            if($message->save())
-            {
-                Alert::addSuccess(Yii::t('messages','Translation has been saved'));
-                self::commitLocalTransaction();
-                return true;
-
-            }
-            else Alert::addError(Yii::t('messages','Translation has not been saved'),$message->errors);
         }
+        else
+        {
+            $message = Message::findOne(['id'=>$this->id,'language'=>$this->language]);
+            if(!($message instanceof Message))
+            {
+                $message = new Message();
+            }
+        }
+        $message->id = $this->id;
+        $message->language = $this->language;
+        $message->translation = $this->messageTranslation;
+        if($message->save())
+        {
+            Alert::addSuccess(Yii::t('messages','Translation has been saved'));
+            self::commitLocalTransaction();
+            return true;
+
+        }
+        Alert::addError(Yii::t('messages','Translation has not been saved'),$message->errors);
         self::rollbackLocalTransaction();
-        return false;
+        throw new BadRequestHttpException(Alert::popError());
     }
 
     /**
@@ -90,11 +127,9 @@ class SourceMessage extends MainActiveRecord
      */
     public function getMessages()
     {
-        return $this->hasMany(Message::className(), ['id' => 'id']);
+        return $this->hasMany(Message::className(), ['id' => 'id'])->from(Message::tableName(). ' messages');
     }
 
-    public function search()
-    {
 
-    }
+
 }

@@ -15,6 +15,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <br>
     <p>
         <?= Html::a(Yii::t('yii', 'Update'), ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+        <?if(Yii::$app->user->can(\app\commands\RbacController::delete_beacon)):?>
         <?= Html::a(Yii::t('yii', 'Delete'), ['delete', 'id' => $model->id], [
             'class' => 'btn btn-danger',
             'data' => [
@@ -22,6 +23,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'method' => 'post',
             ],
         ]) ?>
+        <?endif?>
     </p>
     <?= DetailView::widget([
         'model' => $model,

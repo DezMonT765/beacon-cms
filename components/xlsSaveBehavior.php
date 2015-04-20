@@ -1,5 +1,7 @@
 <?php
+namespace app\components;
 use yii\base\Behavior;
+use yii\base\Exception;
 
 /**
  * Created by PhpStorm.

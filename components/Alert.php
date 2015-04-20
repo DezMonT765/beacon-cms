@@ -29,7 +29,6 @@ class Alert
     const NONE = -1;
 
 
-
     public static $stores = array(
         self::ERROR => 'FrError',
         self::WARNING => 'FrWarning',
@@ -44,10 +43,10 @@ class Alert
     );
 
     public static $general_statuses = array(
-        '100'=>  self::SUCCESS,
-        '010'=>  self::WARNING,
-        '001'=>  self::ERROR,
-        '000'=> self::NONE,
+        '100' => self::SUCCESS,
+        '010' => self::WARNING,
+        '001' => self::ERROR,
+        '000' => self::NONE,
     );
 
     public static $colors = array(
@@ -64,12 +63,38 @@ class Alert
      * @param null $details
      * Adds an alert to proper store by status
      */
-    public static function addAlert($status,$msg,$details = null)
+    public static function addAlert($status, $msg, $details = null)
+    {
+        if(!Yii::$app->request->isAjax)
+        {
+            $buffer = self::getAlertStore($status);
+            $buffer[] = ['msg' => $msg,
+                         'details' => $details];
+            self::setAlert($status, $buffer);
+        }
+    }
+
+
+    public static function popAlert($status)
     {
         $buffer = self::getAlertStore($status);
-        $buffer[] =array('msg'=>$msg,
-                         'details'=>$details);
-        self::setAlert($status,$buffer);
+        $last_message = array_slice($buffer, 0, -1);
+        return $last_message['msg'];
+    }
+
+    public static function popSuccess()
+    {
+        return self::popAlert(self::SUCCESS);
+    }
+
+    public static function popError()
+    {
+        return self::popAlert(self::ERROR);
+    }
+
+    public static function popWarning()
+    {
+        return self::popAlert(self::WARNING);
     }
 
 

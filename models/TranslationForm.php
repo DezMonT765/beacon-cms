@@ -4,6 +4,7 @@ use app\components\Alert;
 use app\models\Message;
 use app\models\SourceMessage;
 use Yii;
+use yii\base\Model;
 
 /**
  * Created by PhpStorm.
@@ -12,7 +13,7 @@ use Yii;
  * Time: 12:53
  */
 
-class TranslationForm extends \yii\base\Model
+class TranslationForm extends Model
 {
     public $language;
     public $category;
@@ -36,7 +37,7 @@ class TranslationForm extends \yii\base\Model
         $sourceMessage->language = $this->language;
         $sourceMessage->category = $this->category;
         $sourceMessage->message = $this->source_message;
-        $sourceMessage->translation = $this->translation;
+        $sourceMessage->messageTranslation = $this->translation;
         if(!$sourceMessage->save())
              Alert::addError(Yii::t('messages','Translation has not been saved'),$sourceMessage->errors);
         return false;

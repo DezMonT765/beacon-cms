@@ -109,8 +109,11 @@ class BeaconController extends MainController
     {
         $model = $this->findModel($id);
         self::checkAccess(RbacController::update_beacon,['beacon'=>$model]);
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($model->load(Yii::$app->request->post())) {
+            if(!Yii::$app->user->can(RbacController::admin))
+                $model->groupToBind = '';
+            if($model->save())
+                return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('beacon-form', [
                 'model' => $model,

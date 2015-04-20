@@ -23,27 +23,34 @@ $this->title = Yii::t('app', 'Translations');
                                                                  'active' => $translationForm->language,
                                                              ]); ?>
     </div>
-    <div class="mrg-10">
-<!--        --><?//= $this->render('translation-load',['model' => $translationLoad])?>
-    </div>
     <?= $this->render('translation-form',['model'=>$translationForm]) ;?>
+    <div class="mrg-10">
+        <span><?= Yii::t('messages','Upload translation:')?>&nbsp;</span>
+        <?= $this->render('translation-load',['model' => $translationLoad])?>
+    </div>
     <?= GridView::widget([
                              'dataProvider' => $data_provider,
                              'filterModel' => $search_model,
                              'columns' => [
                                  ['class' => 'yii\grid\SerialColumn'],
                                  [
-                                     'attribute'=>'originCategory',
-                                     'format'=>'raw',
+                                         'class'=>\dosamigos\grid\EditableColumn::className(),
+                                         'format'=>'raw',
+                                         'attribute'=>'category',
+                                         'url'=>['ajax-update','language'=>$translationForm->language],
                                  ],
                                  [
-                                     'attribute'=>'originMessage',
+                                     'class'=>\dosamigos\grid\EditableColumn::className(),
+                                     'attribute'=>'message',
                                      'format'=>'raw',
+                                     'url'=>['ajax-update','language'=>$translationForm->language],
                                  ],
 
                                  [
-                                     'attribute'=>'translation',
+                                     'class'=>\dosamigos\grid\EditableColumn::className(),
+                                     'attribute'=>'messageTranslation',
                                      'format'=>'raw',
+                                     'url'=>['ajax-update','language'=>$translationForm->language],
                                  ],
                                  ['class' => 'yii\grid\ActionColumn',
                                     'template' => '{delete}'

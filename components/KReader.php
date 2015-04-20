@@ -2,14 +2,6 @@
 namespace app\components;
 use PHPExcel_IOFactory;
 use PHPExcelReader\SpreadsheetReader;
-
-/**
- * Created by PhpStorm.
- * User: DezMonT
- * Date: 18.03.2015
- * Time: 12:00
- */
-
 class KReader extends   XReaderInterface
 {
 

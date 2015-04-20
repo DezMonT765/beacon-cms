@@ -1,5 +1,6 @@
 <?php
 namespace app\models;
+use app\components\Alert;
 use app\components\FilePathBehavior;
 use app\components\KReader;
 use app\components\xlsImport;
@@ -22,8 +23,7 @@ class TranslationLoad extends Model
     public function rules()
     {
         return [
-          [['file','language'],'required'],
-          ['file','file']
+          [['language'],'required']
         ];
     }
 
@@ -41,13 +41,13 @@ class TranslationLoad extends Model
     {
         if(!$this->validate())
         {
+            Alert::addError('Translation has not been loaded',$this->errors);
             return false;
         }
 
-        $xlsImport = new xlsImport(Yii::$app->controller, Yii::$app->request->referrer,SourceMessage::className(), KReader::className());
+        $xlsImport = new xlsImport(Yii::$app->controller, Yii::$app->request->referrer,SourceMessage::className(), KReader::className(),$this,'file');
         $xlsImport->additionalAttributes(['language'=>$this->language]);
         $xlsImport->run();
-
 
         return true;
     }

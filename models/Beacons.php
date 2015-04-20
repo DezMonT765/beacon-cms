@@ -54,7 +54,11 @@ class Beacons extends MainActiveRecord
                 $result = $group->id;
                 return $result;
             }
-            else return '';
+            else {
+                $result = '';
+                return $result;
+            }
+
         }
     }
 
@@ -99,7 +103,6 @@ class Beacons extends MainActiveRecord
             [['description'], 'string'],
             [['minor', 'major'], 'integer'],
             [['title', 'uuid'], 'string', 'max' => 50],
-            [['picture'], 'string', 'max' => 64],
             [['pictureFile'], 'file', 'extensions' => 'jpg, png', 'mimeTypes' => 'image/jpeg, image/png',],
             ['groupToBind','safe']
         ];
@@ -155,14 +158,17 @@ class Beacons extends MainActiveRecord
 
     public function saveGroup()
     {
-        BeaconBindings::deleteAll(['beacon_id'=>$this->id]);
-        $group = Groups::findOne(['id'=>$this->groupToBind]);
-        if($group instanceof Groups)
+        if(!empty($this->groupToBind))
         {
-            $beacon_binding = new BeaconBindings();
-            $beacon_binding->beacon_id = $this->id;
-            $beacon_binding->group_id = $group->id;
-            $beacon_binding->save();
+            BeaconBindings::deleteAll(['beacon_id' => $this->id]);
+            $group = Groups::findOne(['id' => $this->groupToBind]);
+            if($group instanceof Groups)
+            {
+                $beacon_binding = new BeaconBindings();
+                $beacon_binding->beacon_id = $this->id;
+                $beacon_binding->group_id = $group->id;
+                $beacon_binding->save();
+            }
         }
     }
 

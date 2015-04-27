@@ -4,6 +4,7 @@
 namespace app\filters;
 
 
+use Yii;
 use yii\helpers\Url;
 
 /**
@@ -24,8 +25,8 @@ class UserLayout extends TabbedLayout
     public static function getTabs($active = [])
     {
             $tabs = [
-                ['label'=>'View','url'=>Url::to(['user/view'] + $_GET),'active'=>self::getActive($active,TabbedLayout::view())],
-                ['label'=>'Update','url'=>Url::to(['user/update'] + $_GET),'active'=>self::getActive($active,TabbedLayout::update())],
+                ['label'=>Yii::t('site_layout',':my_profile'),'url'=>Url::to(['user/view'] + $_GET),'active'=>self::getActive($active,TabbedLayout::view())],
+                ['label'=>Yii::t('user_layout',':update_profile'),'url'=>Url::to(['user/update'] + $_GET),'active'=>self::getActive($active,TabbedLayout::update())],
             ];
 
         return $tabs;

@@ -9,6 +9,7 @@
 namespace app\filters;
 
 
+use Yii;
 use yii\helpers\Url;
 
 class AdminUserLayout extends SubTabbedLayout
@@ -27,13 +28,13 @@ class AdminUserLayout extends SubTabbedLayout
     {
 
         $tabs =  [
-            ['label'=>'List','url'=>Url::to(['user/list']),'active'=>self::getActive($active,TabbedLayout::listing())],
-            ['label'=>'Create','url'=>Url::to(['user/create']),'active'=>self::getActive($active,TabbedLayout::create())],
+            ['label'=>Yii::t('user_layout',':list_users'),'url'=>Url::to(['user/list']),'active'=>self::getActive($active,TabbedLayout::listing())],
+            ['label'=>Yii::t('user_layout',':create_user'),'url'=>Url::to(['user/create']),'active'=>self::getActive($active,TabbedLayout::create())],
 
         ];
         if(self::getActive($active,TabbedLayout::update()))
         {
-            $tabs[] = ['label'=>'Manage','url'=>Url::to(['user/update']),'active'=>self::getActive($active,TabbedLayout::update())];
+            $tabs[] = ['label'=>Yii::t('user_layout',':manage_user'),'url'=>Url::to(['user/update']),'active'=>self::getActive($active,TabbedLayout::update())];
         }
 
 

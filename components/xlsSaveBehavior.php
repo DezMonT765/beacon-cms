@@ -17,11 +17,14 @@ class xlsSaveBehavior extends Behavior
     {
         try
         {
+            $model->scenario = xlsImport::XLS_IMPORT;
+
             if($old_model)
             {
                 if($this->owner->isUpdate())
                 {
-                    $old_model->attributes = $model->attributes;
+                    $old_model->scenario = xlsImport::XLS_IMPORT;
+                    $old_model->setAttributes($model->getAttributes($model->safeAttributes()));
                     $this->owner->saveModel($old_model);
                 }
                 else

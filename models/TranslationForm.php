@@ -27,6 +27,15 @@ class TranslationForm extends Model
         ];
     }
 
+    public function attributeLabels()
+    {
+        return [
+            'category' =>  Yii::t('translation', ':category'),
+            'source_message' =>  Yii::t('translation', ':message'),
+            'translation' =>  Yii::t('translation', ':translation'),
+        ];
+    }
+
     public function createMessage()
     {
         if(!$this->validate()){

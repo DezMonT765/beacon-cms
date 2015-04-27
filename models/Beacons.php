@@ -115,13 +115,15 @@ class Beacons extends MainActiveRecord
     {
         return [
             'id' => Yii::t('app', 'ID'),
-            'title' => Yii::t('app', 'Title'),
-            'description' => Yii::t('app', 'Description'),
-            'picture' => Yii::t('app', 'Picture'),
-            'place' => Yii::t('app', 'Place'),
-            'uuid' => Yii::t('app', 'Uuid'),
-            'minor' => Yii::t('app', 'Minor'),
-            'major' => Yii::t('app', 'Major'),
+            'name' => Yii::t('beacon', ':name'),
+            'groupToBind' => Yii::t('beacon', ':group'),
+            'title' => Yii::t('beacon', ':title'),
+            'description' => Yii::t('beacon', ':description'),
+            'picture' => Yii::t('beacon', ':picture'),
+            'place' => Yii::t('beacon', ':place'),
+            'uuid' => Yii::t('beacon', ':uuid'),
+            'minor' =>Yii::t('beacon', ':minor'),
+            'major' => Yii::t('beacon', ':major'),
         ];
     }
     public function beforeValidate()

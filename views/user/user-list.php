@@ -48,20 +48,21 @@ $this->title = Yii::t('app', 'Users');
                                  ],
                                  [
                                      'class'=>\dosamigos\grid\EditableColumn::className(),
-                                     'filter' => Users::$roles,
+                                     'filter' => Users::roles(),
                                      'format'=>'raw',
                                      'attribute'=>'role',
-                                     'url'=>['ajaxUpdate'],
+                                     'url'=>['ajax-update'],
                                      'value' => function($data){
                                          return Users::getRole($data->role);
                                      },
                                      'type'=>'select',
-                                     'editableOptions'=>
-                                         [
-                                             'source' => Yii::$app->user->identity->getEditableRoles(),
+                                     'editableOptions' => function($model)
+                                     {
+                                         return [
+                                             'source' => Yii::$app->user->identity->getEditableRoles($model->id),
                                              'sourceCache' => false,
-
-                                         ]
+                                         ];
+                                     }
                                  ],
 
 

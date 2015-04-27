@@ -22,7 +22,7 @@ use yii\widgets\ActiveForm;
                                         ]); ?>
         <?php if(Yii::$app->user->can(\app\commands\RbacController::admin)):?>
         <fieldset class="col-md-6" style="border-right:1px solid #afafaf;">
-            <legend>System</legend>
+            <legend><?php echo Yii::t('beacon',':system')?></legend>
             <?= $form->field($model, 'name')->textInput() ?>
             <?= $form->field($model, 'groupToBind')->textInput(['class' => '']) ?>
 
@@ -34,7 +34,7 @@ use yii\widgets\ActiveForm;
         </fieldset>
         <?endif?>
         <fieldset class="col-md-6">
-            <legend>Content</legend>
+            <legend><?php echo Yii::t('beacon',':content')?></legend>
             <?= $form->field($model, 'title')->textInput(['maxlength' => 50]) ?>
 
             <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
@@ -43,7 +43,7 @@ use yii\widgets\ActiveForm;
         </fieldset>
         <fieldset class="col-md-12">
         <div class="form-group">
-            <?= Html::submitButton($model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+            <?= Html::submitButton($model->isNewRecord ? Yii::t('beacon', ':create') : Yii::t('beacon', ':update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
         </div>
         </fieldset>
     <?php ActiveForm::end(); ?>

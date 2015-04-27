@@ -1,5 +1,6 @@
 <?php
 
+use app\models\Languages;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
@@ -25,11 +26,12 @@ use yii\widgets\ActiveForm;
         <?php if(Yii::$app->user->can(\app\commands\RbacController::admin)):?>
     <?= $form->field($model, 'groupsToBind')->textInput(['class'=>'']) ?>
         <?php endif?>
-    <?= $form->field($model, 'role')->dropDownList(Yii::$app->user->identity->getEditableRoles()) ?>
+    <?= $form->field($model, 'role')->dropDownList(Yii::$app->user->identity->getEditableRoles($model->id)) ?>
+        <?= $form->field($model, 'language')->dropDownList(Languages::getLanguageNames(true)) ?>
 
 
     <div class="form-group">
-        <?= Html::submitButton($model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+        <?= Html::submitButton($model->isNewRecord ? Yii::t('user', ':create') : Yii::t('user', ':update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

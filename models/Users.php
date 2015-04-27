@@ -4,6 +4,7 @@ namespace app\models;
 
 //use app\components\Alert;
 //use app\commands\RbacController;
+use app\commands\RbacController;
 use app\components\Alert;
 use Yii;
 use yii\data\ActiveDataProvider;
@@ -24,6 +25,7 @@ use yii\web\NotFoundHttpException;
  * @property string $role
  * @property string $logged
  * @property string $groupsToBind
+ * @property string $language
  *
  *
  * relations
@@ -81,22 +83,24 @@ class Users extends ActiveRecord implements IdentityInterface
 
     public static function  getRole($role)
     {
-        return (isset(self::$roles[$role]) ? self::$roles[$role] : null);
+        return (isset(self::roles()[$role]) ? self::roles()[$role] : null);
     }
 
     public function getCurrentRole()
     {
-        return (isset(self::$roles[$this->role]) ? self::$roles[$this->role] : null);
+        return (isset(self::roles()[$this->role]) ? self::roles()[$this->role] : null);
     }
 
 
 
 
-    public static $roles = [
-        self::user => 'User',
-        self::admin => 'Admin',
-        self::super_admin => 'Super Admin',
-    ];
+    public static function roles() {
+        return [
+            self::user => 'User',
+            self::admin => 'Admin',
+            self::super_admin => 'Super Admin',
+        ];
+    }
 
     public static $status_colors = [
         self::STATUS_INACTIVE  => 'red',
@@ -129,11 +133,12 @@ class Users extends ActiveRecord implements IdentityInterface
             ['passwordConfirm','compare','compareAttribute'=>'password','on'=>['create','register']],
             ['groupsToBind','safe'],
             ['group_alias','exist','targetClass'=>Groups::className(),'targetAttribute'=>'alias','on'=>'register'],
-            ['role','in','range'=>!Yii::$app->user->isGuest ? array_flip(Yii::$app->user->identity->getEditableRoles()) : array_flip(self::$roles)],
+            ['role','in','range'=> array_flip(self::roles())],
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_INACTIVE]],
             ['rememberMe', 'boolean'],
             [['name', 'email'], 'string', 'max' => 50],
+            ['language','string','max' => 5],
             [['password', 'auth_key', 'access_token'], 'string', 'max' => 256],
 
         ];
@@ -181,13 +186,15 @@ class Users extends ActiveRecord implements IdentityInterface
     public function attributeLabels()
     {
         return [
-            'id' => Yii::t('app', 'ID'),
-            'name' => Yii::t('app', 'Name'),
-            'email' => Yii::t('app', 'Email'),
-            'password' => Yii::t('app', 'Password'),
-            'passwordConfirm' => Yii::t('app', 'Password confirm'),
-            'auth_key' => Yii::t('app', 'Auth Key'),
-            'access_token' => Yii::t('app', 'Access Token'),
+            'name' => Yii::t('user', ':name'),
+            'email' => Yii::t('user', ':email'),
+            'role' => Yii::t('user', ':role'),
+            'language' => Yii::t('user', ':language'),
+            'groupsToBind' => Yii::t('user', ':groups'),
+            'password' => Yii::t('user', ':password'),
+            'passwordConfirm' => Yii::t('user', ':password_confirm'),
+            'auth_key' => Yii::t('user', 'Auth Key'),
+            'access_token' => Yii::t('user', 'Access Token'),
         ];
     }
 
@@ -234,7 +241,9 @@ class Users extends ActiveRecord implements IdentityInterface
      */
     public static function findIdentity($id)
     {
-        return static::findOne(['id'=>$id,'status'=>self::STATUS_ACTIVE]);
+        $user =  static::findOne(['id'=>$id,'status'=>self::STATUS_ACTIVE]);
+        Yii::$app->language = $user->language;
+        return $user;
     }
 
 
@@ -344,13 +353,20 @@ class Users extends ActiveRecord implements IdentityInterface
         return $user;
     }
 
-    public function getEditableRoles()
+    public function getEditableRoles($user_id = null)
     {
-        $editable_roles = [
-          self::super_admin => [self::admin => 'Admin',self::user => 'User'],
-          self::admin => [self::user => 'User'],
-          self::user => [self::user => 'User']
-        ];
+        $editable_roles = RbacController::getEditableRoles();
+        if(isset($editable_roles[$this->role]))
+        {
+            array_walk($editable_roles[$this->role],function(&$value,$key) {
+                $value = isset(self::roles()[$key]) ? self::roles()[$key] : $value;
+            });
+        }
+        if(isset($editable_roles[$this->role]))
+        {
+            if($user_id !== null && $user_id === $this->id)
+            $editable_roles[$this->role][$this->role] = $this->getCurrentRole();
+        }
         return isset($editable_roles[$this->role]) ? $editable_roles[$this->role] : [];
     }
 

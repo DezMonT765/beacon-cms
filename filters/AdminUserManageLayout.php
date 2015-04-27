@@ -9,6 +9,7 @@
 namespace app\filters;
 
 
+use Yii;
 use yii\helpers\Url;
 
 class AdminUserManageLayout extends AdminUserLayout
@@ -35,9 +36,9 @@ class AdminUserManageLayout extends AdminUserLayout
     {
         $tabs =  [
 
-            ['label'=>'Update','url'=>Url::to(['user/update'] +  self::getParams()),'active'=>self::getActive($active,AdminUserManageLayout::update())],
-            ['label'=>'View','url'=>Url::to(['user/view'] + $_GET),'active'=>self::getActive($active,TabbedLayout::view())],
-            ['label'=>'Beacons','url'=>Url::to(['user/beacons'] +  self::getParams()),'active'=>self::getActive($active,AdminUserManageLayout::beacons())],
+                ['label'=>Yii::t('user_layout',':update_user'),'url'=>Url::to(['user/update'] +  self::getParams()),'active'=>self::getActive($active,AdminUserManageLayout::update())],
+            ['label'=>Yii::t('user_layout',':view_user'),'url'=>Url::to(['user/view'] + $_GET),'active'=>self::getActive($active,TabbedLayout::view())],
+            ['label'=>Yii::t('user_layout',':user_beacons'),'url'=>Url::to(['user/beacons'] +  self::getParams()),'active'=>self::getActive($active,AdminUserManageLayout::beacons())],
         ];
         return $tabs;
     }

@@ -11,12 +11,12 @@ $params = array_merge(
 
 $config = [
     'id' => 'basic',
-    'language' => 'ru-RU',
+    'language' => 'en-US',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'defaultRoute' => 'site/login',
     'aliases' => [
-        '@file_save_dir' => '@app/files/',
+        '@file_save_dir' => '@app/web/files/',
         '@file_view_url' => '/files/'
     ],
     'components' => [
@@ -104,7 +104,12 @@ $config = [
                 '*' => [
                     'class' => 'yii\i18n\DbMessageSource',
                     //'basePath' => '@app/messages',
-                    //'sourceLanguage' => 'en-US',
+                    'sourceLanguage' => 'en-US',
+                    'on missingTranslation' => function($event)
+                    {
+                        $event->translatedMessage = $event->message;
+                    },
+                    'forceTranslation' => true
                 ],
             ],
         ],

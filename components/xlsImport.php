@@ -32,7 +32,7 @@ class xlsImport extends Component
     public function behaviors()
     {
         return [
-          'saveBehavior' => [
+          self::SAVE_BEHAVIOR => [
               'class'=>'app\components\xlsSaveBehavior'
           ]
         ];
@@ -85,7 +85,7 @@ class xlsImport extends Component
      */
     protected $field_wrap_array;
 
-    public function __construct(&$controller,$base_url,$modelName, $xls_reader_class,$file_model,$file_attribute)
+    public function __construct(&$controller,$base_url,$modelName, $xls_reader_class,$file_model,$file_attribute,$is_update)
     {
         Yii::setAlias('@xls_save_dir','@app/files');
         $this->controller = $controller;
@@ -97,6 +97,7 @@ class xlsImport extends Component
         $this->warnings = array();
         $this->file_model = $file_model;
         $this->file_attribute = $file_attribute;
+        $this->is_update = $is_update;
         $this->attachBehaviors($this->behaviors());
     }
 
@@ -140,10 +141,9 @@ class xlsImport extends Component
         return array_shift($params);
     }
 
-    protected function setIsUpdate($isUpdate)
+    protected function setIsUpdate()
     {
-        $this->is_update = $isUpdate;
-        if($isUpdate)
+        if($this->isUpdate())
         {
             if(isset($this->ignore_attributes['id']) || array_key_exists('id',$this->ignore_attributes))
                 unset($this->ignore_attributes['id']);
@@ -173,9 +173,9 @@ class xlsImport extends Component
         $xls_file = UploadedFile::getInstance($this->file_model,$this->file_attribute);
         if($xls_file instanceof UploadedFile)
         {
-            $this->file_name = Yii::getAlias('@xls_save_dir').'xls-import.'.$xls_file->extension;
-            if(!is_dir(Yii::getAlias('@xls_save_dir')))
-              FileHelper::createDirectory(Yii::getAlias('@xls_save_dir'));
+            $this->file_name = Yii::getAlias('@file_save_dir').'xls-import.'.$xls_file->extension;
+            if(!is_dir(Yii::getAlias('@file_save_dir')))
+              FileHelper::createDirectory(Yii::getAlias('@file_save_dir'));
             $xls_file->saveAs($this->file_name);
             $this->file_size = $xls_file->size;
             $this->file_type = $xls_file->type;
@@ -198,7 +198,7 @@ class xlsImport extends Component
     {
         if(!self::prepareFile())
             return false;
-        self::setIsUpdate((isset($_POST['is_update']) ? $_POST['is_update'] : false));
+        self::setIsUpdate();
         $this->transaction = Yii::$app->getDb()->beginTransaction();
         $this->xlsRowToDb();
         if(count($this->errors) || $this->error)

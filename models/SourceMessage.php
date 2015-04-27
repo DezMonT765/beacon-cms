@@ -44,7 +44,7 @@ class SourceMessage extends MainActiveRecord
     public function scenarios()
     {
         return array_merge(parent::scenarios(), [
-            xlsImport::XLS_IMPORT => ['category','message','messageTranslation']
+            xlsImport::XLS_IMPORT => ['id','category','message','messageTranslation','language']
         ]);
     }
 
@@ -83,6 +83,7 @@ class SourceMessage extends MainActiveRecord
 
     public function afterSave($insert)
     {
+        $this->activeAttributes();
         if($insert)
         {
             $message = new Message();

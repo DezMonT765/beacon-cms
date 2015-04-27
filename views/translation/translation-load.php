@@ -9,13 +9,10 @@ use yii\helpers\Url;
 /* @var $form yii\widgets\ActiveForm */
 \app\assets\Select2Asset::register($this);
 ?>
-
-<?php $form = ActiveForm::begin(['layout'=>'inline',
+<br>
+<?php $form = ActiveForm::begin([
                                  'action'=>Url::to(['translation/load']),
-                                 'fieldConfig' => [
-                                     'template' => "<span class='left-mrg-10'>{input}\n{hint}\n{error}</span>",
-                                     'inputTemplate' => '{input}',
-                                 ],
+
                                  'options' => [
                                      'enctype' => 'multipart/form-data'
                                  ]
@@ -23,10 +20,13 @@ use yii\helpers\Url;
 <?= $form->errorSummary($model);?>
 
 <?= $form->field($model, 'file')->fileInput(['placeholder'=>$model->getAttributeLabel('file')]) ?>
+<?= $form->field($model, 'isUpdate')->checkbox() ?>
+<div class="hidden">
 <?= $form->field($model, 'language')->hiddenInput(['style'=>'display:none']) ?>
+</div>
 
 
-    <?= Html::submitButton(Yii::t('app', "<span class='glyphicon glyphicon-upload'></span>") , ['class' =>  'btn btn-success']) ?>
+    <?= Html::submitButton(Yii::t('translation_load', ":upload_translation_file") , ['class' =>  'btn btn-success']) ?>
 
 <?php ActiveForm::end(); ?>
 <br>

@@ -24,10 +24,6 @@ $this->title = Yii::t('app', 'Translations');
                                                              ]); ?>
     </div>
     <?= $this->render('translation-form',['model'=>$translationForm]) ;?>
-    <div class="mrg-10">
-        <span><?= Yii::t('messages','Upload translation:')?>&nbsp;</span>
-        <?= $this->render('translation-load',['model' => $translationLoad])?>
-    </div>
     <?= GridView::widget([
                              'dataProvider' => $data_provider,
                              'filterModel' => $search_model,
@@ -53,7 +49,20 @@ $this->title = Yii::t('app', 'Translations');
                                      'url'=>['ajax-update','language'=>$translationForm->language],
                                  ],
                                  ['class' => 'yii\grid\ActionColumn',
-                                    'template' => '{delete}'
+                                    'template' => '{delete}',
+                                    'buttons' => [
+                                        'delete' => function($url,$model,$key) use ($translationForm) {
+                                            $url = Url::to(['translation/delete','id'=>$model->id,'language'=>$translationForm->language]);
+                                            return Html::a('<span class="glyphicon glyphicon-trash"></span>', $url, [
+                                                'title' => Yii::t('yii', 'Delete'),
+                                                'data-confirm' => Yii::t('yii', 'Are you sure you want to delete this item?'),
+                                                'data-method' => 'post',
+                                                'data-pjax' => '0',
+                                            ]);
+                                        }
+                                    ],
+
+
                                  ],
                              ],
                          ]); ?>

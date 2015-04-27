@@ -28,7 +28,7 @@ $this->title = $model->name;
             'email:email',
         ],
     ]) ?>
-    <legend>Groups</legend>
+    <legend><?php echo Yii::t('user',':groups')?></legend>
     <?= \yii\widgets\ListView::widget([
         'dataProvider'=>$model->getGroupsProvider(),
         'itemView' => 'small-group'

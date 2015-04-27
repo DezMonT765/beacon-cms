@@ -8,6 +8,7 @@
 
 namespace app\filters;
 
+use Yii;
 use yii\helpers\Url;
 
 class GroupManageLayout extends GroupLayout
@@ -35,9 +36,9 @@ class GroupManageLayout extends GroupLayout
     {
         $tabs =  [
 
-            ['label'=>'Update','url'=>Url::to(['group/update'] +  self::getParams()),'active'=>self::getActive($active,GroupManageLayout::update())],
-            ['label'=>'View','url'=>Url::to(['group/view'] + $_GET),'active'=>self::getActive($active,TabbedLayout::view())],
-            ['label'=>'Beacons','url'=>Url::to(['group/beacons'] +  self::getParams()),'active'=>self::getActive($active,GroupManageLayout::beacons())],
+            ['label'=>Yii::t('group_layout', ':group_update'),'url'=>Url::to(['group/update'] +  self::getParams()),'active'=>self::getActive($active,GroupManageLayout::update())],
+            ['label'=>Yii::t('group_layout', ':group_view'),'url'=>Url::to(['group/view'] + $_GET),'active'=>self::getActive($active,TabbedLayout::view())],
+            ['label'=>Yii::t('group_layout', ':group_beacons'),'url'=>Url::to(['group/beacons'] +  self::getParams()),'active'=>self::getActive($active,GroupManageLayout::beacons())],
         ];
         return $tabs;
     }

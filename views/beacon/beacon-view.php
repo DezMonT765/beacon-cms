@@ -31,9 +31,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 'title:raw',
                 'description:text',
             [
-              'label' => 'Picture',
-              'value' => Html::img($model->getImage(),['width'=>250]),
-              'format'=>'html'
+                'attribute'=>'picture',
+                'value' => Html::img($model->getImage(),['width'=>250]),
+                'format'=>'html'
             ],
             'place',
             'uuid',

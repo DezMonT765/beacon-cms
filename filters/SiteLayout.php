@@ -4,6 +4,7 @@
 namespace app\filters;
 
 use app\commands\RbacController;
+use Yii;
 use \yii\helpers\Url;
 use \app\models\Users;
 
@@ -71,8 +72,8 @@ class SiteLayout extends LayoutFilter
     public static function getGuestLeftTabs($active)
     {
         return [
-            ['label'=>'Login','url'=>Url::to(['site/login']),'active'=>self::getActive($active,SiteLayout::login())],
-            ['label'=>'Register','url'=>Url::to(['site/register']),'active'=>self::getActive($active,SiteLayout::register())]
+            ['label'=>Yii::t('site_layout',':login'),'url'=>Url::to(['site/login']),'active'=>self::getActive($active,SiteLayout::login())],
+            ['label'=>Yii::t('site_layout',':register'),'url'=>Url::to(['site/register']),'active'=>self::getActive($active,SiteLayout::register())]
         ];
     }
 
@@ -80,13 +81,13 @@ class SiteLayout extends LayoutFilter
     {
 
         $tabs = [
-            ['label'=>'My Beacons','url'=>Url::to(['beacon/list']),'active'=>self::getActive($active,SiteLayout::beacons())]
+            ['label'=>Yii::t('site_layout',':my_beacons'),'url'=>Url::to(['beacon/list']),'active'=>self::getActive($active,SiteLayout::beacons())]
         ];
         if(self::getActive($active,self::profile()))
         {
                $user = Users::getLogged(true);
                $tabs[] =
-                   ['label'=>'My profile','url'=>Url::to(['user/view','id'=>$user->id]),'active'=>self::getActive($active,SiteLayout::profile())];
+                   ['label'=>Yii::t('site_layout',':my_profile'),'url'=>Url::to(['user/view','id'=>$user->id]),'active'=>self::getActive($active,SiteLayout::profile())];
         }
         return $tabs;
     }
@@ -94,10 +95,10 @@ class SiteLayout extends LayoutFilter
     public static function getAdminLeftTabs($active)
     {
         $tabs = [
-            ['label'=>'Users','url'=>Url::to(['user/list']),'active'=>self::getActive($active,SiteLayout::users())],
-            ['label'=>'Beacons','url'=>Url::to(['beacon/list']),'active'=>self::getActive($active,SiteLayout::beacons())],
-            ['label'=>'Groups','url'=>Url::to(['group/list']),'active'=>self::getActive($active,SiteLayout::groups())],
-            ['label'=>'Translation','url'=>Url::to(['translation/list']),'active'=>self::getActive($active,SiteLayout::translations())],
+            ['label'=>Yii::t('site_layout',':users'),'url'=>Url::to(['user/list']),'active'=>self::getActive($active,SiteLayout::users())],
+            ['label'=>Yii::t('site_layout',':beacons'),'url'=>Url::to(['beacon/list']),'active'=>self::getActive($active,SiteLayout::beacons())],
+            ['label'=>Yii::t('site_layout',':groups'),'url'=>Url::to(['group/list']),'active'=>self::getActive($active,SiteLayout::groups())],
+            ['label'=>Yii::t('site_layout',':translations'),'url'=>Url::to(['translation/list']),'active'=>self::getActive($active,SiteLayout::translations())],
         ];
         return $tabs;
     }
@@ -106,8 +107,8 @@ class SiteLayout extends LayoutFilter
     public static  function getGuestRightNav($active)
     {
         return [
-            ['label'=>'Login','url'=>Url::to(['site/login']),'active'=>self::getActive($active,SiteLayout::login())],
-            ['label'=>'Register','url'=>Url::to(['site/register']),'active'=>self::getActive($active,SiteLayout::register())]
+            ['label'=>Yii::t('site_layout',':login'),'url'=>Url::to(['site/login']),'active'=>self::getActive($active,SiteLayout::login())],
+            ['label'=>Yii::t('site_layout',':register'),'url'=>Url::to(['site/register']),'active'=>self::getActive($active,SiteLayout::register())]
         ];
     }
 
@@ -115,9 +116,9 @@ class SiteLayout extends LayoutFilter
     {
         $user = Users::getLogged(true);
         return [
-            ['label'=>'Hello, '.$user->email,'items'=>[
-                ['label'=>'My profile','url'=>Url::to(['user/view','id'=>$user->id])],
-                ['label'=>'Log out','url'=>['site/logout']]
+            ['label'=>Yii::t('site_layout',':hello'). ' '. $user->email,'items'=>[
+                ['label'=>Yii::t('site_layout',':my_profile'),'url'=>Url::to(['user/view','id'=>$user->id])],
+                ['label'=>Yii::t('site_layout',':logout'),'url'=>['site/logout']]
             ]],
         ];
     }

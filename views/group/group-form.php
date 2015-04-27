@@ -14,7 +14,7 @@ use yii\widgets\ActiveForm;
     <br>
 
     <fieldset class="col-md-6">
-        <legend>Group settings</legend>
+        <legend><?php echo Yii::t('group', ':group_settings')?></legend>
         <?php $form = ActiveForm::begin(); ?>
 
         <?= $form->field($model, 'alias')->textInput(['maxlength' => 64]) ?>
@@ -23,7 +23,7 @@ use yii\widgets\ActiveForm;
     </fieldset>
     <fieldset class="col-md-6">
 
-    <legend>Beacons params</legend>
+        <legend><?php echo Yii::t('group', ':beacon_default_content')?></legend>
         <?= $form->field($model, 'uuid')->textInput(['maxlength' => 64]) ?>
         <?= $form->field($model, 'major')->textInput() ?>
         <?= $form->field($model, 'minor')->textInput() ?>
@@ -32,7 +32,7 @@ use yii\widgets\ActiveForm;
     <fieldset class="col-md-12">
 
         <div class="form-group">
-            <?= Html::submitButton($model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+            <?= Html::submitButton($model->isNewRecord ? Yii::t('app', ':create') : Yii::t('app', ':create'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
         </div>
 
         <?php ActiveForm::end(); ?>

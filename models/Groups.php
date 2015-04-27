@@ -61,8 +61,13 @@ class Groups extends MainActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => Yii::t('app', 'ID'),
-            'token' => Yii::t('app', 'Token'),
+            'alias' => Yii::t('group', ':alias'),
+            'name' => Yii::t('group', ':name'),
+            'description' => Yii::t('group', ':description'),
+            'uuid' => Yii::t('group', ':uuid'),
+            'major' => Yii::t('group', ':major'),
+            'minor' => Yii::t('group', ':minor'),
+            'place' => Yii::t('group', ':place'),
         ];
     }
 

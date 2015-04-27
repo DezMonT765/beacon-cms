@@ -20,10 +20,19 @@ class TranslationLoad extends Model
 
     public $language;
     public $file;
+    public $isUpdate;
     public function rules()
     {
         return [
-          [['language'],'required']
+          [['language','isUpdate'],'required']
+        ];
+    }
+
+    public function attributeLabels()
+    {
+        return [
+          'isUpdate' => Yii::t('translation_load',':is_update'),
+          'file' => Yii::t('translation_load',':file'),
         ];
     }
 
@@ -45,8 +54,7 @@ class TranslationLoad extends Model
             return false;
         }
 
-        $xlsImport = new xlsImport(Yii::$app->controller, Yii::$app->request->referrer,SourceMessage::className(), KReader::className(),$this,'file');
-        $xlsImport->additionalAttributes(['language'=>$this->language]);
+        $xlsImport = new xlsImport(Yii::$app->controller, Yii::$app->request->referrer,SourceMessage::className(), KReader::className(),$this,'file',$this->isUpdate);
         $xlsImport->run();
 
         return true;

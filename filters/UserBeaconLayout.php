@@ -9,6 +9,7 @@
 namespace app\filters;
 
 
+use Yii;
 use yii\helpers\Url;
 
 class UserBeaconLayout extends TabbedLayout
@@ -23,16 +24,16 @@ class UserBeaconLayout extends TabbedLayout
     {
 
         $tabs =  [
-            ['label'=>'List','url'=>Url::to(['beacon/list']),'active'=>self::getActive($active,TabbedLayout::listing())],
+            ['label'=>Yii::t('beacon_layout', ':beacons_list'),'url'=>Url::to(['beacon/list']),'active'=>self::getActive($active,TabbedLayout::listing())],
         ];
 
         if(self::getActive($active,TabbedLayout::update()))
             $tabs[] =
-                ['label'=>'Update','url'=>Url::to(['beacon/update'] + $_GET),'active'=>self::getActive($active,TabbedLayout::update())];
+                ['label'=>Yii::t('beacon_layout', ':beacon_update'),'url'=>Url::to(['beacon/update'] + $_GET),'active'=>self::getActive($active,TabbedLayout::update())];
 
         if(self::getActive($active,TabbedLayout::view()))
             $tabs[] =
-                ['label'=>'View','url'=>Url::to(['beacon/view'] + $_GET),'active'=>self::getActive($active,TabbedLayout::view())];
+                ['label'=>Yii::t('beacon_layout', ':beacon_view'),'url'=>Url::to(['beacon/view'] + $_GET),'active'=>self::getActive($active,TabbedLayout::view())];
 
         return $tabs;
     }

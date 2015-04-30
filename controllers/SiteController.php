@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\commands\RbacController;
 use app\filters\SiteLayout;
+use app\models\BeaconPins;
 use app\models\LoginForm;
 use app\models\RegisterForm;
 use Yii;
@@ -122,30 +123,9 @@ class SiteController extends MainController
 
 
 
-    public function actionTest()
-    {
-        var_dump(self::generateRoleCondition(RbacController::$role_hierarchy,RbacController::user));
-    }
 
 
 
-    protected  function  generateRoleCondition($roles,$checking_role,$condition = false)
-    {
-        foreach ($roles as $role=>$parents)
-        {
-//            $condition = $condition || ($role == $checking_role);
-            if(is_array($parents))
-            {
-                $condition = self::generateRoleCondition($parents, $checking_role, $condition);
-                $condition = $condition || $role == $checking_role;
-            }
-            else
-            {
-                $condition = $condition || ($role == $checking_role);
-            }
 
 
-        }
-        return $condition;
-    }
 }

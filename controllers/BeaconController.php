@@ -3,8 +3,11 @@
 namespace app\controllers;
 
 use app\commands\RbacController;
+use app\components\Alert;
 use app\filters\AdminBeaconLayout;
 use app\filters\UserBeaconLayout;
+use app\models\BeaconMapLoad;
+use app\models\BeaconPins;
 use Yii;
 use app\models\Beacons;
 use app\models\BeaconsSearch;
@@ -32,7 +35,7 @@ class BeaconController extends MainController
                         'roles' => ['@'],
                     ],
                     [
-                        'actions' => ['create','delete'],
+                        'actions' => ['create','delete','map'],
                         'allow' => true,
                         'roles'=>[RbacController::admin],
                     ],
@@ -159,5 +162,29 @@ class BeaconController extends MainController
     public function actionGetSelectionById()
     {
         self::selectionById(Beacons::className());
+    }
+
+    public function actionMap()
+    {
+        $model = new BeaconPins();
+        $map_load = new BeaconMapLoad();
+        return $this->render('beacon-map',['model'=>$model,'map_load'=>$map_load]);
+    }
+
+
+    /**
+     *
+     */
+    public function actionSaveMap()
+    {
+        $model = new BeaconMapLoad();
+        $model->load(Yii::$app->request->post());
+        if($model->saveMap())
+        {
+            Alert::addSuccess(Yii::t('messages',':map_load'));
+        }
+        else Alert::addError(Yii::t('messages',':map_not_load'));
+
+        return $this->redirect(['map']);
     }
 }

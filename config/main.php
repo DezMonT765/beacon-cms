@@ -105,10 +105,6 @@ $config = [
                     'class' => 'yii\i18n\DbMessageSource',
                     //'basePath' => '@app/messages',
                     'sourceLanguage' => 'en-US',
-                    'on missingTranslation' => function($event)
-                    {
-                        $event->translatedMessage = $event->message;
-                    },
                     'forceTranslation' => true
                 ],
             ],

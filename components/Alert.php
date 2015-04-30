@@ -106,7 +106,7 @@ class Alert
     public static function addSuccess($msg,$details = null)
     {
         self::addAlert(self::SUCCESS,$msg,$details);
-        Yii::info($msg.(serialize(';',$details)),'alerts');
+        Yii::info($msg.(serialize($details)),'alerts');
     }
 
 
@@ -118,7 +118,7 @@ class Alert
     public static function addWarning($msg,$details = null)
     {
         self::addAlert(self::WARNING,$msg,$details);
-        Yii::warning($msg.(serialize(';',$details)),'alerts');
+        Yii::warning($msg.(serialize($details)),'alerts');
     }
 
 
@@ -130,7 +130,7 @@ class Alert
     public static function addError($msg,$details = null)
     {
         self::addAlert(self::ERROR,$msg,$details);
-        Yii::error($msg.(serialize(';',$details)),'alerts');
+        Yii::error($msg.(serialize($details)),'alerts');
     }
 
 

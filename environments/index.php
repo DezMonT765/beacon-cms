@@ -52,4 +52,17 @@ return [
             'config/main-local.php',
         ],
     ],
+    'Production-dev' => [
+        'path' => 'dev-prod',
+        'setWritable' => [
+            'runtime',
+            'web/assets',
+        ],
+        'setExecutable' => [
+            'yii',
+        ],
+        'setCookieValidationKey' => [
+            'config/main-local.php',
+        ],
+    ]
 ];

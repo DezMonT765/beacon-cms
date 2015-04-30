@@ -106,6 +106,7 @@ class Alert
     public static function addSuccess($msg,$details = null)
     {
         self::addAlert(self::SUCCESS,$msg,$details);
+        Yii::info($msg,'alerts');
     }
 
 
@@ -117,6 +118,7 @@ class Alert
     public static function addWarning($msg,$details = null)
     {
         self::addAlert(self::WARNING,$msg,$details);
+        Yii::warning($msg,'alerts');
     }
 
 
@@ -128,6 +130,7 @@ class Alert
     public static function addError($msg,$details = null)
     {
         self::addAlert(self::ERROR,$msg,$details);
+        Yii::error($msg,'alerts');
     }
 
 

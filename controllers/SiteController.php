@@ -3,15 +3,20 @@
 namespace app\controllers;
 
 use app\commands\RbacController;
+use app\components\Alert;
 use app\filters\SiteLayout;
 use app\models\BeaconPins;
 use app\models\LoginForm;
+use app\models\PasswordResetForm;
 use app\models\RegisterForm;
+use app\models\PasswordChangeForm;
 use Yii;
+use yii\base\InvalidParamException;
 use yii\filters\AccessControl;
 use app\models\Users;
 use app\models\ContactForm;
 use yii\helpers\Url;
+use yii\web\BadRequestHttpException;
 
 class SiteController extends MainController
 {
@@ -122,7 +127,73 @@ class SiteController extends MainController
     }
 
 
+    public function actionPasswordReset()
+    {
+        $model = new PasswordResetForm();
+        if(Yii::$app->user->isGuest)
+        {
+            if($model->load(Yii::$app->request->post()) && $model->validate())
+            {
+                $model->sendEmail();
+                Alert::addSuccess('Thank you. If the email address you entered matches with one that is registered in our system we will send you a reset link within the next few minutes.');
+                return $this->goHome();
+            }
+            else
+            {
+                return $this->render('password-reset', [
+                    'model' => $model,
+                ]);
+            }
+        }
+        else
+        {
+            $model->email = Yii::$app->user->identity->email;
+        }
+        if($model->validate())
+        {
+            $model->sendEmail();
+            Alert::addSuccess('Thank you. If the email address you entered matches with one that is registered in our system we will send you a reset link within the next few minutes.');
+            return $this->goHome();
+        }
+        else
+        {
+            return $this->render('password-reset', [
+                'model' => $model,
+            ]);
+        }
+    }
 
+
+
+
+
+    public function actionPasswordChange($token)
+    {
+        try
+        {
+            $model = new PasswordChangeForm($token);
+        }
+        catch (InvalidParamException $e)
+        {
+            throw new BadRequestHttpException('Wrong password reset token.');
+        }
+        if($model->load(Yii::$app->request->post()))
+        {
+            if($model->validate() && $model->changePassword())
+            {
+                Alert::addSuccess('New password was saved.');
+                return $this->goHome();
+            }
+            else
+            {
+                Alert::addError('Password hasn\'t been saved.');
+                return $this->goHome();
+            }
+        }
+        return $this->render('password-change', [
+            'model' => $model,
+        ]);
+    }
 
 
 

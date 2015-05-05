@@ -26,6 +26,7 @@ use yii\web\NotFoundHttpException;
  * @property string $logged
  * @property string $groupsToBind
  * @property string $language
+ * @property string $password_reset_token
  *
  *
  * relations
@@ -40,6 +41,7 @@ class Users extends ActiveRecord implements IdentityInterface
     const user = 'user';
     const STATUS_INACTIVE = 0;
     const STATUS_ACTIVE = 1;
+    const PASSWORD_CHANGE_SCENARIO = 'password-change';
 
     public static $statuses = [
         self::STATUS_ACTIVE => 'Active',
@@ -106,6 +108,8 @@ class Users extends ActiveRecord implements IdentityInterface
         self::STATUS_INACTIVE  => 'red',
         self::STATUS_ACTIVE => 'green'
     ];
+
+
     private static $_logged_user = null;
     private static $_is_need_update = false;
     public $rememberMe;
@@ -129,8 +133,8 @@ class Users extends ActiveRecord implements IdentityInterface
             [['email','password'],'required'],
             ['email','unique','on'=>['create','register']],
             ['role','default','value'=> self::user],
-            [['passwordConfirm'],'required','on'=>['create','register']],
-            ['passwordConfirm','compare','compareAttribute'=>'password','on'=>['create','register']],
+            [['passwordConfirm'],'required','on'=>['create','register',self::PASSWORD_CHANGE_SCENARIO]],
+            ['passwordConfirm','compare','compareAttribute'=>'password','on'=>['create','register',self::PASSWORD_CHANGE_SCENARIO]],
             ['groupsToBind','safe'],
             ['group_alias','exist','targetClass'=>Groups::className(),'targetAttribute'=>'alias','on'=>'register'],
             ['role','in','range'=> array_flip(self::roles())],
@@ -149,7 +153,7 @@ class Users extends ActiveRecord implements IdentityInterface
     public function beforeSave($insert)
     {
         parent::beforeSave(true);
-        if ($this->isNewRecord) {
+        if ($this->isNewRecord || $this->scenario == self::PASSWORD_CHANGE_SCENARIO) {
             $this->auth_key = Yii::$app->getSecurity()->generateRandomString();
             $this->password = Yii::$app->getSecurity()->generatePasswordHash($this->password);
         }
@@ -430,5 +434,51 @@ class Users extends ActiveRecord implements IdentityInterface
     public function generateAuthKey()
     {
         $this->auth_key = Yii::$app->security->generateRandomString();
+    }
+
+
+    public static function findByPasswordResetToken($token)
+    {
+        if (!static::isPasswordResetTokenValid($token)) {
+            return null;
+        }
+
+        return static::findOne([
+                                   'password_reset_token' => $token,
+                                   'status' => self::STATUS_ACTIVE,
+                               ]);
+    }
+
+    /**
+     * Finds out if password reset token is valid
+     *
+     * @param string $token password reset token
+     * @return boolean
+     */
+    public static function isPasswordResetTokenValid($token)
+    {
+        if (empty($token)) {
+            return false;
+        }
+        $expire = Yii::$app->params['user.passwordResetTokenExpire'];
+        $parts = explode('_', $token);
+        $timestamp = (int) end($parts);
+        return $timestamp + $expire >= time();
+    }
+
+    /**
+     * Generates new password reset token
+     */
+    public function generatePasswordResetToken()
+    {
+        $this->password_reset_token = Yii::$app->security->generateRandomString() . '_' . time();
+    }
+
+    /**
+     * Removes password reset token
+     */
+    public function removePasswordResetToken()
+    {
+        $this->password_reset_token = null;
     }
 }

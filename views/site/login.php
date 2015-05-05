@@ -6,7 +6,7 @@ use yii\bootstrap\ActiveForm;
 /* @var $form yii\bootstrap\ActiveForm */
 /* @var $model app\models\LoginForm */
 
-$this->title =  Yii::t('app',':login');
+$this->title =  Yii::t('general',':login');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="site-login">
@@ -29,11 +29,11 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?= $form->field($model, 'rememberMe', [
         'template' => "<div class=\"col-lg-offset-1 col-lg-3\">{input}</div>\n<div class=\"col-lg-8\">{error}</div>",
-    ])->checkbox() ?>
-    <?= Html::a(Yii::t('login',':password_forgot'),\yii\helpers\Url::to(['site/password-reset']))?>
+    ])->checkbox()->label(Yii::t('login',':remember')) ?>
+    <?= Html::a(Yii::t('general',':password_forgot'),\yii\helpers\Url::to(['site/password-reset']))?>
     <div class="form-group">
         <div class="col-lg-offset-1 col-lg-11">
-            <?= Html::submitButton(Yii::t('app',':login'), ['class' => 'btn btn-primary', 'name' => 'login-button']) ?>
+            <?= Html::submitButton(Yii::t('general',':login'), ['class' => 'btn btn-primary', 'name' => 'login-button']) ?>
         </div>
     </div>
 

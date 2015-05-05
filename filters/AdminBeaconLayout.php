@@ -8,7 +8,6 @@
 
 namespace app\filters;
 
-
 use Yii;
 use yii\helpers\Url;
 /** @method static map()*/

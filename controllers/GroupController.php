@@ -10,10 +10,10 @@ use app\models\BeaconsSearch;
 use Yii;
 use app\models\Groups;
 use app\models\GroupSearch;
-use yii\console\Response;
 use yii\filters\AccessControl;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\Response;
 
 /**
  * GroupController implements the CRUD actions for Groups model.
@@ -21,7 +21,7 @@ use yii\filters\VerbFilter;
 class GroupController extends MainController
 {
     public $defaultAction = 'list';
-
+    public  $layout = 'main';
 
     public function behaviors()
     {
@@ -103,7 +103,7 @@ class GroupController extends MainController
     public function actionAsAjax($id)
     {
         $model = $this->findModel($id);
-        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        Yii::$app->response->format = Response::FORMAT_JSON;
         return $model->toArray();
     }
 
@@ -192,7 +192,7 @@ class GroupController extends MainController
 
     public function actionGetSelectionById()
     {
-        self::selectionById(Groups::className());
+        self::selectionById(Groups::className(),'name');
     }
 
     public function actionBeacons($id)

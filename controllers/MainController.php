@@ -57,12 +57,12 @@ class MainController extends Controller
         $model_array = [];
         foreach ($models as $model)
         {
-            $model_array[] =['id'=>$model->id,'text'=> is_null($return_wrap) ? $model->name : $return_wrap($model) ];
+            $model_array[] =['id'=>$model->id,'text'=> is_null($return_wrap) ? $model->$attribute : $return_wrap($model) ];
         }
         echo json_encode(['more'=>false,'results'=>$model_array]);
     }
 
-    public function selectionById($model_class,callable $return_wrap = null)
+    public function selectionById($model_class,$attribute = 'name', callable $return_wrap = null)
     {
         /** @var ActiveRecord $model_class */
         $id = Yii::$app->request->getQueryParam('id');
@@ -73,7 +73,7 @@ class MainController extends Controller
         if(count($models) == 1)
         {
             $model = array_shift($models);
-            $model_array = ['id'=>$model->id,'text'=> is_null($return_wrap) ? $model->name : $return_wrap($model)];
+            $model_array = ['id'=>$model->id,'text'=> is_null($return_wrap) ? $model->$attribute : $return_wrap($model)];
         }
         else
         {

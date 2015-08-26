@@ -27,6 +27,7 @@ class Beacons extends MainActiveRecord
 {
 
 
+    public $absolutePicture;
     public $pictureFile;
     /**
      * @inheritdoc
@@ -105,7 +106,8 @@ class Beacons extends MainActiveRecord
             [['minor', 'major'], 'integer'],
             [['title', 'uuid'], 'string', 'max' => 50],
             [['pictureFile'], 'file', 'extensions' => 'jpg, png', 'mimeTypes' => 'image/jpeg, image/png',],
-            ['groupToBind','safe']
+
+            [['groupToBind','absolutePicture'],'safe']
         ];
     }
 
@@ -207,5 +209,16 @@ class Beacons extends MainActiveRecord
     public function getBeaconStatistic()
     {
         return $this->hasOne(BeaconStatistic::className(), ['id' => 'id']);
+    }
+
+    public function afterFind()
+    {
+        $this->absolutePicture = Yii::$app->request->getHostInfo() . $this->getImage();
+    }
+
+    public function fields(){
+        $fields = parent::fields();
+        $fields['absolutePicture'] = 'absolutePicture';
+        return $fields;
     }
 }

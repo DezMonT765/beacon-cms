@@ -12,14 +12,14 @@ use Yii;
  * @property string $value
  * @property integer $client_id
  */
-class Statistics extends \yii\db\ActiveRecord
+class Info extends MainActiveRecord
 {
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return 'statistics';
+        return 'info';
     }
 
     /**

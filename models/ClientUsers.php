@@ -66,12 +66,8 @@ class ClientUsers extends MainActiveRecord
             }
             else
             {
-                if($client_user->save())
-                {
-                    $this->auth_key = $client_user->auth_key;
-                    return true;
-                }
-                else return false;
+                $this->auth_key = $client_user->auth_key;
+                return true;
             }
         } else return false;
 

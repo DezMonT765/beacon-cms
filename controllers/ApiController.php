@@ -6,7 +6,7 @@ use app\models\Beacons;
 use app\filters\FilterJson;
 use app\models\ClientBeacons;
 use app\models\ClientUsers;
-use app\models\Statistics;
+use app\models\Info;
 use Yii;
 use yii\filters\VerbFilter;
 use yii\web\ErrorAction;
@@ -60,7 +60,7 @@ class ApiController extends MainController {
                 'actions' => [
                     'login'  => ['post'],
                     'register'   => ['post'],
-                    'statistic' => ['post']
+                    'info' => ['post']
                 ]
             ],
             'auth' => [
@@ -124,17 +124,24 @@ class ApiController extends MainController {
         throw new HttpException(400,'Your credentials are invalid ' . Helper::recursive_implode($model->errors,',',false,false));
     }
 
-    public function actionStatistic() {
-        $model = new Statistics();
-        if($model->load(Yii::$app->request->post())) {
-            if($this->client_user instanceof ClientUsers)
-                $model->client_id = $this->client_user->id;
-            if(!$model->save()) {
-                throw new HttpException(500,'Statistic has\'nt been saved. ' . Helper::recursive_implode($model->errors,',',false,false));
+    public function actionInfo() {
+
+        $info = file_get_contents('php://input');
+
+        if($info = json_decode($info,true))
+        {
+            foreach($info as $key=>$value) {
+                $model = new Info();
+                $model->key = $key;
+                $model->value = $value;
+                if($this->client_user instanceof ClientUsers)
+                {
+                    $model->client_id = $this->client_user->id;
+                }
+                $model->save();
             }
-        } else {
-            throw new HttpException(400,'Invalid request');
         }
+        else throw new HttpException(400,'Invalid info');
 
     }
 

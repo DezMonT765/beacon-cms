@@ -131,7 +131,7 @@ class ApiController extends MainController {
         if($info = json_decode($info,true))
         {
             foreach($info as $key=>$value) {
-                $model = Info::findOne(['key'=>$key]);
+                $model = Info::findOne(['key'=>$key,'client_id'=>$this->client_user->id]);
                 if(!($model instanceof Info))
                     $model = new Info();
                 $model->key = $key;

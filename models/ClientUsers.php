@@ -79,9 +79,11 @@ class ClientUsers extends MainActiveRecord
             $query = Beacons::find();
         $user = $this;
         $query->joinWith([
-                             'clientUsers'=>function(ActiveQuery $query) use ($user)
+                             'clientBindings'=>function(ActiveQuery $query) use ($user)
                              {
-                                 $query->andFilterWhere([ClientUsers::tableName().'.id'=>$user->id]);
+
+                                 $query->andFilterWhere(['client_id'=>$user->id]);
+
                              }
                          ]);
         return $query;

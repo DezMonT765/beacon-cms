@@ -24,7 +24,21 @@ $this->title = Yii::t('app', 'Infos');
             'key',
             'value',
 
-            ['class' => 'yii\grid\ActionColumn'],
+            ['class' => 'yii\grid\ActionColumn',
+             'controller'=> 'info',
+             'template' => '{delete}',
+             'buttons' => [
+                 'delete' => function($url,$model,$key) {
+                     $url = Url::to(['info/delete','id'=>$model->id,'url'=> ['client-user/beacons','id'=>$_GET['id']]]);
+                     return Html::a('<span class="glyphicon glyphicon-trash"></span>', $url, [
+                         'title' => Yii::t('yii', 'Delete'),
+                         'data-confirm' => Yii::t('yii', 'Are you sure you want to delete this item?'),
+                         'data-method' => 'post',
+                         'data-pjax' => '0',
+                     ]);
+                 }
+             ],
+            ],
         ],
     ]); ?>
     <?php  echo Html::button('Delete',['class'=>'btn btn-danger','id'=>'delete-info'])?>
@@ -41,7 +55,7 @@ $this->title = Yii::t('app', 'Infos');
             {
                 newlist["keys["+index+"]"] = value;
             });
-            $.post("<?=Url::to(['mass-delete'])?>",newlist,function(data)
+            $.post("<?=Url::to(['mass-delete','url'=>['client-user/info','id'=>$_GET['id']]])?>",newlist,function(data)
             {
                 window.location.reload();
             });

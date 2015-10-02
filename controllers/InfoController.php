@@ -23,7 +23,6 @@ class InfoController extends MainController
     public function behaviors()
     {
         $behaviors = [
-            'layout' => InfoLayout::className(),
         ];
         return $behaviors;
     }
@@ -112,6 +111,7 @@ class InfoController extends MainController
      */
     public function actionDelete($id)
     {
+        $url = Yii::$app->request->getQueryParam('url');
         try
         {
             $model = $this->findModel(Info::className(),$id);
@@ -120,12 +120,13 @@ class InfoController extends MainController
         catch(Exception $e) {
             Alert::addError('Item has not been deleted', $e->getMessage());
         }
-        return $this->redirect(['list']);
+        return $this->redirect($url);
     }
 
 
     public function actionMassDelete()
     {
+        $url = Yii::$app->request->getQueryParam('url');
         if(isset($_POST['keys']))
         {
             foreach ($_POST['keys'] as $key)
@@ -144,7 +145,7 @@ class InfoController extends MainController
                 }
             }
         }
-        return $this->redirect(['list']);
+        return $this->redirect($url);
     }
 
     public function actionAsAjax($id)

@@ -15,19 +15,33 @@ $this->title = Yii::t('app', 'Client Beacons');
 
 
     <?= GridView::widget([
-        'id' => 'client-beacon-list',
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
-        ['class' => 'yii\grid\CheckboxColumn'],
+                             'dataProvider' => $dataProvider,
+                             'filterModel' => $searchModel,
+                             'columns' => [
+                                 ['class' => 'yii\grid\SerialColumn'],
 
-            'id',
-            'client_id',
-            'beacon_id',
+                                 'title',
+                                 'description:text',
+                                 'place',
+                                 'uuid',
 
-            ['class' => 'yii\grid\ActionColumn'],
-        ],
-    ]); ?>
+                                 ['class' => 'yii\grid\ActionColumn',
+                                  'controller' => 'client-beacon',
+                                  'template' => '{delete}',
+                                  'buttons' => [
+                                      'delete' => function($url,$model,$key) {
+                                          $url = Url::to(['client-beacon/delete','id'=>$model->id,'url'=> ['client-user/beacons','id'=>$_GET['id']]]);
+                                          return Html::a('<span class="glyphicon glyphicon-trash"></span>', $url, [
+                                              'title' => Yii::t('yii', 'Delete'),
+                                              'data-confirm' => Yii::t('yii', 'Are you sure you want to delete this item?'),
+                                              'data-method' => 'post',
+                                              'data-pjax' => '0',
+                                          ]);
+                                      }
+                                  ],
+                                 ],
+                             ],
+                         ]); ?>
     <?php  echo Html::button('Delete',['class'=>'btn btn-danger','id'=>'delete-client-beacon'])?>
 
 </div>

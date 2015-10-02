@@ -23,7 +23,6 @@ class ClientBeaconController extends MainController
     public function behaviors()
     {
         $behaviors = [
-            'layout' => ClientBeaconLayout::className(),
         ];
         return $behaviors;
     }
@@ -112,6 +111,7 @@ class ClientBeaconController extends MainController
      */
     public function actionDelete($id)
     {
+        $url = Yii::$app->request->getQueryParam('url');
         try
         {
             $model = $this->findModel(ClientBeacons::className(),$id);
@@ -120,7 +120,7 @@ class ClientBeaconController extends MainController
         catch(Exception $e) {
             Alert::addError('Item has not been deleted', $e->getMessage());
         }
-        return $this->redirect(['list']);
+        return $this->redirect($url);
     }
 
 

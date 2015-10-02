@@ -51,7 +51,7 @@ class ClientUserController extends MainController
         $searchModel->load(Yii::$app->request->queryParams);
         $dataProvider = $searchModel->clientBeacons($id);
 
-        return $this->render('/beacon/beacon-list', [
+        return $this->render('/client-beacon/client-beacon-list', [
             'searchModel' => new BeaconsSearch(),
             'dataProvider' => $dataProvider,
         ]);

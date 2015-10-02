@@ -20,6 +20,7 @@ use \app\models\Users;
  * @method static register()
  * @method static groups()
  * @method static translations()
+ * @method static client_users()
  */
 class SiteLayout extends LayoutFilter
 {
@@ -96,6 +97,7 @@ class SiteLayout extends LayoutFilter
     {
         $tabs = [
             ['label'=>Yii::t('site_layout',':users'),'url'=>Url::to(['user/list']),'active'=>self::getActive($active,SiteLayout::users())],
+            ['label'=>Yii::t('site_layout',':client_user'),'url'=>Url::to(['client-user/list']),'active'=>self::getActive($active,SiteLayout::client_users())],
             ['label'=>Yii::t('site_layout',':beacons'),'url'=>Url::to(['beacon/list']),'active'=>self::getActive($active,SiteLayout::beacons())],
             ['label'=>Yii::t('site_layout',':groups'),'url'=>Url::to(['group/list']),'active'=>self::getActive($active,SiteLayout::groups())],
             ['label'=>Yii::t('site_layout',':translations'),'url'=>Url::to(['translation/list']),'active'=>self::getActive($active,SiteLayout::translations())],

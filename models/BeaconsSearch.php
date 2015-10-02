@@ -3,6 +3,7 @@
 namespace app\models;
 
 use app\commands\RbacController;
+use app\filters\ClientUserLayout;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
@@ -81,6 +82,43 @@ class BeaconsSearch extends Beacons
             'minor' => $this->minor,
             'major' => $this->major,
         ]);
+
+        $query->andFilterWhere(['like', 'title', $this->title])
+            ->andFilterWhere(['like', 'description', $this->description])
+            ->andFilterWhere(['like', 'uuid', $this->uuid]);
+
+        return $dataProvider;
+    }
+
+    public function clientBeacons($client_user_id = null) {
+        $query = Beacons::find();
+
+        if($client_user_id !== null)
+        {
+            $user = ClientUsers::findOne(['id'=>$client_user_id]);
+            $user->getBeaconsQuery($query);
+        }
+
+
+
+        $dataProvider = new ActiveDataProvider([
+                                                   'query' => $query,
+                                               ]);
+
+
+        if (!$this->validate()) {
+            // uncomment the following line if you do not want to any records when validation fails
+            // $query->where('0=1');
+            return $dataProvider;
+        }
+
+
+
+        $query->andFilterWhere([
+                                   'id' => $this->id,
+                                   'minor' => $this->minor,
+                                   'major' => $this->major,
+                               ]);
 
         $query->andFilterWhere(['like', 'title', $this->title])
             ->andFilterWhere(['like', 'description', $this->description])

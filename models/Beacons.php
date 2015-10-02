@@ -211,6 +211,16 @@ class Beacons extends MainActiveRecord
         return $this->hasOne(BeaconStatistic::className(), ['id' => 'id']);
     }
 
+
+    public function getClientBindings() {
+        return $this->hasMany(ClientBeacons::className(), ['beacon_id' => 'id']);
+    }
+
+    public function getClientUsers() {
+        return $this->hasMany(ClientUsers::className(), ['id' => 'client_id'])
+            ->via('clientBindings');
+    }
+
     public function afterFind()
     {
         $this->absolutePicture = Yii::$app->request->getHostInfo() . $this->getImage();

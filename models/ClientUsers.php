@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use yii\db\ActiveQuery;
 
 /**
  * This is the model class for table "client_users".
@@ -71,6 +72,19 @@ class ClientUsers extends MainActiveRecord
             }
         } else return false;
 
+    }
+
+    public function getBeaconsQuery($query = null) {
+        if($query == null)
+            $query = Beacons::find();
+        $user = $this;
+        $query->joinWith([
+                             'clientUsers'=>function(ActiveQuery $query) use ($user)
+                             {
+                                 $query->andFilterWhere([ClientUsers::tableName().'.id'=>$user->id]);
+                             }
+                         ]);
+        return $query;
     }
 
     public static  function findByEmail($email)

@@ -5,6 +5,8 @@ namespace app\controllers;
 use app\filters\ClientUserLayout;
 use app\filters\ClientUserManageLayout;
 use app\models\BeaconsSearch;
+use app\models\ClientBeacons;
+use app\models\ClientBeaconSearch;
 use app\models\InfoSearch;
 use Exception;
 use Yii;
@@ -46,13 +48,14 @@ class ClientUserController extends MainController
 
     public function actionBeacons($id)
     {
-        $searchModel = new BeaconsSearch();
+        $searchModel = new ClientBeaconSearch();
 
         $searchModel->load(Yii::$app->request->queryParams);
-        $dataProvider = $searchModel->clientBeacons($id);
+        $searchModel->client_id = $id;
+        $dataProvider = $searchModel->search();
 
         return $this->render('/client-beacon/client-beacon-list', [
-            'searchModel' => new BeaconsSearch(),
+            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }

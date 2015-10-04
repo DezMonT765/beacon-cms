@@ -15,6 +15,8 @@ use yii\db\ActiveQuery;
  */
 class ClientUsers extends MainActiveRecord
 {
+
+
     /**
      * @inheritdoc
      */
@@ -74,20 +76,8 @@ class ClientUsers extends MainActiveRecord
 
     }
 
-    public function getBeaconsQuery($query = null) {
-        if($query == null)
-            $query = Beacons::find();
-        $user = $this;
-        $query->joinWith([
-                             'clientBindings'=>function(ActiveQuery $query) use ($user)
-                             {
 
-                                 $query->andFilterWhere(['client_id'=>$user->id]);
 
-                             }
-                         ]);
-        return $query;
-    }
 
     public static  function findByEmail($email)
     {

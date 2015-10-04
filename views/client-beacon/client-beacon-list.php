@@ -15,15 +15,15 @@ $this->title = Yii::t('app', 'Client Beacons');
 
 
     <?= GridView::widget([
+                             'id' => 'client-beacon-list',
                              'dataProvider' => $dataProvider,
                              'filterModel' => $searchModel,
                              'columns' => [
-                                 ['class' => 'yii\grid\SerialColumn'],
+                                 ['class' => 'yii\grid\CheckboxColumn'],
 
-                                 'title',
-                                 'description:text',
-                                 'place',
-                                 'uuid',
+                                 'beaconTitle',
+                                 'created',
+                                 'updated',
 
                                  ['class' => 'yii\grid\ActionColumn',
                                   'controller' => 'client-beacon',
@@ -56,7 +56,7 @@ $this->title = Yii::t('app', 'Client Beacons');
             {
                 newlist["keys["+index+"]"] = value;
             });
-            $.post("<?=Url::to(['mass-delete'])?>",newlist,function(data)
+            $.post("<?=Url::to(['client-beacon/mass-delete','url'=> ['client-user/beacons','id'=>$_GET['id']]])?>",newlist,function(data)
             {
                 window.location.reload();
             });

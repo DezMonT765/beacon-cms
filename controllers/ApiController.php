@@ -102,17 +102,17 @@ class ApiController extends MainController {
         else throw new HttpException(400,'Invalid data');
     }
 
-        public function actionLogin() {
-           $model = new ClientUsers();
-            if($model->load(Yii::$app->request->post()))
+    public function actionLogin() {
+       $model = new ClientUsers();
+        if($model->load(Yii::$app->request->post()))
+        {
+            if($model->login())
             {
-                if($model->login())
-                {
-                    return ['auth_key' => $model->auth_key];
-                }
+                return ['auth_key' => $model->auth_key];
             }
-            throw new HttpException(401,'You have not been authorized ' . Helper::recursive_implode($model->errors,',',false,false));
         }
+        throw new HttpException(401,'You have not been authorized ' . Helper::recursive_implode($model->errors,',',false,false));
+    }
 
     public function actionRegister() {
         $model = new ClientUsers();

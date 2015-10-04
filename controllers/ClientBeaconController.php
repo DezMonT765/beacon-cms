@@ -126,6 +126,7 @@ class ClientBeaconController extends MainController
 
     public function actionMassDelete()
     {
+        $url = Yii::$app->request->getQueryParam('url');
         if(isset($_POST['keys']))
         {
             foreach ($_POST['keys'] as $key)
@@ -144,7 +145,7 @@ class ClientBeaconController extends MainController
                 }
             }
         }
-        return $this->redirect(['list']);
+        return $this->redirect($url);
     }
 
     public function actionAsAjax($id)

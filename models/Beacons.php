@@ -107,7 +107,7 @@ class Beacons extends MainActiveRecord
             [['title', 'uuid'], 'string', 'max' => 50],
             [['pictureFile'], 'file', 'extensions' => 'jpg, png', 'mimeTypes' => 'image/jpeg, image/png',],
 
-            [['groupToBind','absolutePicture'],'safe']
+            [['beaconTitle','groupToBind','absolutePicture'],'safe']
         ];
     }
 
@@ -212,7 +212,7 @@ class Beacons extends MainActiveRecord
     }
 
 
-    public function getClientBindings() {
+    public function getClientBeacons() {
         return $this->hasMany(ClientBeacons::className(), ['beacon_id' => 'id']);
     }
 

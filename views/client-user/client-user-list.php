@@ -21,8 +21,14 @@ $this->title = Yii::t('app', 'Client Users');
         'columns' => [
         ['class' => 'yii\grid\CheckboxColumn'],
 
-            'email:email',
-
+            [
+                'attribute'=>'email',
+                'format'=>'raw',
+                'value'=>function($data)
+                {
+                    return Html::a($data->email,Url::to(['update','id'=>$data->id]));
+                }
+            ],
             ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>

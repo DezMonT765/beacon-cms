@@ -98,9 +98,7 @@ $config = [
             ],
         ],
 
-        'db' => [
-            'enableSchemaCache' => true,
-        ],
+
         'session' => [
             'class' => 'yii\web\DbSession'
         ],

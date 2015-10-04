@@ -6,12 +6,14 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\models\ClientBeacons;
+use yii\db\ActiveQuery;
 
 /**
  * ClientBeaconSearch represents the model behind the search form about `app\models\ClientBeacons`.
  */
 class ClientBeaconSearch extends ClientBeacons
 {
+    const ITEMS_PER_PAGE = 10;
     /**
      * @inheritdoc
      */
@@ -19,6 +21,7 @@ class ClientBeaconSearch extends ClientBeacons
     {
         return [
             [['id', 'client_id', 'beacon_id'], 'integer'],
+            [['beaconTitle'], 'safe'],
         ];
     }
 
@@ -43,8 +46,29 @@ class ClientBeaconSearch extends ClientBeacons
         $query = ClientBeacons::find();
 
         $dataProvider = new ActiveDataProvider([
-            'query' => $query,
-        ]);
+                                                   'query' => $query,
+                                                   'pagination' => [
+                                                       'pageSize' => self::ITEMS_PER_PAGE,
+                                                   ],
+                                                   'sort' => [
+
+                                                       'attributes'=>[
+                                                           'beaconTitle' => [
+                                                               'asc'=>[Beacons::tableName().'.title'=>SORT_ASC],
+                                                               'desc'=>[Beacons::tableName().'.title'=>SORT_DESC],
+                                                           ],
+                                                           'created' => [
+                                                               'asc'=>['created'=>SORT_ASC],
+                                                               'desc'=>['created'=>SORT_DESC],
+                                                           ],
+                                                           'updated' => [
+                                                               'asc'=>['updated'=>SORT_ASC],
+                                                               'desc'=>['updated'=>SORT_DESC],
+                                                           ],
+
+                                                       ]
+                                                   ]
+                                               ]);
 
         $this->load($params);
 
@@ -53,6 +77,9 @@ class ClientBeaconSearch extends ClientBeacons
             // $query->where('0=1');
             return $dataProvider;
         }
+        $query->joinWith('beacon',function (ActiveQuery $query) {
+            $query->andFilterWhere('title',$this->beaconTitle);
+        });
 
         $query->andFilterWhere([
             'id' => $this->id,

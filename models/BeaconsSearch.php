@@ -7,6 +7,7 @@ use app\filters\ClientUserLayout;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
+use yii\db\ActiveQuery;
 
 /**
  * BeaconsSearch represents the model behind the search form about `app\models\Beacons`.
@@ -90,26 +91,32 @@ class BeaconsSearch extends Beacons
         return $dataProvider;
     }
 
+
+
     public function clientBeacons($client_user_id = null) {
         $query = Beacons::find();
 
-        if($client_user_id !== null)
-        {
-            $user = ClientUsers::findOne(['id'=>$client_user_id]);
-            $user->getBeaconsQuery($query);
-        }
-
-
-
-        $dataProvider = new ActiveDataProvider([
-                                                   'query' => $query,
-                                               ]);
+        $dataProvider = new ActiveDataProvider(['query' => $query]);
 
 
         if (!$this->validate()) {
             // uncomment the following line if you do not want to any records when validation fails
             // $query->where('0=1');
             return $dataProvider;
+        }
+
+
+        if($client_user_id !== null)
+        {
+            $user = ClientUsers::findOne(['id'=>$client_user_id]);
+            $query->joinWith([
+                                 'clientBeacons'=>function(ActiveQuery $query) use ($user)
+                                 {
+
+                                     $query->andFilterWhere(['client_id'=>$user->id]);
+
+                                 }
+                             ]);
         }
 
 

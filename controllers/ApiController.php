@@ -65,8 +65,9 @@ class ApiController extends MainController {
             ],
             'auth' => [
                 'class' => AuthKeyFilter::className(),
-                'except' => ['login','register']
+                'except' => ['login','register','fb-auth']
             ],
+
 
         ];
     }
@@ -118,6 +119,16 @@ class ApiController extends MainController {
         $model = new ClientUsers();
         if($model->load(Yii::$app->request->post())) {
             if($model->save()) {
+                return ['auth_key'=>$model->auth_key];
+            }
+        }
+        throw new HttpException(400,'Your credentials are invalid ' . Helper::recursive_implode($model->errors,',',false,false));
+    }
+
+    public function actionFbAuth() {
+        $model = new ClientUsers();
+        if($model->load(Yii::$app->request->post())) {
+            if($model->fbAuth()) {
                 return ['auth_key'=>$model->auth_key];
             }
         }

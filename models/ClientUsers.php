@@ -12,7 +12,6 @@ use yii\db\ActiveQuery;
  * @property string $email
  * @property string $password
  * @property string $auth_key
- * @property string $fb_identifier
  */
 class ClientUsers extends MainActiveRecord
 {
@@ -33,7 +32,6 @@ class ClientUsers extends MainActiveRecord
     public function rules()
     {
         return [
-            ['fb_identifier','required','on'=>self::FB_AUTH_SCENARIO],
             [['email', 'password', 'auth_key','fb_identifier'], 'string', 'max' => 256],
             ['email','email'],
             ['email','unique']
@@ -58,7 +56,8 @@ class ClientUsers extends MainActiveRecord
         parent::beforeSave(true);
         if ($this->isNewRecord) {
             $this->password = Yii::$app->getSecurity()->generatePasswordHash($this->password);
-            $this->auth_key = Yii::$app->getSecurity()->generateRandomString();
+            if(empty($this->auth_key))
+                $this->auth_key = Yii::$app->getSecurity()->generateRandomString();
         }
 
         return true;
@@ -84,24 +83,12 @@ class ClientUsers extends MainActiveRecord
         $client_user = ClientUsers::findByEmail($this->email);
         if($client_user instanceof ClientUsers)
         {
-            if(empty($client_user->fb_identifier))
-            {
-                $client_user->fb_identifier = $this->fb_identifier;
-            }
-            else
-            {
-                if($client_user->fb_identifier !== $this->fb_identifier)
-                {
-                    $this->addError('password','Your identifier is invalid');
-                    return false;
-                }
-            }
+            $client_user->auth_key;
         }
         else {
             $client_user = new ClientUsers();
             $client_user->attributes = $this->attributes;
         }
-        $client_user->scenario = self::FB_AUTH_SCENARIO;
         $client_user->save();
         $this->auth_key = $client_user->auth_key;
         return true;

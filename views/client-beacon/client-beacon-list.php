@@ -22,8 +22,16 @@ $this->title = Yii::t('app', 'Client Beacons');
                                  ['class' => 'yii\grid\CheckboxColumn'],
 
                                  'beaconTitle',
-                                 'created',
-                                 'updated',
+                                 [
+                                     'attribute'=>'created',
+                                     'format' => ['date', 'php:d-m-Y H:i:s']
+
+                                 ],
+                                 [
+                                     'attribute'=>'updated',
+                                     'format' => ['date', 'php:d-m-Y H:i:s']
+
+                                 ],
 
                                  ['class' => 'yii\grid\ActionColumn',
                                   'controller' => 'client-beacon',

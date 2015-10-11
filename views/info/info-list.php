@@ -29,7 +29,7 @@ $this->title = Yii::t('app', 'Infos');
              'template' => '{delete}',
              'buttons' => [
                  'delete' => function($url,$model,$key) {
-                     $url = Url::to(['info/delete','id'=>$model->id,'url'=> ['client-user/beacons','id'=>$_GET['id']]]);
+                     $url = Url::to(['info/delete','id'=>$model->id,'url'=> ['client-user/info','id'=>$_GET['id']]]);
                      return Html::a('<span class="glyphicon glyphicon-trash"></span>', $url, [
                          'title' => Yii::t('yii', 'Delete'),
                          'data-confirm' => Yii::t('yii', 'Are you sure you want to delete this item?'),
@@ -55,7 +55,7 @@ $this->title = Yii::t('app', 'Infos');
             {
                 newlist["keys["+index+"]"] = value;
             });
-            $.post("<?=Url::to(['mass-delete','url'=>['client-user/info','id'=>$_GET['id']]])?>",newlist,function(data)
+            $.post("<?=Url::to(['info/mass-delete','url'=>['client-user/info','id'=>$_GET['id']]])?>",newlist,function(data)
             {
                 window.location.reload();
             });

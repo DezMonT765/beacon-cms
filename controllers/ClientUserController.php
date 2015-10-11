@@ -4,19 +4,13 @@ namespace app\controllers;
 
 use app\filters\ClientUserLayout;
 use app\filters\ClientUserManageLayout;
-use app\models\BeaconsSearch;
-use app\models\ClientBeacons;
 use app\models\ClientBeaconSearch;
 use app\models\InfoSearch;
 use Exception;
 use Yii;
 use app\models\ClientUsers;
 use app\models\ClientUsersSearch;
-use app\controllers\MainController;
-use console\controllers\RbacController;
 use app\components\Alert;
-use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 use yii\web\Response;
 use dosamigos\editable\EditableAction;
 

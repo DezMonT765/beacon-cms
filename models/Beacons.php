@@ -107,7 +107,7 @@ class Beacons extends MainActiveRecord
             [['title', 'uuid'], 'string', 'max' => 50],
             [['pictureFile'], 'file', 'extensions' => 'jpg, png', 'mimeTypes' => 'image/jpeg, image/png',],
 
-            [['beaconTitle','groupToBind','absolutePicture'],'safe']
+            [['groupToBind','absolutePicture'],'safe']
         ];
     }
 
@@ -160,7 +160,6 @@ class Beacons extends MainActiveRecord
     {
         FileHelper::removeDirectory($this->getImageSavePath());
     }
-
     public function saveGroup()
     {
         if(!empty($this->groupToBind))

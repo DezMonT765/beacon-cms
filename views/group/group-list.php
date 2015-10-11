@@ -21,7 +21,14 @@ $this->title = Yii::t('app', 'Groups');
         'columns' => [
             ['class' => 'yii\grid\CheckboxColumn'],
 
-            'name',
+            [
+                'attribute'=>'name',
+                'format'=>'raw',
+                'value'=>function($data)
+                {
+                    return Html::a($data->name,Url::to(['update','id'=>$data->id]));
+                }
+            ],
             'alias',
 
             ['class' => 'yii\grid\ActionColumn'],

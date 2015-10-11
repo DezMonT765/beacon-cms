@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\BeaconsSearch */
@@ -19,7 +20,14 @@ $this->title = Yii::t('app', 'Beacons');
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            'title',
+            [
+                'attribute'=>'title',
+                'format'=>'raw',
+                'value'=>function($data)
+                {
+                    return Html::a($data->title,Url::to(['update','id'=>$data->id]));
+                }
+            ],
             'description:text',
             'place',
              'uuid',

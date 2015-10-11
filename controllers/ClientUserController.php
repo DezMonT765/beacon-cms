@@ -113,23 +113,6 @@ class ClientUserController extends MainController
         }
     }
 
-    /**
-     * Updates an existing ClientUsers model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
-     */
-    public function actionUpdate($id)
-    {
-        $model = $this->findModel(ClientUsers::className(),$id);
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-                return $this->render('client-user-form', [
-                'model' => $model,
-            ]);
-        }
-    }
 
     /**
      * Deletes an existing ClientUsers model.

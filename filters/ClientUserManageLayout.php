@@ -20,7 +20,7 @@ class ClientUserManageLayout extends ClientUserLayout
     {
         $active_map =  array_merge(parent::getActiveMap(),[
             'beacons' => [ClientUserManageLayout::beacons()],
-            'update' => [ClientUserManageLayout::update()],
+            'view' => [ClientUserManageLayout::view()],
             'info' => [ClientUserManageLayout::info()],
         ]);
         return $active_map;
@@ -36,7 +36,7 @@ class ClientUserManageLayout extends ClientUserLayout
     public static function getLeftSubTabs(array $active = [])
     {
         $tabs =  [
-            ['label'=>Yii::t('client_layout',':user_update'),'url'=>Url::to(['client-user/update'] +  self::getParams()),'active'=>self::getActive($active,ClientUserManageLayout::update())],
+            ['label'=>Yii::t('client_layout',':user_view'),'url'=>Url::to(['client-user/view'] +  self::getParams()),'active'=>self::getActive($active,ClientUserManageLayout::view())],
             ['label'=>Yii::t('client_layout',':user_info'),'url'=>Url::to(['client-user/info'] + $_GET),'active'=>self::getActive($active,ClientUserManageLayout::info())],
             ['label'=>Yii::t('client_layout',':user_beacons'),'url'=>Url::to(['client-user/beacons'] +  self::getParams()),'active'=>self::getActive($active,ClientUserManageLayout::beacons())],
         ];

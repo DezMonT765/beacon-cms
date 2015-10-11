@@ -26,10 +26,12 @@ $this->title = Yii::t('app', 'Client Users');
                 'format'=>'raw',
                 'value'=>function($data)
                 {
-                    return Html::a($data->email,Url::to(['update','id'=>$data->id]));
+                    return Html::a($data->email,Url::to(['view','id'=>$data->id]));
                 }
             ],
-            ['class' => 'yii\grid\ActionColumn'],
+            ['class' => 'yii\grid\ActionColumn',
+             'template' => '{view}{delete}'
+            ],
         ],
     ]); ?>
     <?php  echo Html::button('Delete',['class'=>'btn btn-danger','id'=>'delete-client-user'])?>

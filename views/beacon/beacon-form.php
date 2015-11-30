@@ -71,7 +71,7 @@ use yii\widgets\ActiveForm;
             });
 
     var image_id = "<?=Html::getInputId($model,'picture')?>";
-    var image_crop = new Crop('picture',250, 4 / 3, image_id);
+    var image_crop = new Crop('picture',250, 3 / 4, image_id);
     $('#' + image_id).on('click',function(){
         $(this).attr('value',null);
     }).on('change',function(e){

@@ -111,7 +111,7 @@ class FileSaveBehavior extends Behavior
     public function postSavingProcess($attribute) {
         if(!is_dir($this->getFileSavePath($attribute)))
         {
-            if(file_exists($this->getFileSavePath($attribute))) {
+            if(Helper::_is_link($this->getFileSavePath($attribute)) || is_file($this->getFileSavePath($attribute))) {
                 unlink($this->getFileSavePath($attribute));
             }
             FileHelper::createDirectory($this->getFileSavePath($attribute));

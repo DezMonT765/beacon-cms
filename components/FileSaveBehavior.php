@@ -111,24 +111,7 @@ class FileSaveBehavior extends Behavior
     public function postSavingProcess($attribute) {
         if(!is_dir($this->getFileSavePath($attribute)))
         {
-            if(Helper::_is_link($this->getFileSavePath($attribute)) || is_file($this->getFileSavePath($attribute))) {
-                unlink($this->getFileSavePath($attribute));
-            }
             FileHelper::createDirectory($this->getFileSavePath($attribute));
-        }
-        if(!Helper::_is_link($this->getBackendViewDir($attribute)) && $this->getBackendViewDir($attribute) !== $this->getFileSavePath($attribute))
-        {
-            if(is_dir($this->getBackendViewDir($attribute)))
-                FileHelper::removeDirectory($this->getBackendViewDir($attribute));
-
-            symlink($this->getFileSaveDir($attribute),$this->getBackendViewDir($attribute));
-        }
-        if(!Helper::_is_link($this->getFrontendViewDir($attribute)) && $this->getFrontendViewDir($attribute) !== $this->getFileSavePath($attribute))
-        {
-            if(is_dir($this->getFrontendViewDir($attribute)))
-                FileHelper::removeDirectory($this->getFrontendViewDir($attribute));
-
-            symlink($this->getFileSaveDir($attribute),$this->getFrontendViewDir($attribute));
         }
         if(isset(self::getFileAttributeParams($attribute)[self::INSTANCE]))
             if($this->file_attributes[$attribute][self::INSTANCE] instanceof UploadedFile)
@@ -149,20 +132,7 @@ class FileSaveBehavior extends Behavior
     }
 
 
-    public function getBackendViewDir($file_attribute) {
-        $path = null;
-        if(isset(self::getFileAttributeParams($file_attribute)[self::BACKEND_VIEW_DIR]))
-            $path =  Yii::getAlias(self::getFileAttributeParams($file_attribute)[self::BACKEND_VIEW_DIR]);
-        return $path;
-    }
-
-    public function getFrontendViewDir($file_attribute) {
-        $path = null;
-        if(isset(self::getFileAttributeParams($file_attribute)[self::FRONTEND_VIEW_DIR]))
-            $path =  Yii::getAlias(self::getFileAttributeParams($file_attribute)[self::FRONTEND_VIEW_DIR]);
-        return $path;
-    }
-
+   
     /**@method getFileSaveDir
      * @param $file_attribute
      * @return bool|string

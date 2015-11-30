@@ -18,10 +18,10 @@ $config = [
     'aliases' => [
         '@file_save_dir' => '@app/web/files/',
         '@file_view_url' => '/files/',
-        '@beacon_save_dir' =>'@app/web/files/',
-        '@beacon_view_url' => '/files',
-        '@backend_beacon_view_dir' => '@app/web/files',
-        '@frontend_beacon_view_dir' =>'@app/web/files'
+        '@beacon_save_dir' =>'@app/web/beacon_images/',
+        '@beacon_view_url' => '/beacon_images',
+        '@backend_beacon_view_dir' => '@app/web/beacon_images',
+        '@frontend_beacon_view_dir' =>'@app/web/beacon_images'
     ],
     'components' => [
         'cache' => [

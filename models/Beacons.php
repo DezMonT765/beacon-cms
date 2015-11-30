@@ -2,8 +2,10 @@
 
 namespace app\models;
 
+use app\components\Crop;
+use app\components\FileSaveBehavior;
+use app\helpers\HelperImage;
 use Yii;
-use yii\helpers\FileHelper;
 use yii\web\UploadedFile;
 
 /**
@@ -26,6 +28,28 @@ use yii\web\UploadedFile;
 class Beacons extends MainActiveRecord
 {
 
+    public $crop;
+    public function init() {
+        /**@var Beacons | FileSaveBehavior $this*/
+        $crop = $this->crop;
+        $this->addFileAttribute('picture','@beacon_save_dir','@beacon_view_dir','@backend_beacon_view_dir','@frontend_beacon_view_dir','@beacon_view_url',function ($attribute,$file_path) use ($crop) {
+            HelperImage::imgCropByScale(
+                $file_path,
+                $file_path,
+                Crop::getAttribute($attribute,Crop::X1),
+                Crop::getAttribute($attribute,Crop::Y1),
+                Crop::getAttribute($attribute,Crop::WIDTH),
+                Crop::getAttribute($attribute,Crop::HEIGHT),
+                Crop::getAttribute($attribute,Crop::SCALE)
+            );
+        });
+    }
+
+    public function behaviors() {
+        return [
+            FileSaveBehavior::className(),
+        ];
+    }
 
     public $absolutePicture;
     public $pictureFile;
@@ -64,35 +88,6 @@ class Beacons extends MainActiveRecord
         }
     }
 
-    public function getImageSaveDir()
-    {
-        return Yii::$app->params['image_save_dir'];
-    }
-
-    public function getImageSavePath()
-    {
-        return self::getImageSaveDir() . $this->id . DIRECTORY_SEPARATOR;
-    }
-
-    public function getImageViewDir()
-    {
-        return Yii::$app->params['image_view_dir'];
-    }
-
-    public function getImageViewPath()
-    {
-        return self::getImageViewDir() . $this->id . '/';
-    }
-
-    public function getImage()
-    {
-        return self::getImageViewPath() . $this->picture;
-    }
-
-    public function getImageName()
-    {
-        return Yii::$app->security->generateRandomString(16) . '.';
-    }
 
     /**
      * @inheritdoc
@@ -129,37 +124,8 @@ class Beacons extends MainActiveRecord
             'major' => Yii::t('beacon', ':major'),
         ];
     }
-    public function beforeValidate()
-    {
-        if(parent::beforeValidate())
-        {
-            $this->pictureFile = UploadedFile::getInstance($this, 'picture');
-            if($this->pictureFile instanceof UploadedFile)
-            {
-                if(!$this->isNewRecord)
-                {
 
-                    if(is_file($this->getImageSavePath(). $this->oldAttributes['picture']))
-                    {
-                        unlink($this->getImageSavePath(). $this->oldAttributes['picture']);
-                    }
-                }
-                $this->picture = $this->getImageName() . $this->pictureFile->extension;
-            }
-            else
-            {
-                if(isset($this->oldAttributes['picture']))
-                    $this->picture = $this->oldAttributes['picture'];
-            }
-            return true;
-        }
-        else return false;
-    }
 
-    public function afterDelete()
-    {
-        FileHelper::removeDirectory($this->getImageSavePath());
-    }
     public function saveGroup()
     {
         if(!empty($this->groupToBind))
@@ -179,12 +145,6 @@ class Beacons extends MainActiveRecord
     public function afterSave($insert,$changedAttributes)
     {
         parent::afterSave($insert,$changedAttributes);
-        if(!is_dir($this->getImageSavePath()))
-        {
-            FileHelper::createDirectory($this->getImageSavePath());
-        }
-        if($this->pictureFile instanceof UploadedFile)
-            $this->pictureFile->saveAs($this->getImageSavePath() . $this->picture);
         self::saveGroup();
     }
 
@@ -222,7 +182,7 @@ class Beacons extends MainActiveRecord
 
     public function afterFind()
     {
-        $this->absolutePicture = Yii::$app->request->getHostInfo() . $this->getImage();
+        $this->absolutePicture = Yii::$app->request->getHostInfo() . $this->getFile('picture');
     }
 
     public function fields(){

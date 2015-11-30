@@ -8,6 +8,7 @@ use yii\widgets\ActiveForm;
 /* @var $model app\models\Beacons */
 /* @var $form yii\widgets\ActiveForm */
 \app\assets\Select2Asset::register($this);
+\app\assets\CropAsset::register($this);
 ?>
 
 <div class="beacons-form" xmlns="http://www.w3.org/1999/html">
@@ -68,5 +69,13 @@ use yii\widgets\ActiveForm;
                });
 
             });
+
+    var image_id = "<?=Html::getInputId($model,'picture')?>";
+    var image_crop = new Crop('picture',250, 4 / 3, image_id);
+    $('#' + image_id).on('click',function(){
+        $(this).attr('value',null);
+    }).on('change',function(e){
+        image_crop.start(e);
+    });
 
 </script>

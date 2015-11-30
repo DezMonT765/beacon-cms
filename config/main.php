@@ -17,7 +17,11 @@ $config = [
     'defaultRoute' => 'site/login',
     'aliases' => [
         '@file_save_dir' => '@app/web/files/',
-        '@file_view_url' => '/files/'
+        '@file_view_url' => '/files/',
+        '@beacon_save_dir' =>'@app/web/files/',
+        '@beacon_view_url' => '/files',
+        '@backend_beacon_view_dir' => '@app/web/files',
+        '@frontend_beacon_view_dir' =>'@app/web/files'
     ],
     'components' => [
         'cache' => [

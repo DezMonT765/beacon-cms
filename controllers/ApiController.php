@@ -137,7 +137,7 @@ class ApiController extends MainController {
 
     public function actionInfo() {
 
-        $info = file_get_contents('php://input');
+    $info = file_get_contents('php://input');
 
         if($info = json_decode($info,true))
         {

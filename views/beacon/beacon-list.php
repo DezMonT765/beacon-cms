@@ -28,7 +28,7 @@ $this->title = Yii::t('app', 'Beacons');
                     return Html::a($data->title,Url::to(['update','id'=>$data->id]));
                 }
             ],
-            'description:text',
+            'description:html',
             'place',
              'uuid',
 

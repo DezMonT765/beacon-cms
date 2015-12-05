@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use app\behaviors\AliasBehavior;
 use Yii;
 
 /**
@@ -29,6 +30,15 @@ class Groups extends MainActiveRecord
         return 'groups';
     }
 
+
+    public function behaviors() {
+        return ['slug' => [
+            'class' => AliasBehavior::className(),
+            'in_attribute' => 'name',
+            'out_attribute' => 'alias',
+            'translit' => true
+        ]];
+    }
 
 
     /**

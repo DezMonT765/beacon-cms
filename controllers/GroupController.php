@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\behaviors\AliasBehavior;
 use app\commands\RbacController;
 use app\components\Alert;
 use app\filters\GroupLayout;
@@ -206,5 +207,15 @@ class GroupController extends MainController
             'searchModel' => new BeaconsSearch(),
             'dataProvider' => $dataProvider,
         ]);
+    }
+
+
+    public function actionGetAlias() {
+        /**@var $model Groups |AliasBehavior*/
+        $value = Yii::$app->request->getQueryParam('value');
+        $model = new Groups();
+        $model->name = $value;
+        $model->getAlias();
+        return json_encode(['success'=>true,'alias'=>$model->alias]);
     }
 }

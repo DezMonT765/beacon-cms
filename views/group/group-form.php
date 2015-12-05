@@ -17,8 +17,8 @@ use yii\widgets\ActiveForm;
         <legend><?php echo Yii::t('group', ':group_settings')?></legend>
         <?php $form = ActiveForm::begin(); ?>
 
-        <?= $form->field($model, 'alias')->textInput(['maxlength' => 64]) ?>
         <?= $form->field($model, 'name')->textInput() ?>
+        <?= $form->field($model, 'alias')->textInput() ?>
         <?= $form->field($model, 'description')->textarea() ?>
     </fieldset>
     <fieldset class="col-md-6">
@@ -39,3 +39,22 @@ use yii\widgets\ActiveForm;
     </fieldset>
 
 </div>
+<script>
+    $('#<?=Html::getInputId($model,'name')?>').on('change',function() {
+        var value = $(this).prop('value');
+        $.ajax({
+            url : "<?=Url::to(['group/get-alias'])?>",
+            type : "GET",
+            dataType : "json",
+            data : {
+                value : value
+            },
+            success : function (data) {
+                if(data.success) {
+                    $('#<?=Html::getInputId($model,'alias')?>').prop('value',data['alias']);
+                }
+            }
+        });
+    });
+
+</script>

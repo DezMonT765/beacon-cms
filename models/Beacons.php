@@ -51,6 +51,8 @@ class Beacons extends MainActiveRecord
         ];
     }
 
+
+
     public $absolutePicture;
     public $pictureFile;
     /**
@@ -102,7 +104,7 @@ class Beacons extends MainActiveRecord
             [['title', 'uuid'], 'string', 'max' => 50],
             [['pictureFile'], 'file', 'extensions' => 'jpg, png', 'mimeTypes' => 'image/jpeg, image/png',],
 
-            [['groupToBind','absolutePicture'],'safe']
+            [['groupToBind','absolutePicture','link','additional_info'],'safe']
         ];
     }
 
@@ -188,6 +190,7 @@ class Beacons extends MainActiveRecord
     public function fields(){
         $fields = parent::fields();
         $fields['absolutePicture'] = 'absolutePicture';
+        $fields['groupToBind'] = 'groupToBind';
         return $fields;
     }
 }

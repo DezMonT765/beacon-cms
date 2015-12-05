@@ -82,5 +82,12 @@ class HelperImage
         return $new_size;
     }
 
+    public static function resizeByBound($infile, $outfile,$bound) {
+        $image = AcImage::createImage($infile);
+        $image->setRewrite(true);
+        $image->hardResize($image->getSize()->getByWidthBound($bound));
+        $image->save($outfile);
+    }
+
 
 }

@@ -132,7 +132,7 @@ class FileSaveBehavior extends Behavior
     }
 
 
-   
+
     /**@method getFileSaveDir
      * @param $file_attribute
      * @return bool|string
@@ -206,6 +206,16 @@ class FileSaveBehavior extends Behavior
     public function getFileName($file_attribute)
     {
         return Yii::$app->security->generateRandomString(16) . '.';
+    }
+
+
+
+    public function saveFiles() {
+        $this->owner->id = Yii::$app->security->generateRandomString(8);
+        foreach($this->file_attributes as $file_attribute => $property) {
+            self::preValidationProcess($file_attribute);
+            self::postSavingProcess($file_attribute);
+        }
     }
 
 

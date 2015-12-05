@@ -5,6 +5,8 @@
     "homepage": "http://www.yiiframework.com/",
     "type": "project",
     "license": "BSD-3-Clause",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "support": {
         "issues": "https://github.com/yiisoft/yii2/issues?state=open",
         "forum": "http://www.yiiframework.com/forum/",
@@ -12,7 +14,6 @@
         "irc": "irc://irc.freenode.net/yii",
         "source": "https://github.com/yiisoft/yii2"
     },
-    "minimum-stability": "stable",
     "repositories": [
         {
             "type": "vcs",
@@ -29,13 +30,15 @@
     ],
     "require": {
         "php": ">=5.4.0",
-        "yiisoft/yii2": "*",
+        "yiisoft/yii2": "2.0.6",
         "yiisoft/yii2-bootstrap": "*",
         "dezmont765/yii2-grid-view-library" : "dev-master",
         "zyx/zyx-phpmailer": "dev-log-fix",
         "bower-asset/select2-skins": "dev-master",
         "lajax/yii2-language-picker": "dev-master",
         "phpoffice/phpexcel" : "dev-master",
+        "vova07/yii2-imperavi-widget": "*",
+        "2amigos/yii2-transliterator-helper": "*",
         "php-excel-reader/spreadsheet-reader": "dev-master"
     },
     "require-dev": {

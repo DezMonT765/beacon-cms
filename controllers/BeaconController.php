@@ -1,7 +1,7 @@
 <?php
-
 namespace app\controllers;
 
+use app\actions\SaveEditorImage;
 use app\commands\RbacController;
 use app\components\Alert;
 use app\filters\AdminBeaconLayout;
@@ -23,25 +23,37 @@ class BeaconController extends MainController
 
 
     public $defaultAction = 'list';
+
+
+    public function actions()
+    {
+        return [
+            'save-redactor-image' => [
+            'class' => SaveEditorImage::className(),
+            'model_class' => Beacons::className(),
+            ]
+        ];
+    }
+
+
     public function behaviors()
     {
-        $behaviors =  [
+        $behaviors = [
             'access' => [
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['list','update','view','get-selection-by-id','get-selection-list'],
+                        'actions' => ['list', 'update', 'view', 'get-selection-by-id', 'get-selection-list','save-redactor-image'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
                     [
-                        'actions' => ['create','delete','map'],
+                        'actions' => ['create', 'delete', 'map'],
                         'allow' => true,
-                        'roles'=>[RbacController::admin],
+                        'roles' => [RbacController::admin],
                     ],
                 ],
             ],
-
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
@@ -49,10 +61,10 @@ class BeaconController extends MainController
                 ],
             ],
         ];
-
-        $behaviors['layout'] =  ['class' => Yii::$app->user->can(RbacController::admin) ? AdminBeaconLayout::className() : UserBeaconLayout::className()];
+        $behaviors['layout'] = ['class' => Yii::$app->user->can(RbacController::admin) ? AdminBeaconLayout::className() : UserBeaconLayout::className()];
         return $behaviors;
     }
+
 
     /**
      * Lists all Beacons models.
@@ -63,12 +75,12 @@ class BeaconController extends MainController
         $searchModel = new BeaconsSearch();
         $searchModel->load(Yii::$app->request->queryParams);
         $dataProvider = $searchModel->search();
-
         return $this->render('beacon-list', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
+
 
     /**
      * Displays a single Beacons model.
@@ -78,11 +90,12 @@ class BeaconController extends MainController
     public function actionView($id)
     {
         $model = $this->findModel($id);
-        self::checkAccess(RbacController::update_beacon,['beacon'=>$model]);
+        self::checkAccess(RbacController::update_beacon, ['beacon' => $model]);
         return $this->render('beacon-view', [
             'model' => $model,
         ]);
     }
+
 
     /**
      * Creates a new Beacons model.
@@ -92,15 +105,18 @@ class BeaconController extends MainController
     public function actionCreate()
     {
         $model = new Beacons();
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if($model->load(Yii::$app->request->post()) && $model->save())
+        {
             return $this->redirect(['view', 'id' => $model->id]);
-        } else {
+        }
+        else
+        {
             return $this->render('beacon-form', [
                 'model' => $model,
             ]);
         }
     }
+
 
     /**
      * Updates an existing Beacons model.
@@ -111,18 +127,26 @@ class BeaconController extends MainController
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        self::checkAccess(RbacController::update_beacon,['beacon'=>$model]);
-        if ($model->load(Yii::$app->request->post())) {
+        self::checkAccess(RbacController::update_beacon, ['beacon' => $model]);
+        if($model->load(Yii::$app->request->post()))
+        {
             if(!Yii::$app->user->can(RbacController::admin))
+            {
                 $model->groupToBind = '';
+            }
             if($model->save())
+            {
                 return $this->redirect(['view', 'id' => $model->id]);
-        } else {
+            }
+        }
+        else
+        {
             return $this->render('beacon-form', [
                 'model' => $model,
             ]);
         }
     }
+
 
     /**
      * Deletes an existing Beacons model.
@@ -133,9 +157,9 @@ class BeaconController extends MainController
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
-
         return $this->redirect(['list']);
     }
+
 
     /**
      * Finds the Beacons model based on its primary key value.
@@ -146,12 +170,16 @@ class BeaconController extends MainController
      */
     protected function findModel($id)
     {
-        if (($model = Beacons::findOne($id)) !== null) {
+        if(($model = Beacons::findOne($id)) !== null)
+        {
             return $model;
-        } else {
+        }
+        else
+        {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+
 
     public function actionGetSelectionList()
     {
@@ -164,11 +192,12 @@ class BeaconController extends MainController
         self::selectionById(Beacons::className());
     }
 
+
     public function actionMap()
     {
         $model = new BeaconPins();
         $map_load = new BeaconMapLoad();
-        return $this->render('beacon-map',['model'=>$model,'map_load'=>$map_load]);
+        return $this->render('beacon-map', ['model' => $model, 'map_load' => $map_load]);
     }
 
 
@@ -181,10 +210,9 @@ class BeaconController extends MainController
         $model->load(Yii::$app->request->post());
         if($model->saveMap())
         {
-            Alert::addSuccess(Yii::t('messages',':map_load'));
+            Alert::addSuccess(Yii::t('messages', ':map_load'));
         }
-        else Alert::addError(Yii::t('messages',':map_not_load'));
-
+        else Alert::addError(Yii::t('messages', ':map_not_load'));
         return $this->redirect(['map']);
     }
 }

@@ -22,6 +22,7 @@ class RbacController extends Controller
     const super_admin = 'super_admin';
     const admin = 'admin';
     const user = 'user';
+    const promo_user = 'promo_user';
     const create_beacon = 'create_beacon';
     const update_beacon = 'update_beacon';
     const user_update_beacon = 'user_update_beacon';
@@ -75,16 +76,22 @@ class RbacController extends Controller
 
         $user_group_rule = new UserGroupRule();
         $auth->add($user_group_rule);
+
         $user = $auth->createRole(self::user);
         $user->ruleName = $user_group_rule->name;
         $auth->add($user);
         $auth->addChild($user,$user_update_beacon);
         $auth->addChild($user,$update_profile);
 
+        $promo_user = $auth->createRole(self::promo_user);
+        $user->ruleName = $user_group_rule->name;
+        $auth->add($promo_user);
+        $auth->addChild($promo_user,$user);
+
         $admin = $auth->createRole(self::admin);
         $admin->ruleName = $user_group_rule->name;
         $auth->add($admin);
-        $auth->addChild($admin,$user);
+        $auth->addChild($admin,$promo_user);
         $auth->addChild($admin,$update_beacon);
         $auth->addChild($admin,$delete_beacon);
         $auth->addChild($admin,$delete_profile);

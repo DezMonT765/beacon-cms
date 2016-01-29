@@ -39,6 +39,7 @@ class Users extends ActiveRecord implements IdentityInterface
     const super_admin = 'super_admin';
     const admin = 'admin';
     const user = 'user';
+    const promo_user = 'promo_user';
     const STATUS_INACTIVE = 0;
     const STATUS_ACTIVE = 1;
     const PASSWORD_CHANGE_SCENARIO = 'password-change';
@@ -99,6 +100,7 @@ class Users extends ActiveRecord implements IdentityInterface
     public static function roles() {
         return [
             self::user => 'User',
+            self::promo_user => 'Promo user',
             self::admin => 'Admin',
             self::super_admin => 'Super Admin',
         ];

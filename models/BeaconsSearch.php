@@ -41,7 +41,6 @@ class BeaconsSearch extends Beacons
      * @param null $user_id
      * @param null $group_id
      * @throws \yii\web\NotFoundHttpException
-     * @internal param $ null||string $user_id
      * @return ActiveDataProvider
      */
     public function search($user_id = null, $group_id = null)

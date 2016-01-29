@@ -13,6 +13,8 @@ class RegisterForm extends Model
     public $email;
     public $password;
     public $passwordConfirm;
+    public $groupToBind = null;
+    public $role = null;
 
     /**
      * @inheritdoc
@@ -30,17 +32,25 @@ class RegisterForm extends Model
         ];
     }
 
+
     /**
      * Signs user up.
      *
+     * @param null $groupsToBind
      * @return Users|null the saved model or null if saving fails
      */
-    public function register()
+    public function register($groupsToBind = null)
     {
         if ($this->validate()) {
             $user = new Users(['scenario'=>'register']);
             $user->email = $this->email;
             $user->password = $this->password;
+            if($this->role !== null) {
+                $user->role = $this->role;
+            }
+            if($groupsToBind !== null) {
+                $user->groupsToBind = $groupsToBind;
+            }
             $user->passwordConfirm = $this->passwordConfirm;
             if ($user->save()) {
                 return $user;

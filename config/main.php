@@ -74,7 +74,7 @@ $config = [
         'authManager' => [
             'class' => yii\rbac\DbManager::className(),
             'cache'=>'cache',
-            'defaultRoles'=>['super_admin','admin', 'user'],
+            'defaultRoles'=>['super_admin','admin', 'user','promo_user'],
         ],
         'apcCache' => [
             'class' => yii\caching\MemCache::className(),

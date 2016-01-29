@@ -54,15 +54,16 @@ class SiteLayout extends LayoutFilter
                 self::place_right_nav => self::getGuestRightNav($active),
             ];
                 break;
+            case RbacController::promo_user :
             case RbacController::user : $nav_bar = [
                 self::place_left_nav => self::getLeftTabs($active),
-                self::place_right_nav => self::getRightNav($active),
+                self::place_right_nav => self::getRightNav(),
             ];
                 break;
             case RbacController::admin :
             case RbacController::super_admin : $nav_bar = [
                 self::place_left_nav => self::getAdminLeftTabs($active),
-                self::place_right_nav => self::getRightNav($active),
+                self::place_right_nav => self::getRightNav(),
             ];
         }
 

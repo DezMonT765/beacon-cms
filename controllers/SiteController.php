@@ -195,6 +195,10 @@ class SiteController extends MainController
         ]);
     }
 
+    public function actionTerms() {
+        return $this->render('terms');
+    }
+
 
 
 

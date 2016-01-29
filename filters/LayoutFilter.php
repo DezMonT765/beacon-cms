@@ -12,6 +12,7 @@ use app\commands\RbacController;
 use app\components\MainView;
 use app\controllers\MainController;
 use yii\base\ActionFilter;
+use yii\rbac\Role;
 
 class LayoutFilter extends ActionFilter
 {
@@ -63,18 +64,12 @@ class LayoutFilter extends ActionFilter
             }
             else
             {
-                switch (\Yii::$app->user->identity->role)
+                $role = \Yii::$app->authManager->getRole(\Yii::$app->user->identity->role);
+                if($role instanceof Role)
                 {
-                    case RbacController::super_admin:
-                        self::$role = RbacController::super_admin;
-                        break;
-                    case RbacController::admin:
-                        self::$role = RbacController::admin;
-                        break;
-                    case RbacController::user:
-                        self::$role = RbacController::user;
-                        break;
+                    self::$role =  $role->name;
                 }
+                else self::$role = 'Guest';
             }
         }
         return self::$role;

@@ -1,6 +1,5 @@
 <?php
 namespace app\components;
-use app\helpers\Helper;
 use app\models\MainActiveRecord;
 use Yii;
 use yii\base\Behavior;
@@ -16,6 +15,7 @@ use yii\web\UploadedFile;
  * Time: 14:25
  * Class FileSaveBehavior
  * @property MainActiveRecord $owner
+ * @property MainActiveRecord $lama
  */
 
 class FileSaveBehavior extends Behavior
@@ -48,17 +48,7 @@ class FileSaveBehavior extends Behavior
         $this->file_attributes[$attribute][self::ON_SAVE] = $on_save;
     }
 
-    public function getFileInstance($file_attribute) {
-        if(isset($this->file_attributes[$file_attribute]))
-            $this->file_attributes[$file_attribute][self::INSTANCE];
-    }
 
-    public function getFileAttributeParams($file_attribute) {
-        if(isset($this->file_attributes[$file_attribute])) {
-            return $this->file_attributes[$file_attribute];
-        }
-        else return [];
-    }
 
     public function events()
     {
@@ -86,10 +76,12 @@ class FileSaveBehavior extends Behavior
         {
             if(!$this->owner->isNewRecord)
             {
-
-                if(is_file($this->getFileSavePath($attribute). $this->owner->oldAttributes[$attribute]))
+                if(isset($this->owner->oldAttributes[$attribute]))
                 {
-                    unlink($this->getFileSavePath($attribute). $this->owner->oldAttributes[$attribute]);
+                    if(is_file($this->getFileSavePath($attribute) . $this->owner->oldAttributes[$attribute]))
+                    {
+                        unlink($this->getFileSavePath($attribute) . $this->owner->oldAttributes[$attribute]);
+                    }
                 }
             }
             $this->owner->$attribute = $this->getFileName($attribute) . $this->file_attributes[$attribute][self::INSTANCE]->extension;
@@ -109,19 +101,39 @@ class FileSaveBehavior extends Behavior
     }
 
     public function postSavingProcess($attribute) {
-        if(!is_dir($this->getFileSavePath($attribute)))
-        {
-            FileHelper::createDirectory($this->getFileSavePath($attribute));
-        }
         if(isset(self::getFileAttributeParams($attribute)[self::INSTANCE]))
             if($this->file_attributes[$attribute][self::INSTANCE] instanceof UploadedFile)
-                if($this->file_attributes[$attribute][self::INSTANCE]->saveAs($this->getFileSavePath($attribute) . $this->owner->$attribute)){
-                    if(isset(self::getFileAttributeParams($attribute)[self::ON_SAVE]) && is_callable(self::getFileAttributeParams($attribute)[self::ON_SAVE])) {
+            {
+                if(!is_dir($this->getFileSavePath($attribute)))
+                {
+                    FileHelper::createDirectory($this->getFileSavePath($attribute));
+                }
+                if(!Helper::_is_link($this->getBackendViewDir($attribute)))
+                {
+                    if(is_dir($this->getBackendViewDir($attribute)))
+                    {
+                        FileHelper::removeDirectory($this->getBackendViewDir($attribute));
+                    }
+                    symlink($this->getFileSaveDir($attribute), $this->getBackendViewDir($attribute));
+                }
+                if(!Helper::_is_link($this->getFrontendViewDir($attribute)))
+                {
+                    if(is_dir($this->getFrontendViewDir($attribute)))
+                    {
+                        FileHelper::removeDirectory($this->getFrontendViewDir($attribute));
+                    }
+                    symlink($this->getFileSaveDir($attribute), $this->getFrontendViewDir($attribute));
+                }
+                if($this->file_attributes[$attribute][self::INSTANCE]->saveAs($this->getFileSavePath($attribute) . $this->owner->$attribute))
+                {
+                    if(isset(self::getFileAttributeParams($attribute)[self::ON_SAVE]) && is_callable(self::getFileAttributeParams($attribute)[self::ON_SAVE]))
+                    {
                         call_user_func_array(
                             self::getFileAttributeParams($attribute)[self::ON_SAVE],
-                            [$attribute,$this->getFileSavePath($attribute) . $this->owner->$attribute]);
+                            [$attribute, $this->getFileSavePath($attribute) . $this->owner->$attribute]);
                     }
                 }
+            }
     }
 
     public function afterSave($event)
@@ -131,7 +143,32 @@ class FileSaveBehavior extends Behavior
         }
     }
 
+    public function getFileInstance($file_attribute) {
+        if(isset($this->file_attributes[$file_attribute]))
+            $this->file_attributes[$file_attribute][self::INSTANCE];
+    }
 
+    public function getFileAttributeParams($file_attribute) {
+        if(isset($this->file_attributes[$file_attribute])) {
+            return $this->file_attributes[$file_attribute];
+        }
+        else return [];
+    }
+
+
+    public function getBackendViewDir($file_attribute) {
+        $path = null;
+        if(isset(self::getFileAttributeParams($file_attribute)[self::BACKEND_VIEW_DIR]))
+            $path =  Yii::getAlias(self::getFileAttributeParams($file_attribute)[self::BACKEND_VIEW_DIR]);
+        return $path;
+    }
+
+    public function getFrontendViewDir($file_attribute) {
+        $path = null;
+        if(isset(self::getFileAttributeParams($file_attribute)[self::FRONTEND_VIEW_DIR]))
+            $path =  Yii::getAlias(self::getFileAttributeParams($file_attribute)[self::FRONTEND_VIEW_DIR]);
+        return $path;
+    }
 
     /**@method getFileSaveDir
      * @param $file_attribute
@@ -207,7 +244,6 @@ class FileSaveBehavior extends Behavior
     {
         return Yii::$app->security->generateRandomString(16) . '.';
     }
-
 
 
     public function saveFiles() {

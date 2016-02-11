@@ -27,6 +27,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= $form->field($model, 'password')->passwordInput() ?>
         <?= $form->field($model, 'passwordConfirm')->passwordInput() ?>
         <?= $form->field($model, 'beacon_count')->textInput(['type'=>'number']) ?>
+        <?= $form->field($model, 'group_name')->textInput() ?>
         <?= $form->field($model,'terms_agree')->checkbox()->label('I agree to <a target="_blank" href="'.Url::to(['site/terms']).'">terms and conditions</a>');?>
 
     </div>

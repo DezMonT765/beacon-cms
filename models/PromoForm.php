@@ -12,6 +12,7 @@ use yii\helpers\Url;
 class PromoForm extends RegisterForm
 {
     public $username;
+    public $group_name;
     public $email;
     public $password;
     public $passwordConfirm;
@@ -25,8 +26,9 @@ class PromoForm extends RegisterForm
     {
         return [
             ['email', 'filter', 'filter' => 'trim'],
-            ['email', 'required'],
+            [['email','group_name'], 'required'],
             ['email', 'email'],
+            ['beacon_count','integer','max'=>10],
             ['email', 'unique', 'targetClass' => '\app\models\Users', 'message' => 'This email address has already been taken.'],
             [['password','passwordConfirm'],'required'],
             ['password', 'string'],
@@ -50,21 +52,22 @@ class PromoForm extends RegisterForm
         try
         {
             $group = new Groups();
-            $group->name = $this->email;
+            $group->name = $this->group_name;
 
             if($group->save())
             {
                 $user = parent::register($group->id);
+                $uuid = UUID::v4();
                 for ($i = 0; $i < $this->beacon_count; $i++)
                 {
                     $beacon = new Beacons();
                     $beacon->name = Yii::$app->security->generateRandomString(16);
-                    $beacon->title = "Such title $i";
-                    $beacon->description = "So description $i";
-                    $beacon->minor = $group->id . $user->id . $i;
-                    $beacon->major = $group->id. $user->id . $i;
-                    $beacon->place = "Wow Place $i";
-                    $beacon->uuid = UUID::v4();
+                    $beacon->title = "Test title $i";
+                    $beacon->description = "Test description $i";
+                    $beacon->major = 1;
+                    $beacon->minor = $i;
+                    $beacon->place = "Test Place $i";
+                    $beacon->uuid = $uuid;
                     $beacon->groupToBind = $group->id;
                     $beacon->save();
                 }

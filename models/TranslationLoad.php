@@ -1,7 +1,7 @@
 <?php
 namespace app\models;
 use app\components\Alert;
-use app\components\FilePathBehavior;
+use app\components\FileSaveBehavior;
 use app\components\KReader;
 use app\components\xlsImport;
 use Yii;
@@ -40,8 +40,7 @@ class TranslationLoad extends Model
     {
         return [
            'filePath' => [
-               'class' => FilePathBehavior::className(),
-               'file_attribute' => 'file'
+               'class' => FileSaveBehavior::className(),
            ]
         ];
     }
@@ -60,15 +59,6 @@ class TranslationLoad extends Model
         return true;
     }
 
-    public function getFileSavePath()
-    {
-        return self::getFileSaveDir() .  DIRECTORY_SEPARATOR;
-    }
-
-    public function getFileViewPath()
-    {
-        return self::getFileViewUrl() .  '/';
-    }
 
 
 

@@ -31,6 +31,8 @@ $this->title = Yii::t('app', 'Beacons');
             'description:html',
             'place',
              'uuid',
+             'major',
+             'minor',
 
             ['class' => 'yii\grid\ActionColumn',
              'controller' => 'beacon',

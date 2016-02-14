@@ -60,6 +60,7 @@ class SiteController extends MainController
 
     public function actionIndex()
     {
+        $this->layout = 'landing-base-layout';
         return $this->render('index');
     }
 

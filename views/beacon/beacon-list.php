@@ -29,7 +29,7 @@ $this->title = Yii::t('app', 'Beacons');
                 }
             ],
             'description:html',
-            'place',
+            'groupsName',
              'uuid',
              'major',
              'minor',

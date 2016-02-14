@@ -1,13 +1,16 @@
 <?php
 namespace app\controllers;
+
 use app\filters\AuthKeyFilter;
 use app\helpers\Helper;
 use app\models\Beacons;
 use app\filters\FilterJson;
 use app\models\ClientBeacons;
 use app\models\ClientUsers;
+use app\models\Groups;
 use app\models\Info;
 use Yii;
+use yii\db\ActiveQuery;
 use yii\filters\VerbFilter;
 use yii\web\ErrorAction;
 use yii\web\ErrorHandler;
@@ -25,86 +28,110 @@ use yii\web\HttpException;
  * Examples of response :
  *
  * [{"title":"Nice beaconsss","description":"Simple beacon for test","absolutePicture":"http://yii2.test/beacon_images/1/PDJaGxSxhms1PTiT.png","status":200},{"status":400}]
-   {"name":"Bad Request","message":"Invalid data","code":0,"status":400,"type":"yii\\web\\HttpException"}
+ * {"name":"Bad Request","message":"Invalid data","code":0,"status":400,"type":"yii\\web\\HttpException"}
  * @property ClientUsers $client_user
  */
-
-class ApiController extends MainController {
+class ApiController extends MainController
+{
 
     const INVALID_REQUEST_DATA = 400;
     const UNAUTHORIZED = 401;
     const OK = 200;
     const NOT_FOUND = 404;
     public $enableCsrfValidation = false;
-    public function init() {
+
+
+    public function init()
+    {
         $handler = new ErrorHandler();
         $handler->errorAction = 'api/error';
-        Yii::$app->set('errorHandler',$handler);
+        Yii::$app->set('errorHandler', $handler);
         $handler->register();
     }
 
+
     public $client_user = null;
 
-    public function actions () {
+
+    public function actions()
+    {
         return [
             'error' => ErrorAction::className()
         ];
     }
 
-    public function behaviors() 
+
+    public function behaviors()
     {
         return [
             'json-filter' => FilterJson::className(),
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
-                    'login'  => ['post'],
-                    'register'   => ['post'],
+                    'login' => ['post'],
+                    'register' => ['post'],
                     'info' => ['post']
                 ]
             ],
             'auth' => [
                 'class' => AuthKeyFilter::className(),
-                'except' => ['login','register','fb-auth']
+                'except' => ['login', 'register', 'fb-auth', 'test', 'groups']
             ],
-
-
         ];
     }
 
-    public function actionBeaconData($beacons) {
 
-
+    public function actionBeaconData($beacons)
+    {
         $return = [];
-        if($beacons = json_decode($beacons,true))
+        if($beacons = json_decode($beacons, true))
         {
-            foreach($beacons as $beacon){
+            foreach ($beacons as $beacon)
+            {
                 if(isset($beacon['uuid']) && isset($beacon['minor']) && isset($beacon['major']))
                 {
-                    $beacon = Beacons::find()->filterWhere(['uuid' => $beacon['uuid'], 'minor' => $beacon['minor'], 'major' => $beacon['major']])->one();
-                    if($beacon instanceof Beacons) {
+                    $query = Beacons::find()->filterWhere([Beacons::tableName() . '.uuid' => $beacon['uuid'], Beacons::tableName() . '.minor' => $beacon['minor'], Beacons::tableName() . '.major' => $beacon['major']]);
+                    if($this->client_user instanceof ClientUsers)
+                    {
+                        $client_group_ids = $this->client_user->getGroupIds();
+                        if(is_array($client_group_ids) && count($client_group_ids) > 0)
+                        {
+                            $query->joinWith(['groups' => function (ActiveQuery $query) use ($client_group_ids)
+                            {
+                                $query->andWhere(['in', Groups::tableName() . '.id',$client_group_ids]);
+                            }]);
+                        }
+                    }
+                    $beacon = $query->one();
+                    if($beacon instanceof Beacons)
+                    {
                         $beacon_statistic = new ClientBeacons();
                         $beacon_statistic->beacon_id = $beacon->id;
                         if($this->client_user instanceof ClientUsers)
+                        {
                             $beacon_statistic->client_id = $this->client_user->id;
+                        }
                         $beacon_statistic->save();
                         $beacon = $beacon->toArray();
                         $beacon['status'] = self::OK;
                     }
-                    else $beacon = ['status'=>self::NOT_FOUND];
+                    else $beacon = ['status' => self::NOT_FOUND];
                     $return[] = $beacon;
                 }
-                else {
-                    $return[] = ['status'=>self::INVALID_REQUEST_DATA];
+                else
+                {
+                    $return[] = ['status' => self::INVALID_REQUEST_DATA];
                 }
             }
             return $return;
         }
-        else throw new HttpException(400,'Invalid data');
+        else throw new HttpException(400, 'Invalid data');
     }
 
-    public function actionLogin() {
-       $model = new ClientUsers();
+
+    public function actionLogin()
+    {
+        $model = new ClientUsers();
         if($model->load(Yii::$app->request->post()))
         {
             if($model->login())
@@ -112,39 +139,50 @@ class ApiController extends MainController {
                 return ['auth_key' => $model->auth_key];
             }
         }
-        throw new HttpException(401,'You have not been authorized ' . Helper::recursive_implode($model->errors,',',false,false));
+        throw new HttpException(401, 'You have not been authorized ' . Helper::recursive_implode($model->errors, ',', false, false));
     }
 
-    public function actionRegister() {
+
+    public function actionRegister()
+    {
         $model = new ClientUsers();
-        if($model->load(Yii::$app->request->post())) {
-            if($model->save()) {
-                return ['auth_key'=>$model->auth_key];
-            }
-        }
-        throw new HttpException(400,'Your credentials are invalid ' . Helper::recursive_implode($model->errors,',',false,false));
-    }
-
-    public function actionFbAuth() {
-        $model = new ClientUsers();
-        if($model->load(Yii::$app->request->post())) {
-            if($model->fbAuth()) {
-                return ['auth_key'=>$model->auth_key];
-            }
-        }
-        throw new HttpException(400,'Your credentials are invalid ' . Helper::recursive_implode($model->errors,',',false,false));
-    }
-
-    public function actionInfo() {
-
-    $info = file_get_contents('php://input');
-
-        if($info = json_decode($info,true))
+        if($model->load(Yii::$app->request->post()))
         {
-            foreach($info as $key=>$value) {
-                $model = Info::findOne(['key'=>$key,'client_id'=>$this->client_user->id]);
+            if($model->save())
+            {
+                return ['auth_key' => $model->auth_key];
+            }
+        }
+        throw new HttpException(400, 'Your credentials are invalid ' . Helper::recursive_implode($model->errors, ',', false, false));
+    }
+
+
+    public function actionFbAuth()
+    {
+        $model = new ClientUsers();
+        if($model->load(Yii::$app->request->post()))
+        {
+            if($model->fbAuth())
+            {
+                return ['auth_key' => $model->auth_key];
+            }
+        }
+        throw new HttpException(400, 'Your credentials are invalid ' . Helper::recursive_implode($model->errors, ',', false, false));
+    }
+
+
+    public function actionInfo()
+    {
+        $info = file_get_contents('php://input');
+        if($info = json_decode($info, true))
+        {
+            foreach ($info as $key => $value)
+            {
+                $model = Info::findOne(['key' => $key, 'client_id' => $this->client_user->id]);
                 if(!($model instanceof Info))
+                {
                     $model = new Info();
+                }
                 $model->key = $key;
                 $model->value = $value;
                 if($this->client_user instanceof ClientUsers)
@@ -154,8 +192,33 @@ class ApiController extends MainController {
                 $model->save();
             }
         }
-        else throw new HttpException(400,'Invalid info');
+        else throw new HttpException(400, 'Invalid info');
+    }
 
+
+    public function actionGroups()
+    {
+        $return = [];
+        $groups = Groups::find()->all();
+        foreach ($groups as $group)
+        {
+            $return[] = $group->toArray(['id', 'name']);
+        }
+        return $return;
+    }
+
+
+    public function actionTest()
+    {
+        return [5,18];
+    }
+
+
+    public function actionTestQuery() {
+        $params = Yii::$app->request->getBodyParams();
+        foreach($params as $key=>$value) {
+            echo "<span>Key : ". $key . ', ' . 'Value : ' . $value . "</span><br>";
+        }
     }
 
 

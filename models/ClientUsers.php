@@ -12,6 +12,7 @@ use yii\db\ActiveQuery;
  * @property string $email
  * @property string $password
  * @property string $auth_key
+ * @property string $group_ids
  */
 class ClientUsers extends MainActiveRecord
 {
@@ -33,6 +34,7 @@ class ClientUsers extends MainActiveRecord
     {
         return [
             [['email', 'password', 'auth_key','fb_identifier'], 'string', 'max' => 256],
+            ['group_ids','safe'],
             ['email','email'],
             ['email','unique']
         ];
@@ -94,6 +96,11 @@ class ClientUsers extends MainActiveRecord
         return true;
     }
 
+
+    public function getGroupIds() {
+        $return =  json_decode($this->group_ids,true);
+        return $return;
+    }
 
 
 

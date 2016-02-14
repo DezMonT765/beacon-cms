@@ -30,6 +30,7 @@ $this->title = Yii::t('app', 'Groups');
                 }
             ],
             'alias',
+            'place',
 
             ['class' => 'yii\grid\ActionColumn'],
         ],

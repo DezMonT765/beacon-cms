@@ -51,7 +51,14 @@ class Beacons extends MainActiveRecord
         ];
     }
 
-
+    public function getGroupsName() {
+        $groups =  $this->groups;
+        $names = [];
+        foreach($groups as $group) {
+            $names[] = $group->name;
+        }
+        return implode(',',$names);
+    }
 
     public $absolutePicture;
     public $pictureFile;

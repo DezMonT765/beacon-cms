@@ -7,9 +7,7 @@ use yii\widgets\Breadcrumbs;
 
 /* @var $this \app\components\MainView */
 
-include_once('header.php');
-?>
-<?php $this->beginBody() ?>
+$this->beginContent('@app/views/layouts/base-layout.php'); ?>
 <div class="wrap">
    <?php
     
@@ -37,5 +35,5 @@ include_once('header.php');
         <?= $content ?>
     </div>
 </div>
-<?php include_once('footer.php');?>
+<?php $this->endContent()?>
 

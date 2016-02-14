@@ -2,10 +2,8 @@
 
 namespace app\controllers;
 
-use app\commands\RbacController;
 use app\components\Alert;
 use app\filters\SiteLayout;
-use app\models\BeaconPins;
 use app\models\LoginForm;
 use app\models\PasswordResetForm;
 use app\models\RegisterForm;
@@ -13,7 +11,6 @@ use app\models\PasswordChangeForm;
 use Yii;
 use yii\base\InvalidParamException;
 use yii\filters\AccessControl;
-use app\models\Users;
 use app\models\ContactForm;
 use yii\helpers\Url;
 use yii\web\BadRequestHttpException;

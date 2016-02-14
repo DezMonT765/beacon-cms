@@ -18,6 +18,7 @@ class LandingAsset extends AssetBundle
     public $basePath = '@webroot';
     public $baseUrl = '@web';
     public $css = [
+        'css/landing-bootstrap.min.css',
         'css/animate.min.css',
         'css/creative.css',
     ];
@@ -30,8 +31,8 @@ class LandingAsset extends AssetBundle
         'libs/wow.min.js'
 
     ];
+
     public $depends = [
-        'yii\bootstrap\BootstrapAsset',
         'yii\web\JqueryAsset',
     ];
 }

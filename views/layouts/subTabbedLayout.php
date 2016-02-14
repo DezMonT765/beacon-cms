@@ -7,9 +7,7 @@ use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
 /* @var $this \app\components\MainView */
 
-include_once('header.php');
-?>
-<?php $this->beginBody() ?>
+$this->beginContent('@app/views/layouts/base-layout.php'); ?>
 <div class="wrap">
     <?php
     NavBar::begin([
@@ -47,5 +45,5 @@ include_once('header.php');
         </div>
     </div>
 </div>
-<?php include_once('footer.php');?>
+<?php $this->endContent()?>
 

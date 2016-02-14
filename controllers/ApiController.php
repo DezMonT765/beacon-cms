@@ -217,10 +217,14 @@ class ApiController extends MainController
 
 
     public function actionTestQuery() {
-        $params = Yii::$app->request->getQueryParams();
+        $get = Yii::$app->request->getQueryParams();
+        $post = Yii::$app->request->getBodyParams();
         $result = "";
-        foreach($params as $key=>$value) {
-            $result .=  "Key : ". $key . ', ' . 'Value : ' . $value . "\n";
+        foreach($get as $key=>$value) {
+            $result .=  "Key : ". $key . ', ' . 'Value : ' . $value . ";";
+        }
+        foreach($post as $key=>$value) {
+            $result .=  "Key : ". $key . ', ' . 'Value : ' . $value . ";";
         }
         return $result;
     }

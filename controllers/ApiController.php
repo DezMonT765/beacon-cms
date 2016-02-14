@@ -75,7 +75,7 @@ class ApiController extends MainController
             ],
             'auth' => [
                 'class' => AuthKeyFilter::className(),
-                'except' => ['login', 'register', 'fb-auth', 'test', 'groups']
+                'except' => ['login', 'register', 'fb-auth', 'test', 'groups','test-query']
             ],
         ];
     }

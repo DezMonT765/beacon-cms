@@ -64,7 +64,9 @@ class ApiController extends MainController
     public function behaviors()
     {
         return [
-            'json-filter' => FilterJson::className(),
+            'json-filter' => [
+                'class' => FilterJson::className(),
+             ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
@@ -215,10 +217,12 @@ class ApiController extends MainController
 
 
     public function actionTestQuery() {
-        $params = Yii::$app->request->getBodyParams();
+        $params = Yii::$app->request->getQueryParams();
+        $result = "";
         foreach($params as $key=>$value) {
-            echo "<span>Key : ". $key . ', ' . 'Value : ' . $value . "</span><br>";
+            $result .=  "Key : ". $key . ', ' . 'Value : ' . $value . "\n";
         }
+        return $result;
     }
 
 

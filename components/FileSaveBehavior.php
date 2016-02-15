@@ -109,7 +109,8 @@ class FileSaveBehavior extends Behavior
                 {
                     FileHelper::createDirectory($this->getFileSavePath($attribute));
                 }
-                if(!Helper::_is_link($this->getBackendViewDir($attribute)))
+
+                if($this->getBackendViewDir($attribute) !== $this->getFileSavePath($attribute) && !Helper::_is_link($this->getBackendViewDir($attribute)))
                 {
                     if(is_dir($this->getBackendViewDir($attribute)))
                     {
@@ -117,7 +118,7 @@ class FileSaveBehavior extends Behavior
                     }
                     symlink($this->getFileSaveDir($attribute), $this->getBackendViewDir($attribute));
                 }
-                if(!Helper::_is_link($this->getFrontendViewDir($attribute)))
+                if($this->getFrontendViewDir($attribute) !== $this->getFileSavePath($attribute) && !Helper::_is_link($this->getFrontendViewDir($attribute)))
                 {
                     if(is_dir($this->getFrontendViewDir($attribute)))
                     {

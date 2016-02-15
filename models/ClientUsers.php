@@ -65,7 +65,7 @@ class ClientUsers extends MainActiveRecord
         return true;
     }
 
-    public function  login() {
+    public function login() {
         $client_user = ClientUsers::findOne(['email'=>$this->email]);
         if($client_user instanceof ClientUsers) {
             if(!Yii::$app->getSecurity()->validatePassword($this->password, $client_user->password)) {

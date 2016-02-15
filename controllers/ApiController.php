@@ -9,12 +9,14 @@ use app\models\ClientBeacons;
 use app\models\ClientUsers;
 use app\models\Groups;
 use app\models\Info;
+use app\models\Users;
 use Yii;
 use yii\db\ActiveQuery;
 use yii\filters\VerbFilter;
 use yii\web\ErrorAction;
 use yii\web\ErrorHandler;
 use yii\web\HttpException;
+use yii\web\User;
 
 /**
  * Created by PhpStorm.
@@ -138,6 +140,11 @@ class ApiController extends MainController
         {
             if($model->login())
             {
+                $user = ClientUsers::findByEmail($model->email);
+                if($user instanceof ClientUsers) {
+                    $user->group_ids = $model->group_ids;
+                    $user->save();
+                }
                 return ['auth_key' => $model->auth_key];
             }
         }

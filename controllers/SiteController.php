@@ -57,6 +57,8 @@ class SiteController extends MainController
 
     public function actionIndex()
     {
+        if(!Yii::$app->user->isGuest)
+           return $this->redirect(['user/list']);
         $this->layout = 'landing-base-layout';
         return $this->render('index');
     }

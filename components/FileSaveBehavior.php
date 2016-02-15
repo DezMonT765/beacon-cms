@@ -1,5 +1,6 @@
 <?php
 namespace app\components;
+use app\helpers\Helper;
 use app\models\MainActiveRecord;
 use Yii;
 use yii\base\Behavior;

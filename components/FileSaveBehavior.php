@@ -109,25 +109,6 @@ class FileSaveBehavior extends Behavior
                 {
                     FileHelper::createDirectory($this->getFileSavePath($attribute));
                 }
-                $file_save_path = $this->getFileSaveDir($attribute);
-                $backend_view_dir = $this->getBackendViewDir($attribute);
-                if($file_save_path !== $backend_view_dir && !Helper::_is_link($backend_view_dir))
-                {
-                    if(is_dir($this->getBackendViewDir($attribute)))
-                    {
-                        FileHelper::removeDirectory($this->getBackendViewDir($attribute));
-                    }
-                    symlink($this->getFileSaveDir($attribute), $this->getBackendViewDir($attribute));
-                }
-                $frontend_view_dir = $this->getFrontendViewDir($attribute);
-                if($file_save_path !== $frontend_view_dir && !Helper::_is_link($frontend_view_dir))
-                {
-                    if(is_dir($this->getFrontendViewDir($attribute)))
-                    {
-                        FileHelper::removeDirectory($this->getFrontendViewDir($attribute));
-                    }
-                    symlink($this->getFileSaveDir($attribute), $this->getFrontendViewDir($attribute));
-                }
                 if($this->file_attributes[$attribute][self::INSTANCE]->saveAs($this->getFileSavePath($attribute) . $this->owner->$attribute))
                 {
                     if(isset(self::getFileAttributeParams($attribute)[self::ON_SAVE]) && is_callable(self::getFileAttributeParams($attribute)[self::ON_SAVE]))

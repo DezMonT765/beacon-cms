@@ -36,7 +36,7 @@ $this->title = Yii::t('app', 'Beacons');
 
             ['class' => 'yii\grid\ActionColumn',
              'controller' => 'beacon',
-             'template' => Yii::$app->user->can(\app\commands\RbacController::delete_beacon) ? '{view}{update}{delete}' : '{view}{update}'
+             'template' => Yii::$app->user->can(\app\commands\RbacController::delete_beacon) ? '{update}{delete}' : '{update}'
             ],
         ],
     ]); ?>

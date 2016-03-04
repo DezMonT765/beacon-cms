@@ -79,7 +79,7 @@ class ApiController extends MainController
             ],
             'auth' => [
                 'class' => AuthKeyFilter::className(),
-                'except' => ['login', 'register', 'fb-auth', 'test', 'groups','test-query']
+                'except' => ['login', 'register', 'fb-auth', 'test', 'groups','test-query','password-restore']
             ],
         ];
     }
@@ -163,6 +163,13 @@ class ApiController extends MainController
             }
         }
         throw new HttpException(400, 'Your credentials are invalid ' . Helper::recursive_implode($model->errors, ',', false, false));
+    }
+
+    public function actionPasswordRestore() {
+        $model = new ClientUsers();
+        if($model->load(Yii::$app->request->post())) {
+            $model->sendPasswordRestoreEmail();
+        }
     }
 
 

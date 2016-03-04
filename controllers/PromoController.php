@@ -61,7 +61,7 @@ class PromoController extends MainController {
     {
         if(!\Yii::$app->user->isGuest)
         {
-            return $this->goHome();
+            return $this->redirect(['beacon/list']);
         }
 
         $model = new PromoForm();
@@ -69,7 +69,7 @@ class PromoController extends MainController {
             $model->role = RbacController::promo_user;
             if ($user = $model->register()) {
                 if (Yii::$app->user->login($user)) {
-                    return $this->goHome();
+                    return $this->redirect(['beacon/list']);
                 }
             }
         }

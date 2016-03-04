@@ -81,6 +81,16 @@ use yii\helpers\Url;
     </div>
 </header>
 
+<aside class="bg-dark">
+    <div class="container text-center">
+        <div class="call-to-action">
+            <h2>Feel free to download our application</h2>
+            <a href="#" class="btn btn-default btn-xl wow tada" style="background: none;"><img src="/img/android-button.png" width="200"></a>
+            <a href="#" class="btn btn-default btn-xl wow tada" style="background: none;"><img src="/img/ios-button.png" width="200"></a>
+        </div>
+    </div>
+</aside>
+
 <section class="bg-primary" id="about">
     <div class="container">
         <div class="row">
@@ -93,6 +103,8 @@ use yii\helpers\Url;
         </div>
     </div>
 </section>
+
+
 
 <section id="services">
     <div class="container">
@@ -139,14 +151,7 @@ use yii\helpers\Url;
 
 
 
-<aside class="bg-dark">
-    <div class="container text-center">
-        <div class="call-to-action">
-            <h2>Free Download at Start Bootstrap!</h2>
-            <a href="#" class="btn btn-default btn-xl wow tada">Download Now!</a>
-        </div>
-    </div>
-</aside>
+
 
 <section id="contact">
     <div class="container">

@@ -8,13 +8,16 @@ use app\components\Alert;
 use app\filters\GroupLayout;
 use app\filters\GroupManageLayout;
 use app\models\BeaconsSearch;
+use app\models\Users;
 use Yii;
 use app\models\Groups;
 use app\models\GroupSearch;
+use yii\db\ActiveQuery;
 use yii\filters\AccessControl;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\Response;
+use yii\web\User;
 
 /**
  * GroupController implements the CRUD actions for Groups model.
@@ -187,7 +190,23 @@ class GroupController extends MainController
 
     public function actionGetSelectionList()
     {
-        parent::selectionList(Groups::className(), 'name');
+        /** @var Groups $model_class */
+        $value = Yii::$app->request->getQueryParam('value');
+        $query = Groups::find();
+        $query->filterWhere(['like','name', $value]);
+        $user = Users::getLogged(true);
+        if($user->role == RbacController::user) {
+            $query->joinWith(['users' => function (ActiveQuery $query) use($user) {
+                $query->andFilterWhere([Users::tableName().'.id' => $user->id]);
+            }]);
+        }
+        $models =  $query->all();
+        $model_array = [];
+        foreach ($models as $model)
+        {
+            $model_array[] =['id'=>$model->id,'text'=>  $model->name ];
+        }
+        echo json_encode(['more'=>false,'results'=>$model_array]);
     }
 
 

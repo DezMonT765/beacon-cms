@@ -28,7 +28,6 @@ class AdminBeaconLayout extends UserBeaconLayout
 
         $tabs = parent::getTabs($active);
         array_splice($tabs,1,0,[['label'=>Yii::t('beacon_layout', ':beacon_create'),'url'=>Url::to(['beacon/create']),'active'=>self::getActive($active,TabbedLayout::create())]]);
-        array_splice($tabs,2,0,[['label'=>Yii::t('beacon_layout', ':beacon_map'),'url'=>Url::to(['beacon/map']),'active'=>self::getActive($active,AdminBeaconLayout::map())]]);
         return $tabs;
     }
 

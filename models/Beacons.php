@@ -200,4 +200,8 @@ class Beacons extends MainActiveRecord
         $fields['groupToBind'] = 'groupToBind';
         return $fields;
     }
+    
+    public function getBeaconPins() {
+        return $this->hasOne(BeaconPins::className(),['id'=>'id']);
+    }
 }

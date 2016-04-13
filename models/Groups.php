@@ -1,8 +1,8 @@
 <?php
-
 namespace app\models;
 
 use app\behaviors\AliasBehavior;
+use app\components\FileSaveBehavior;
 use Yii;
 
 /**
@@ -22,54 +22,64 @@ use Yii;
  */
 class Groups extends MainActiveRecord
 {
+
+    public static function getDropdownList() {
+        $result = [];
+        $models = self::find()->all();
+        foreach($models as $model) {
+            $result[$model->id] = $model->name;
+        }
+        return $result;
+    }
+
+
+    public function init() {
+        /**@var Beacons | FileSaveBehavior $this*/
+        $this->addFileAttribute('map','@group_save_dir','@group_view_dir','@backend_group_view_dir','@frontend_group_view_dir','@group_view_url');
+    }
     /**
      * @inheritdoc
      */
-    public static function tableName()
-    {
+    public static function tableName() {
         return 'groups';
     }
 
 
     public function behaviors() {
-        return ['slug' => [
-            'class' => AliasBehavior::className(),
-            'in_attribute' => 'name',
-            'out_attribute' => 'alias',
-            'translit' => true
-        ]];
-    }
-
-
-    /**
-     * @inheritdoc
-     */
-    public function rules()
-    {
         return [
-            [['id'], 'integer'],
-            [['name','alias'], 'required'],
-            [['name'], 'string', 'max' => 64],
-            [['alias'], 'string', 'max' => 64],
-            [['alias'], 'unique' ],
-            ['uuid', 'string','max'=>64],
-            [['major','minor'],'integer'],
-            ['place','string','max'=>256],
-            ['description','safe']
+            'slug' => [
+                'class' => AliasBehavior::className(),
+                'in_attribute' => 'name',
+                'out_attribute' => 'alias',
+                'translit' => true
+            ],
+            'class' => FileSaveBehavior::className(),
         ];
     }
 
 
-
-
-
+    /**
+     * @inheritdoc
+     */
+    public function rules() {
+        return [
+            [['id'], 'integer'],
+            [['name', 'alias'], 'required'],
+            [['name'], 'string', 'max' => 64],
+            [['alias'], 'string', 'max' => 64],
+            [['alias'], 'unique'],
+            ['uuid', 'string', 'max' => 64],
+            [['major', 'minor'], 'integer'],
+            ['place', 'string', 'max' => 256],
+            [['description','map'], 'safe']
+        ];
+    }
 
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'alias' => Yii::t('group', ':alias'),
             'name' => Yii::t('group', ':name'),
@@ -81,34 +91,30 @@ class Groups extends MainActiveRecord
         ];
     }
 
+
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getBeaconBindings()
-    {
+    public function getBeaconBindings() {
         return $this->hasMany(BeaconBindings::className(), ['group_id' => 'id']);
     }
 
-    public function getBeacons()
-    {
-        return $this->hasMany(Beacons::className(),['id'=>'beacon_id'])
-            ->via('beaconBindings');
-    }
 
-    public function getUserBindings()
-    {
-        return $this->hasMany(UserBindings::className(),['group_id'=>'id']);
-    }
-
-    public function getUsers()
-    {
-        return $this->hasMany(Users::className(),['id'=>'user_id'])
-            ->via('userBindings');
+    public function getBeacons() {
+        return $this->hasMany(Beacons::className(), ['id' => 'beacon_id'])
+                    ->via('beaconBindings');
     }
 
 
+    public function getUserBindings() {
+        return $this->hasMany(UserBindings::className(), ['group_id' => 'id']);
+    }
 
 
+    public function getUsers() {
+        return $this->hasMany(Users::className(), ['id' => 'user_id'])
+                    ->via('userBindings');
+    }
 
 
 }

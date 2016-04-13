@@ -2,11 +2,15 @@
 
 namespace app\controllers;
 
+use app\models\Groups;
+use app\models\Users;
 use Yii;
 use app\models\BeaconPins;
+use yii\db\ActiveQuery;
 use yii\helpers\Url;
 use yii\web\Response;
 use yii\web\ServerErrorHttpException;
+use yii\web\User;
 
 /**
  * BeaconPinController implements the CRUD actions for BeaconPins model.
@@ -44,11 +48,15 @@ class BeaconPinController extends MainController
     public function actionJson()
     {
         /** @var BeaconPins $model */
-        $models = BeaconPins::find()->asArray()->all();
-        foreach ($models as &$model)
-        {
-            $model['url'] = Url::to(['beacon/view','id'=>$model['id']]);
-        }
+        $group_id = Yii::$app->request->getQueryParam('group_id');
+        $user = Users::getLogged(true);
+        $models = BeaconPins::find()
+            ->joinWith(['beacon'=>function(ActiveQuery $query) use($group_id) {
+                $query->joinWith(['groups'=>function(ActiveQuery $query) use($group_id) {
+                    $query->andFilterWhere([Groups::tableName(). '.id' => $group_id]);
+                }]);
+            }])->all();
+
         $beacon_pin_array = ['pins'=> $models];
         Yii::$app->response->format = Response::FORMAT_JSON;
         return $beacon_pin_array;

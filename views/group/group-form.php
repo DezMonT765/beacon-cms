@@ -15,11 +15,17 @@ use yii\widgets\ActiveForm;
 
     <fieldset class="col-md-6">
         <legend><?php echo Yii::t('group', ':group_settings')?></legend>
-        <?php $form = ActiveForm::begin(); ?>
+        <?php $form = ActiveForm::begin([
+                                            'options' => ['enctype' => 'multipart/form-data']
+                                        ]); ?>
 
         <?= $form->field($model, 'name')->textInput() ?>
         <?= $form->field($model, 'alias')->textInput() ?>
         <?= $form->field($model, 'description')->textarea() ?>
+        <?if($model->map) : ?>
+        <img width="200" src="<?=$model->getFile('map')?>">
+        <?endif?>
+        <?= $form->field($model, 'map')->fileInput() ?>
     </fieldset>
     <fieldset class="col-md-6">
 

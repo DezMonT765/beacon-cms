@@ -21,7 +21,11 @@ $config = [
         '@beacon_save_dir' =>'@app/web/beacon_images/',
         '@beacon_view_url' => '/beacon_images',
         '@backend_beacon_view_dir' => '@app/web/beacon_images',
-        '@frontend_beacon_view_dir' =>'@app/web/beacon_images'
+        '@frontend_beacon_view_dir' =>'@app/web/beacon_images',
+        '@group_save_dir' =>'@app/web/group_images/',
+        '@group_view_url' => '/group_images',
+        '@backend_group_view_dir' => '@app/web/group_images',
+        '@frontend_group_view_dir' =>'@app/web/group_images'
     ],
     'components' => [
         'cache' => [

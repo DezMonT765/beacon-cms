@@ -419,6 +419,19 @@ class Users extends ActiveRecord implements IdentityInterface
         return $query;
     }
 
+    public function getBeaconPins($query = null) {
+        if($query === null)  {
+            $query = BeaconPins::find();
+        }
+        
+        $user = $this;
+        
+        $query->joinWith(['beacon'=>function(ActiveQuery $query) use ($user) {
+             $user->getBeaconsQuery($query);
+        }]);
+        return $query;
+    }
+
     /**
      * Validates password
      *

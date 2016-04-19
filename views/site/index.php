@@ -85,7 +85,7 @@ use yii\helpers\Url;
     <div class="container text-center">
         <div class="call-to-action">
             <h2>Feel free to download our application</h2>
-            <a href="#" class="btn btn-default btn-xl wow tada" style="background: none;"><img src="/img/android-button.png" width="200"></a>
+            <a target="_blank" href="https://play.google.com/store/apps/details?id=com.kyvlabs.beaconadvertiser" class="btn btn-default btn-xl wow tada" style="background: none;"><img src="/img/android-button.png" width="200"></a>
             <a href="#" class="btn btn-default btn-xl wow tada" style="background: none;"><img src="/img/ios-button.png" width="200"></a>
         </div>
     </div>

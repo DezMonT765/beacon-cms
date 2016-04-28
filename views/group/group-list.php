@@ -18,6 +18,7 @@ $this->title = Yii::t('app', 'Groups');
         'id' => 'group-list',
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
+        'layout' => "{summary}\n{pager}\n{items}\n{pager}",
         'columns' => [
             ['class' => 'yii\grid\CheckboxColumn'],
 

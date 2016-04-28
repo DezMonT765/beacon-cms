@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\commands\RbacController;
 use app\components\Alert;
 use app\filters\SiteLayout;
 use app\models\LoginForm;
@@ -57,8 +58,12 @@ class SiteController extends MainController
 
     public function actionIndex()
     {
-        if(!Yii::$app->user->isGuest)
-           return $this->redirect(['user/list']);
+        if(!Yii::$app->user->isGuest) {
+            if(!Yii::$app->user->can(RbacController::admin))
+                return $this->redirect(['beacon/list']);
+            else
+                return $this->redirect(['user/list']);
+        }
         $this->layout = 'landing-base-layout';
         return $this->render('index');
     }

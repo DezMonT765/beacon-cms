@@ -110,7 +110,7 @@ class Beacons extends MainActiveRecord
             [['minor', 'major'], 'integer'],
             [['title', 'uuid'], 'string', 'max' => 50],
             [['pictureFile'], 'file', 'extensions' => 'jpg, png', 'mimeTypes' => 'image/jpeg, image/png',],
-
+            ['link','url'],
             [['groupToBind','absolutePicture','link','additional_info'],'safe']
         ];
     }

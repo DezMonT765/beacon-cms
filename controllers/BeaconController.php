@@ -189,7 +189,9 @@ class BeaconController extends MainController
                 $group = $user->groups[0];
         }
         if(!$group instanceof Groups) {
-            throw new ForbiddenHttpException('Chosen group doesn\'t contain any map. Please contact to support team, or add the map to the group by yourself.');
+            throw new ForbiddenHttpException('Chosen group doesn\'t contain any map. 
+             Please contact to support team, or add the map to the group by yourself.
+             Also please ensure that you belong at least to one group');
         }
         return $this->render('beacon-map', ['model' => $model,'group'=>$group]);
     }

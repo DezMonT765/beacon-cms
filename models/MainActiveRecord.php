@@ -85,7 +85,7 @@ class MainActiveRecord extends ActiveRecord
                             ['class' => self::className(),
                              'line' => $e->getLine(),
                              'file' => $e->getFile(),
-                             'trace' => $e->getTrace(),
+                             'trace' => $e->getTraceAsString(),
                              'id' => $this->id,
                              'isNewRecord' => $this->isNewRecord,
                              'errors' => $this->errors]);

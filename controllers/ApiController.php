@@ -85,6 +85,7 @@ class ApiController extends MainController
     }
 
 
+
     public function actionBeaconData($beacons)
     {
         $return = [];
@@ -103,6 +104,11 @@ class ApiController extends MainController
                             $query->joinWith(['groups' => function (ActiveQuery $query) use ($client_group_ids)
                             {
                                 $query->andWhere(['in', Groups::tableName() . '.id',$client_group_ids]);
+                            }]);
+                        }
+                        else {
+                            $query->joinWith(['groups' => function(ActiveQuery $query) {
+                                $query->andWhere(['name'=>'Default']);
                             }]);
                         }
                     }
@@ -220,7 +226,7 @@ class ApiController extends MainController
         $groups = Groups::find()->all();
         foreach ($groups as $group)
         {
-            $return[] = $group->toArray(['id', 'name']);
+            $return[] = $group->toArray(['id', 'name','uuid']);
         }
         return $return;
     }

@@ -3,6 +3,7 @@ namespace app\models;
 
 use app\behaviors\AliasBehavior;
 use app\components\FileSaveBehavior;
+use app\components\UUID;
 use Yii;
 
 /**
@@ -43,6 +44,19 @@ class Groups extends MainActiveRecord
     public static function tableName() {
         return 'groups';
     }
+    
+    public function afterSave($insert, $changedAttributes) {
+        parent::afterSave($insert, $changedAttributes); 
+        $this->updateBeacons();
+    }
+    
+    public function updateBeacons() {
+        $beacons = $this->beacons;
+        foreach($beacons as $beacon) {
+            $beacon->uuid = $this->uuid;
+            $beacon->updateAttributes(['uuid']);
+        } 
+    } 
 
 
     public function behaviors() {
@@ -56,6 +70,8 @@ class Groups extends MainActiveRecord
             'class' => FileSaveBehavior::className(),
         ];
     }
+
+    public $is_force_uuid = false;
 
 
     /**
@@ -73,6 +89,15 @@ class Groups extends MainActiveRecord
             ['place', 'string', 'max' => 256],
             [['description','map'], 'safe']
         ];
+    }
+
+    public function beforeSave($insert) {
+        if(parent::beforeSave($insert)) {
+            if(empty($this->uuid) || $this->is_force_uuid)
+                $this->uuid = UUID::v4();
+            return true;
+        }
+        else return false;
     }
 
 

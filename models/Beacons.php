@@ -6,6 +6,7 @@ use app\components\Crop;
 use app\components\FileSaveBehavior;
 use app\helpers\HelperImage;
 use Yii;
+use yii\web\Request;
 use yii\web\UploadedFile;
 
 /**
@@ -43,6 +44,18 @@ class Beacons extends MainActiveRecord
                 Crop::getAttribute($attribute,Crop::SCALE)
             );
         });
+
+        $this->addFileAttribute('horizontal_picture','@beacon_save_dir','@beacon_view_dir','@backend_beacon_view_dir','@frontend_beacon_view_dir','@beacon_view_url',function ($attribute,$file_path) use ($crop) {
+            HelperImage::imgCropByScale(
+                $file_path,
+                $file_path,
+                Crop::getAttribute($attribute,Crop::X1),
+                Crop::getAttribute($attribute,Crop::Y1),
+                Crop::getAttribute($attribute,Crop::WIDTH),
+                Crop::getAttribute($attribute,Crop::HEIGHT),
+                Crop::getAttribute($attribute,Crop::SCALE)
+            );
+        });
     }
 
     public function behaviors() {
@@ -61,6 +74,7 @@ class Beacons extends MainActiveRecord
     }
 
     public $absolutePicture;
+    public $absoluteHorizontalPicture;
     public $pictureFile;
     /**
      * @inheritdoc
@@ -97,6 +111,29 @@ class Beacons extends MainActiveRecord
         }
     }
 
+    public function getGroupId() {
+        return $this->groupToBind;
+    }
+
+    public function getGroupName() {
+        if($this->groupToBind !== null)
+        {
+            return $this->groupToBind;
+        }
+        else {
+            $group = $this->getGroups()->one();
+            if($group instanceof Groups)
+            {
+                $result = $group->name;
+                return $result;
+            }
+            else {
+                $result = '';
+                return $result;
+            }
+        }
+    }
+
 
     /**
      * @inheritdoc
@@ -111,7 +148,7 @@ class Beacons extends MainActiveRecord
             [['title', 'uuid'], 'string', 'max' => 50],
             [['pictureFile'], 'file', 'extensions' => 'jpg, png', 'mimeTypes' => 'image/jpeg, image/png',],
             ['link','url'],
-            [['groupToBind','absolutePicture','link','additional_info'],'safe']
+            [['groupToBind','absolutePicture','groupName','groupId','absoluteHorizontalPicture','link','additional_info'],'safe']
         ];
     }
 
@@ -191,7 +228,10 @@ class Beacons extends MainActiveRecord
 
     public function afterFind()
     {
-        $this->absolutePicture = Yii::$app->request->getHostInfo() . $this->getFile('picture');
+        if(Yii::$app->request instanceof Request) {
+            $this->absolutePicture = Yii::$app->request->getHostInfo() . $this->getFile('picture');
+            $this->absoluteHorizontalPicture =  Yii::$app->request->getHostInfo() . $this->getFile('horizontal_picture');
+        }
     }
 
     public function fields(){

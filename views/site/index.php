@@ -60,7 +60,7 @@ use yii\helpers\Url;
                     <a class="page-scroll" href="<?=Url::to(['site/login'])?>">Login</a>
                 </li>
                 <li>
-                    <a class="page-scroll" href="<?=Url::to(['site/register'])?>">Register</a>
+                    <a class="page-scroll" href="<?=Url::to(['promo/register'])?>">Register</a>
                 </li>
             </ul>
         </div>

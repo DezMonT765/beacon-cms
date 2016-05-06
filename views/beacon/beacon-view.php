@@ -35,6 +35,11 @@ $this->params['breadcrumbs'][] = $this->title;
                 'value' => Html::img($model->getFile('picture'),['width'=>250]),
                 'format'=>'html'
             ],
+                [
+                    'attribute'=>'horizontal_picture',
+                    'value' => Html::img($model->getFile('horizontal_picture'),['width'=>250]),
+                    'format'=>'html'
+                ],
             'place',
             'uuid',
             'minor',

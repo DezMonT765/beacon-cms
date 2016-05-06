@@ -53,6 +53,7 @@ use yii\widgets\ActiveForm;
             <?= $form->field($model, 'additional_info')->textArea() ?>
 
             <?= $form->field($model, 'picture')->fileInput(['maxlength' => 256]) ?>
+            <?= $form->field($model, 'horizontal_picture')->fileInput(['maxlength' => 256]) ?>
         </fieldset>
         <fieldset class="col-md-12">
         <div class="form-group">
@@ -90,6 +91,14 @@ use yii\widgets\ActiveForm;
         $(this).attr('value',null);
     }).on('change',function(e){
         image_crop.start(e);
+    });
+
+    var h_image_id = "<?=Html::getInputId($model,'horizontal_picture')?>";
+    var h_image_crop = new Crop('horizontal_picture',250, 4 / 3, h_image_id);
+    $('#' + h_image_id).on('click',function(){
+        $(this).attr('value',null);
+    }).on('change',function(e){
+        h_image_crop.start(e);
     });
 
 </script>

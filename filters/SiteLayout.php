@@ -75,7 +75,7 @@ class SiteLayout extends LayoutFilter
     {
         return [
             ['label'=>Yii::t('site_layout',':login'),'url'=>Url::to(['site/login']),'active'=>self::getActive($active,SiteLayout::login())],
-            ['label'=>Yii::t('site_layout',':register'),'url'=>Url::to(['site/register']),'active'=>self::getActive($active,SiteLayout::register())]
+            ['label'=>Yii::t('site_layout',':register'),'url'=>Url::to(['promo/register']),'active'=>self::getActive($active,SiteLayout::register())]
         ];
     }
 
@@ -111,7 +111,7 @@ class SiteLayout extends LayoutFilter
     {
         return [
             ['label'=>Yii::t('site_layout',':login'),'url'=>Url::to(['site/login']),'active'=>self::getActive($active,SiteLayout::login())],
-            ['label'=>Yii::t('site_layout',':register'),'url'=>Url::to(['site/register']),'active'=>self::getActive($active,SiteLayout::register())]
+            ['label'=>Yii::t('site_layout',':register'),'url'=>Url::to(['promo/register']),'active'=>self::getActive($active,SiteLayout::register())]
         ];
     }
 

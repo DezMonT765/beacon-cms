@@ -53,11 +53,9 @@ class PromoForm extends RegisterForm
         {
             $group = new Groups();
             $group->name = $this->group_name;
-
             if($group->save())
             {
                 $user = parent::register($group->id);
-                $uuid = UUID::v4();
                 for ($i = 0; $i < $this->beacon_count; $i++)
                 {
                     $beacon = new Beacons();
@@ -67,7 +65,7 @@ class PromoForm extends RegisterForm
                     $beacon->major = 1;
                     $beacon->minor = $i;
                     $beacon->place = "Test Place $i";
-                    $beacon->uuid = $uuid;
+                    $beacon->uuid = $group->uuid;
                     $beacon->groupToBind = $group->id;
                     $beacon->save();
                 }

@@ -34,6 +34,9 @@ return [
         'apcCache' => [
             'class' => 'yii\caching\ApcCache',
         ],
+        'session' => [
+            'class' => 'yii\web\DbSession'
+        ],
     ],
     'params' => $params,
 ];

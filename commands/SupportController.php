@@ -23,4 +23,9 @@ class SupportController extends Controller {
         }
         Alert::varDumpAlert();
     }
+
+    public function actionTest() {
+        $session = \Yii::$app->session;
+        var_dump($session);
+    }
 }

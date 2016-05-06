@@ -1,6 +1,6 @@
 <?php
-require_once('../components/MainView.php');
-require_once('../models/Languages.php');
+require_once(dirname(__DIR__) . '/components/MainView.php');
+require_once(dirname(__DIR__) .'/models/Languages.php');
 use app\components\MainView;
 use app\models\Languages;
 

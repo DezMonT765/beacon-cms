@@ -30,7 +30,7 @@
     ],
     "require": {
         "php": ">=5.4.0",
-        "yiisoft/yii2": "2.0.6",
+        "yiisoft/yii2": "2.0.8",
         "yiisoft/yii2-bootstrap": "*",
         "dezmont765/yii2-grid-view-library" : "dev-master",
         "zyx/zyx-phpmailer": "dev-log-fix",

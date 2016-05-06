@@ -1,5 +1,6 @@
 <?php
 namespace app\commands;
+use app\components\Alert;
 use app\models\Groups;
 use yii\console\Controller;
 
@@ -20,5 +21,6 @@ class SupportController extends Controller {
             $group->is_force_uuid = $is_force;
             $group->save();
         }
+        Alert::varDumpAlert();
     }
 }

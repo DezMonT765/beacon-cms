@@ -6,13 +6,22 @@
  * Time: 17:42
  */
 namespace app\models;
+use app\components\Alert;
+use Exception;
 use Yii;
 use yii\db\ActiveRecord;
+use yii\db\BaseActiveRecord;
+use yii\db\Transaction;
 
+/**
+ *
+ * @class MainActiveRecord
+ * @property Transaction $transaction
+ */
 class MainActiveRecord extends ActiveRecord
 {
-    public $transaction;
-
+    public $is_saved = null;
+    private $transaction = null;
     public function searchByAttribute($attribute,$value)
     {
         $query = self::find();
@@ -45,7 +54,7 @@ class MainActiveRecord extends ActiveRecord
     {
         if(self::isLocalTransactionAccessible())
         {
-            $this->transaction->rollback();
+            $this->transaction->rollBack();
         }
     }
 
@@ -53,6 +62,43 @@ class MainActiveRecord extends ActiveRecord
     {
         $is_accessible = !is_null($this->transaction);
         return  $is_accessible;
+    }
+
+    /** this looks unnecessary but it disables useless typecasting from ActiveRecord class
+     * @param BaseActiveRecord $record
+     * @param array $row
+     */
+    public static function populateRecord($record,$row) {
+        BaseActiveRecord::populateRecord($record, $row);
+    }
+
+    public function save($runValidation = true, $attributeNames = null)
+    {
+        $this->initLocalTransaction();
+        try {
+            $is_saved = parent::save($runValidation, $attributeNames);
+            if($this->is_saved === null)
+                $this->is_saved = $is_saved;
+        }
+        catch (Exception $e) {
+            Alert::addError($e->getMessage(),
+                            ['class' => self::className(),
+                             'id' => $this->id,
+                             'isNewRecord' => $this->isNewRecord,
+                             'errors' => $this->errors]);
+            $this->rollbackLocalTransaction();
+            $this->is_saved = false;
+        }
+        if($this->hasErrors() || count(Alert::getErrors())) {
+            $this->rollbackLocalTransaction();
+            $this->is_saved = false;
+        }
+        else {
+            $this->commitLocalTransaction();
+            $this->is_saved = true;
+        }
+
+        return $this->is_saved;
     }
 
 

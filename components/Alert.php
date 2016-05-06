@@ -57,6 +57,9 @@ class Alert
     );
 
 
+    public static function getErrors() {
+        return self::getAlertStore(self::ERROR);
+    }
     /**
      * @param $status
      * @param $msg
@@ -65,8 +68,12 @@ class Alert
      */
     public static function addAlert($status, $msg, $details = null)
     {
-        if(!Yii::$app->request->isAjax)
-        {
+        $assertion = true;
+        if(Yii::$app->request instanceof yii\web\Request)
+            $assertion = !Yii::$app->request->isAjax;
+        if(Yii::$app->request instanceof yii\console\Request)
+            $assertion = true;
+        if($assertion) {
             $buffer = self::getAlertStore($status);
             $buffer[] = ['msg' => $msg,
                          'details' => $details];
@@ -129,8 +136,8 @@ class Alert
      */
     public static function addError($msg,$details = null)
     {
-        self::addAlert(self::ERROR,$msg,$details);
         Yii::error($msg.(serialize($details)),'alerts');
+        self::addAlert(self::ERROR,$msg,$details);
     }
 
 
@@ -166,6 +173,14 @@ class Alert
             self::dropAlerts();
         }
         return $result;
+    }
+
+    public static function varDumpAlert() {
+        if(self::issetAlerts()) {
+            var_dump(self::getAlertStore(self::SUCCESS));
+            var_dump(self::getAlertStore(self::WARNING));
+            var_dump(self::getAlertStore(self::ERROR));
+        }
     }
 
 

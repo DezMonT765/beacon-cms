@@ -198,14 +198,16 @@ class Beacons extends MainActiveRecord
 
 
     public function saveGroup() {
-        if(!empty($this->groupToBind)) {
-            BeaconBindings::deleteAll(['beacon_id' => $this->id]);
-            $group = Groups::findOne(['id' => $this->groupToBind]);
-            if($group instanceof Groups) {
-                $beacon_binding = new BeaconBindings();
-                $beacon_binding->beacon_id = $this->id;
-                $beacon_binding->group_id = $group->id;
-                $beacon_binding->save();
+        if(Yii::$app->request instanceof Request) {
+            if(!empty($this->groupToBind)) {
+                BeaconBindings::deleteAll(['beacon_id' => $this->id]);
+                $group = Groups::findOne(['id' => $this->groupToBind]);
+                if($group instanceof Groups) {
+                    $beacon_binding = new BeaconBindings();
+                    $beacon_binding->beacon_id = $this->id;
+                    $beacon_binding->group_id = $group->id;
+                    $beacon_binding->save();
+                }
             }
         }
     }

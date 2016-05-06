@@ -83,6 +83,9 @@ class MainActiveRecord extends ActiveRecord
         catch (Exception $e) {
             Alert::addError($e->getMessage(),
                             ['class' => self::className(),
+                             'line' => $e->getLine(),
+                             'file' => $e->getFile(),
+                             'trace' => $e->getTrace(),
                              'id' => $this->id,
                              'isNewRecord' => $this->isNewRecord,
                              'errors' => $this->errors]);

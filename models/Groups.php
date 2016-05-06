@@ -54,7 +54,7 @@ class Groups extends MainActiveRecord
         $beacons = $this->beacons;
         foreach($beacons as $beacon) {
             $beacon->uuid = $this->uuid;
-            $beacon->updateAttributes(['uuid']);
+            $beacon->save();
         } 
     } 
 

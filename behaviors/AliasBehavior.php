@@ -30,7 +30,7 @@ class AliasBehavior extends Behavior
         }
     }
 
-    private function generateAlias( $slug )
+    protected function generateAlias( $slug )
     {
         $slug = $this->slugify( $slug );
         if ( $this->checkUniqueAlias( $slug ) ) {
@@ -57,7 +57,7 @@ class AliasBehavior extends Behavior
         return $lowercase ? strtolower( $string ) : $string;
     }
 
-    private function checkUniqueAlias( $slug )
+    protected function checkUniqueAlias( $slug )
     {
         $pk = $this->owner->primaryKey();
         $pk = $pk[0];

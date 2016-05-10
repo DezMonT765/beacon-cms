@@ -103,7 +103,7 @@ class SmartCityController extends MainController {
         $return = [];
         $groups = Groups::find()->all();
         foreach($groups as $group) {
-            $return[] = $group->toArray(['id','name']);
+            $return[] = $group->toArray(['id','name','uuid']);
         }
         return $return;
     }

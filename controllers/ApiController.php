@@ -108,7 +108,7 @@ class ApiController extends MainController
                         }
                         else {
                             $query->joinWith(['groups' => function(ActiveQuery $query) {
-                                $query->andWhere(['name'=>'Default']);
+                                $query->andWhere([Groups::tableName() . '.name'=>'Default']);
                             }]);
                         }
                     }

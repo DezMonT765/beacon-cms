@@ -30,5 +30,6 @@ class CronController extends MainController
             $group->save();
         }
         Alert::varDumpAlert();
+        Alert::dropAlerts();
     }
 }

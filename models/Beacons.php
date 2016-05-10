@@ -143,8 +143,8 @@ class Beacons extends MainActiveRecord
 
 
     public function getGroupName() {
-        if($this->groupToBind !== null) {
-            return $this->groupToBind;
+        if($this->groupName !== null) {
+            return $this->groupName;
         }
         else {
             $group = $this->getGroups()->one();
@@ -264,6 +264,9 @@ class Beacons extends MainActiveRecord
         $fields = parent::fields();
         $fields['absolutePicture'] = 'absolutePicture';
         $fields['groupToBind'] = 'groupToBind';
+        $fields['absoluteHorizontalPicture'] = 'absoluteHorizontalPicture';
+        $fields['groupName'] = 'groupName';
+        $fields['groupId'] = 'groupId';
         return $fields;
     }
 

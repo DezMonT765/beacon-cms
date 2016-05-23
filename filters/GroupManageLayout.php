@@ -20,6 +20,7 @@ class GroupManageLayout extends GroupLayout
         $active_map =  array_merge(parent::getActiveMap(),[
             'beacons' => [GroupManageLayout::beacons()],
             'update' => [GroupManageLayout::update()],
+            'create-beacon' => [GroupManageLayout::create_beacon()]
         ]);
         return $active_map;
     }
@@ -39,6 +40,7 @@ class GroupManageLayout extends GroupLayout
             ['label'=>Yii::t('group_layout', ':group_update'),'url'=>Url::to(['group/update'] +  self::getParams()),'active'=>self::getActive($active,GroupManageLayout::update())],
             ['label'=>Yii::t('group_layout', ':group_view'),'url'=>Url::to(['group/view'] + $_GET),'active'=>self::getActive($active,TabbedLayout::view())],
             ['label'=>Yii::t('group_layout', ':group_beacons'),'url'=>Url::to(['group/beacons'] +  self::getParams()),'active'=>self::getActive($active,GroupManageLayout::beacons())],
+            ['label'=>Yii::t('group_layout', ':create_beacon'),'url'=>Url::to(['group/create-beacon'] +  self::getParams()),'active'=>self::getActive($active,GroupManageLayout::create_beacon())],
         ];
         return $tabs;
     }

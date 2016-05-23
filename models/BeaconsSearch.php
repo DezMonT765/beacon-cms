@@ -59,6 +59,7 @@ class BeaconsSearch extends Beacons
         if($group_id !== null)
         {
             $group = Groups::findOne(['id'=>$group_id]);
+            if($group instanceof Groups)
             $query = $group->getBeacons();
         }
 

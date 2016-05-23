@@ -7,6 +7,7 @@ use app\commands\RbacController;
 use app\components\Alert;
 use app\filters\GroupLayout;
 use app\filters\GroupManageLayout;
+use app\models\Beacons;
 use app\models\BeaconsSearch;
 use app\models\Users;
 use Yii;
@@ -236,5 +237,19 @@ class GroupController extends MainController
         $model->name = $value;
         $model->getAlias();
         return json_encode(['success'=>true,'alias'=>$model->alias]);
+    }
+
+    public function actionCreateBeacon($id) {
+        $group = $this->findModel($id);
+        $model = new Beacons();
+        $model->groupToBind = $group->id;
+        if($model->load(Yii::$app->request->post())) {
+            if($model->save())
+                return $this->redirect(['beacons', 'id' => $group->id]);
+        }
+        return $this->render('/beacon/beacon-form', [
+            'model' => $model,
+            'group' => $group
+        ]);
     }
 }

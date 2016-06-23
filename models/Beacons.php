@@ -35,8 +35,8 @@ class Beacons extends MainActiveRecord
     public function init() {
         /**@var Beacons | FileSaveBehavior $this */
         $crop = $this->crop;
-        $this->addFileAttribute('picture', '@beacon_save_dir', '@beacon_view_dir', '@backend_beacon_view_dir',
-                                '@frontend_beacon_view_dir', '@beacon_view_url',
+        $this->addFileAttribute('picture', '@beacon_save_dir', '@beacon_view_dir', null,
+                                null, '@beacon_view_url',
             function ($attribute, $file_path) use ($crop) {
                 HelperImage::imgCropByScale(
                     $file_path,

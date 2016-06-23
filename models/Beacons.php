@@ -6,6 +6,7 @@ use app\components\Crop;
 use app\components\FileSaveBehavior;
 use app\helpers\HelperImage;
 use Yii;
+use yii\helpers\Url;
 use yii\web\Request;
 use yii\web\UploadedFile;
 
@@ -22,6 +23,7 @@ use yii\web\UploadedFile;
  * @property integer $minor
  * @property integer $major
  * @property string $groupToBind
+ * @property BeaconPins $beaconPins
  *
  * @property BeaconBindings[] $beaconBindings
  * @property BeaconStatistic $beaconStatistic
@@ -77,7 +79,8 @@ class Beacons extends MainActiveRecord
                 if($beacons instanceof Beacons) {
                     $this->major += 1;
                 }
-            } while($beacons instanceof Beacons); 
+            }
+            while($beacons instanceof Beacons);
             return true;
         }
         else return false;
@@ -173,7 +176,7 @@ class Beacons extends MainActiveRecord
             [['pictureFile'], 'file', 'extensions' => 'jpg, png', 'mimeTypes' => 'image/jpeg, image/png',],
             ['link', 'url'],
             [['groupToBind', 'absolutePicture', 'groupName', 'groupId', 'absoluteHorizontalPicture', 'link',
-              'additional_info'], 'safe']
+              'additional_info', 'absoluteMapFolderUrl', 'mapWidth', 'mapHeight', 'beaconPinX', 'beaconPinY'], 'safe']
         ];
     }
 
@@ -267,11 +270,83 @@ class Beacons extends MainActiveRecord
         $fields['absoluteHorizontalPicture'] = 'absoluteHorizontalPicture';
         $fields['groupName'] = 'groupName';
         $fields['groupId'] = 'groupId';
+        $fields['absoluteMapFolderUrl'] = 'absoluteMapFolderUrl';
+        $fields['mapWidth'] = 'mapWidth';
+        $fields['mapHeight'] = 'mapHeight';
+        $fields['beaconPinX'] = 'beaconPinX';
+        $fields['beaconPinY'] = 'beaconPinY';
         return $fields;
     }
 
 
     public function getBeaconPins() {
         return $this->hasOne(BeaconPins::className(), ['id' => 'id']);
+    }
+
+
+    public function getBeaconPinX() {
+        if($this->beaconPins instanceof BeaconPins) {
+            $x = round($this->beaconPins->x / $this->beaconPins->canvas_width * 100,2);
+            return $x;
+        }
+        else return null;
+    }
+
+
+    public function getBeaconPinY() {
+        if($this->beaconPins instanceof BeaconPins) {
+            $y = round($this->beaconPins->x / $this->beaconPins->canvas_height * 100, 2);
+            return $y;
+        }
+        else return null;
+    }
+
+
+    public function getAbsoluteMapFolderUrl() {
+        /**@var Groups | FileSaveBehavior $group */
+        if($this->beaconPins instanceof BeaconPins && $this->beaconPins->groupFile instanceof GroupFiles) {
+            $file_name = $this->beaconPins->groupFile->name;
+            $group = $this->beaconPins->groupFile->group;
+            if($group instanceof Groups) {
+                $dir = pathinfo($group->getFileByName($file_name, 'map'),PATHINFO_FILENAME);
+                $url = Url::to([$group->getFileViewPath('map') . $dir],true);
+                return $url;
+            }
+        }
+        return false;
+    }
+
+
+    public function getMapWidth() {
+        /**@var Groups | FileSaveBehavior $group */
+        if($this->beaconPins instanceof BeaconPins && $this->beaconPins->groupFile instanceof GroupFiles) {
+            $file_name = $this->beaconPins->groupFile->name;
+            $group = $this->beaconPins->groupFile->group;
+            if($group instanceof Groups) {
+                $group->getFileSavePath('map');
+                $info = getimagesize($group->getFileSavePath('map') . $file_name);
+                if(isset($info[0])) {
+                    return $info[0];
+                }
+            }
+        }
+        return false;
+    }
+
+
+    public function getMapHeight() {
+        /**@var Groups | FileSaveBehavior $group */
+        if($this->beaconPins instanceof BeaconPins && $this->beaconPins->groupFile instanceof GroupFiles) {
+            $file_name = $this->beaconPins->groupFile->name;
+            $group = $this->beaconPins->groupFile->group;
+            if($group instanceof Groups) {
+                $group->getFileSavePath('map');
+                $info = getimagesize($group->getFileSavePath('map') . $file_name);
+                if(isset($info[1])) {
+                    return $info[1];
+                }
+            }
+        }
+        return false;
     }
 }

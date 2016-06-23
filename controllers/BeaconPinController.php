@@ -27,6 +27,7 @@ class BeaconPinController extends MainController
     public function actionSave()
     {
         $id = isset($_POST['BeaconPins']['id']) ? $_POST['BeaconPins']['id'] : null;
+        $group_file_id = Yii::$app->request->getQueryParam('group_file_id');
         $model = BeaconPins::findOne(['id'=>$id]);
         if(!($model instanceof BeaconPins))
         {
@@ -35,6 +36,7 @@ class BeaconPinController extends MainController
 
         if($model->load(Yii::$app->request->post()))
         {
+            $model->group_file_id = $group_file_id;
             if($model->save())
             {
                 Yii::$app->response->format = Response::FORMAT_JSON;
@@ -49,8 +51,9 @@ class BeaconPinController extends MainController
     {
         /** @var BeaconPins $model */
         $group_id = Yii::$app->request->getQueryParam('group_id');
-        $user = Users::getLogged(true);
+        $group_file_id = Yii::$app->request->getQueryParam('group_file_id');
         $models = BeaconPins::find()
+            ->andWhere(['group_file_id'=>$group_file_id])
             ->joinWith(['beacon'=>function(ActiveQuery $query) use($group_id) {
                 $query->joinWith(['groups'=>function(ActiveQuery $query) use($group_id) {
                     $query->andFilterWhere([Groups::tableName(). '.id' => $group_id]);

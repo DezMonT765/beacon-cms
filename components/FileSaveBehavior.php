@@ -110,7 +110,7 @@ class FileSaveBehavior extends Behavior
                 if(count($files)) {
                     $this->owner->$file_attribute = [];
                     foreach($files as $file) {
-                        $this->owner->{$file_attribute}[] = $file->$store_model_attribute;
+                        $this->owner->{$file_attribute}[$file->id] = $file->$store_model_attribute;
                     }
                 }
             }
@@ -220,7 +220,7 @@ class FileSaveBehavior extends Behavior
                 }
             }
             $this->owner->$attribute =
-                $this->getFileName() . $this->file_attributes[$attribute][self::INSTANCE]->extension;
+                $this->getFileName() . '.' . $this->file_attributes[$attribute][self::INSTANCE]->extension;
         }
         else {
             if(isset($this->owner->oldAttributes[$attribute]) && $this->owner->oldAttributes) {
@@ -294,7 +294,12 @@ class FileSaveBehavior extends Behavior
     public function postSavingProcessMultiple($attribute) {
         if(isset($this->file_attributes[$attribute][self::INSTANCE])) {
             $instances = $this->file_attributes[$attribute][self::INSTANCE];
-            if(is_array($instances)) {
+            if(is_array($instances) && count($instances)) {
+                self::prepareFolderTunnel($this->getFileSavePath($attribute),
+                                          $this->getFileSaveDir($attribute),
+                                          $this->getBackendViewDir($attribute),
+                                          $this->getFrontendViewDir($attribute)
+                );
                 $store_model_class = $this->file_attributes[$attribute][self::STORE_MODEL_CLASS];
                 $store_type_attribute = $this->file_attributes[$attribute][self::STORE_TYPE_ATTRIBUTE];
                 $store_model_type = $this->file_attributes[$attribute][self::STORE_MODEL_TYPE];
@@ -305,7 +310,7 @@ class FileSaveBehavior extends Behavior
                         $store_model = new $store_model_class;
                         $file_name = $this->getFileName();
                         $file_extension = $instance->extension;
-                        $store_model->$store_model_attribute = $file_name . $file_extension;
+                        $store_model->$store_model_attribute = $file_name . '.' . $file_extension;
                         $store_model->$store_type_attribute = $store_model_type;
                         $store_model->$store_relation_attribute = $this->owner->id;
                         if($store_model->save()) {
@@ -330,6 +335,11 @@ class FileSaveBehavior extends Behavior
     public function postSavingProcessSingle($attribute) {
         if(isset(self::getFileAttributeParams($attribute)[self::INSTANCE])) {
             if($this->file_attributes[$attribute][self::INSTANCE] instanceof UploadedFile) {
+                self::prepareFolderTunnel($this->getFileSavePath($attribute),
+                                          $this->getFileSaveDir($attribute),
+                                          $this->getBackendViewDir($attribute),
+                                          $this->getFrontendViewDir($attribute)
+                );
                 if($this->file_attributes[$attribute][self::INSTANCE]->saveAs($this->getFileSavePath($attribute)
                                                                               . $this->owner->$attribute)
                 ) {
@@ -347,11 +357,7 @@ class FileSaveBehavior extends Behavior
 
 
     public function postSavingProcess($attribute) {
-        self::prepareFolderTunnel($this->getFileSavePath($attribute),
-                                  $this->getFileSaveDir($attribute),
-                                  $this->getBackendViewDir($attribute),
-                                  $this->getFrontendViewDir($attribute)
-        );
+
         if($this->isMultiple($attribute)) {
             $this->postSavingProcessMultiple($attribute);
         }
@@ -499,7 +505,7 @@ class FileSaveBehavior extends Behavior
      * @return string
      */
     public function getFileName() {
-        return Yii::$app->security->generateRandomString(16) . '.';
+        return Yii::$app->security->generateRandomString(16);
     }
 
 

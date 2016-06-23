@@ -13,6 +13,7 @@ use app\models\BeaconsSearch;
 use app\models\Groups;
 use app\models\Users;
 use Yii;
+use yii\data\ArrayDataProvider;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\ForbiddenHttpException;
@@ -181,8 +182,16 @@ class BeaconController extends MainController
 
 
     public function actionMap($group_id = null) {
+        
         $model = new BeaconPins();
         $group = Groups::findOne($group_id);
+        $map_provider = new ArrayDataProvider([
+                                                'allModels' => $group->map,
+                                                'pagination' => [
+                                                    'pageSize' => 1
+                                                ],
+                                               ]);
+        
         if(!$group instanceof Groups) {
             $user = Users::getLogged(true);
             if(isset($user->groups[0]))
@@ -193,7 +202,7 @@ class BeaconController extends MainController
              Please contact to support team, or add the map to the group by yourself.
              Also please ensure that you belong at least to one group');
         }
-        return $this->render('beacon-map', ['model' => $model,'group'=>$group]);
+        return $this->render('beacon-map', ['model' => $model,'group'=>$group,'map_provider'=>$map_provider]);
     }
 
 

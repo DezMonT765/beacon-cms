@@ -12,7 +12,7 @@ use Yii;
  * @property string $name
  * @property string $type
  *
- * @property Groups $owner
+ * @property Groups $group
  */
 class GroupFiles extends MainActiveRecord
 {
@@ -54,7 +54,7 @@ class GroupFiles extends MainActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getOwner()
+    public function getGroup()
     {
         return $this->hasOne(Groups::className(), ['id' => 'owner_id']);
     }

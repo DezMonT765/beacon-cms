@@ -23,7 +23,7 @@ class SaveEditorImage extends  Action
        $model->attachBehavior('file-save',[
            'class'=>FileSaveBehavior::className(),
        ]);
-        $model->addFileAttribute('picture','@beacon_save_dir','@beacon_view_dir','@backend_beacon_view_dir','@frontend_beacon_view_dir','@beacon_view_url',function ($attribute,$full_file_path)
+        $model->addFileAttribute('picture','@beacon_save_dir','@beacon_view_dir',null,null,'@beacon_view_url',function ($attribute,$full_file_path)
         {
             HelperImage::resizeByBound($full_file_path, $full_file_path, 400);
         });

@@ -40,7 +40,7 @@ class Groups extends MainActiveRecord
     public function init() {
         /**@var Beacons | FileSaveBehavior $this*/
         $this->addFilesAttribute('map',GroupFiles::className(),'name',GroupFiles::TYPE_DEFAULT,'owner_id','type',
-                                 '@group_save_dir','@group_view_dir','@backend_group_view_dir','@frontend_group_view_dir','@group_view_url',function($attribute,$file_full_path,$file_path,$file_name) {
+                                 '@group_save_dir','@group_view_dir',null,null,'@group_view_url',function($attribute,$file_full_path,$file_path,$file_name) {
                 FileHelper::createDirectory($file_path . $file_name);
                 exec("convert ". $file_full_path . " -crop 256x256 -set filename:tile \"%[fx:page.x/256]_%[fx:page.y/256]\"  +repage +adjoin ".$file_path . $file_name. DIRECTORY_SEPARATOR . $file_name."-%[filename:tile].png");
             });

@@ -289,7 +289,7 @@ class Beacons extends MainActiveRecord
             $x = round($this->beaconPins->x / $this->beaconPins->canvas_width * 100,2);
             return $x;
         }
-        else return null;
+        else return 0;
     }
 
 
@@ -298,7 +298,7 @@ class Beacons extends MainActiveRecord
             $y = round($this->beaconPins->x / $this->beaconPins->canvas_height * 100, 2);
             return $y;
         }
-        else return null;
+        else return 0;
     }
 
 
@@ -313,7 +313,7 @@ class Beacons extends MainActiveRecord
                 return $url;
             }
         }
-        return false;
+        return "";
     }
 
 
@@ -330,7 +330,7 @@ class Beacons extends MainActiveRecord
                 }
             }
         }
-        return false;
+        return 0;
     }
 
 
@@ -347,6 +347,6 @@ class Beacons extends MainActiveRecord
                 }
             }
         }
-        return false;
+        return 0;
     }
 }

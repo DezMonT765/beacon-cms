@@ -5,6 +5,8 @@ use app\behaviors\AliasBehavior;
 use app\components\FileSaveBehavior;
 use app\components\UUID;
 use Yii;
+use yii\helpers\FileHelper;
+use yii\web\UploadedFile;
 
 /**
  * This is the model class for table "groups".
@@ -24,6 +26,7 @@ use Yii;
 class Groups extends MainActiveRecord
 {
 
+    public $map = null;
     public static function getDropdownList() {
         $result = [];
         $models = self::find()->all();
@@ -36,7 +39,12 @@ class Groups extends MainActiveRecord
 
     public function init() {
         /**@var Beacons | FileSaveBehavior $this*/
-        $this->addFileAttribute('map','@group_save_dir','@group_view_dir','@backend_group_view_dir','@frontend_group_view_dir','@group_view_url');
+        $this->addFilesAttribute('map',GroupFiles::className(),'name',GroupFiles::TYPE_DEFAULT,'owner_id','type',
+                                 '@group_save_dir','@group_view_dir','@backend_group_view_dir','@frontend_group_view_dir','@group_view_url',function($attribute,$file_full_path,$file_path,$file_name) {
+                FileHelper::createDirectory($file_path . $file_name);
+                exec("convert ". $file_full_path . " -crop 256x256 -set filename:tile \"%[fx:page.x/256]_%[fx:page.y/256]\"  +repage +adjoin ".$file_path . $file_name. DIRECTORY_SEPARATOR . $file_name."-%[filename:tile].png");
+            });
+
     }
     /**
      * @inheritdoc

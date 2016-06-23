@@ -22,10 +22,14 @@ use yii\widgets\ActiveForm;
         <?= $form->field($model, 'name')->textInput() ?>
         <?= $form->field($model, 'alias')->textInput() ?>
         <?= $form->field($model, 'description')->textarea() ?>
-        <?if($model->map) : ?>
-        <img width="200" src="<?=$model->getFile('map')?>">
+        <?if(is_array($model->map) && count($model->map)) : ?>
+            <?foreach($model->map as $file) : ?>
+                <img width="200" src="<?=$model->getFileByName($file,'map')?>">
+            <?endforeach?>
+        <?elseif($model->map) : ?>
+            <img width="200" src="<?=$model->getFile('map')?>">
         <?endif?>
-        <?= $form->field($model, 'map')->fileInput() ?>
+        <?= $form->field($model, 'map[]')->fileInput(['multiple'=>true]) ?>
     </fieldset>
     <fieldset class="col-md-6">
 

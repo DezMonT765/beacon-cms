@@ -295,7 +295,7 @@ class Beacons extends MainActiveRecord
 
     public function getBeaconPinY() {
         if($this->beaconPins instanceof BeaconPins) {
-            $y = round($this->beaconPins->x / $this->beaconPins->canvas_height * 100, 2);
+            $y = round($this->beaconPins->y / $this->beaconPins->canvas_height * 100, 2);
             return $y;
         }
         else return 0;

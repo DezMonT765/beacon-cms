@@ -22,6 +22,8 @@ use yii\web\UploadedFile;
  */
 class FileSaveBehavior extends Behavior
 {
+    public $crop;
+
     const INSTANCE = 'instance';
     const FILE_SAVE_DIR = 'file_save_dir';
     const FILE_VIEW_DIR = 'file_view_dir';

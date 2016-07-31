@@ -16,6 +16,7 @@ namespace app\filters;
 class SubTabbedLayout extends TabbedLayout
 {
     const place_left_sub_tabs = 'left_sub_tabs';
+    const place_top_sub_tabs = 'top_sub_tabs';
     public $layout = 'subTabbedLayout';
 
 
@@ -24,11 +25,19 @@ class SubTabbedLayout extends TabbedLayout
     {
         $nav_bar = parent::layout(array_merge($active));
         $nav_bar[self::place_left_sub_tabs] = static::getLeftSubTabs($active);
+        $nav_bar[self::place_top_sub_tabs] = static::getTopSubTabs($active);
         return $nav_bar;
     }
 
     public static function getLeftSubTabs(array $active = [])
     {
+        $tabs = [
+
+        ];
+        return $tabs;
+    }
+
+    public static function getTopSubTabs(array  $active = []){
         $tabs = [
 
         ];

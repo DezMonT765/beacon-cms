@@ -4,8 +4,9 @@ namespace app\controllers;
 use app\actions\SaveEditorImage;
 use app\commands\RbacController;
 use app\components\Alert;
-use app\filters\AdminBeaconLayout;
-use app\filters\UserBeaconLayout;
+use app\filters\BeaconLayout;
+use app\filters\BeaconManageLayout;
+use app\models\BeaconContentElementsSearch;
 use app\models\BeaconMapLoad;
 use app\models\BeaconPins;
 use app\models\Beacons;
@@ -51,7 +52,7 @@ class BeaconController extends MainController
                         'roles' => ['@'],
                     ],
                     [
-                        'actions' => ['create', 'delete', 'map'],
+                        'actions' => ['create', 'delete', 'map','content-elements'],
                         'allow' => true,
                         'roles' => [RbacController::admin],
                     ],
@@ -64,8 +65,13 @@ class BeaconController extends MainController
                 ],
             ],
         ];
-        $behaviors['layout'] = ['class' => Yii::$app->user->can(RbacController::admin) ? AdminBeaconLayout::className()
-            : UserBeaconLayout::className()];
+        $behaviors['layout'] = [
+            'class' =>BeaconLayout::className()
+        ];
+        $behaviors['manage-layout'] = [
+            'class' => BeaconManageLayout::className(),
+            'only' => ['update']
+        ];
         return $behaviors;
     }
 
@@ -217,5 +223,15 @@ class BeaconController extends MainController
         }
         else Alert::addError(Yii::t('messages', ':map_not_load'));
         return $this->redirect(['map']);
+    }
+    public function actionContentElements($id) {
+        $searchModel = new BeaconContentElementsSearch();
+        $searchModel->load(Yii::$app->request->queryParams);
+        $searchModel->beacon_id = $id;
+        $dataProvider = $searchModel->search();
+        return $this->render('beacon-content-element-list', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
     }
 }

@@ -16,6 +16,7 @@ namespace app\filters;
 class TabbedLayout extends SiteLayout
 {
     const place_tabs = 'tabs';
+    const place_top_control_buttons = 'place_top_control_buttons';
     public $layout = 'tabbedLayout';
 
     public static function getActiveMap()
@@ -33,6 +34,7 @@ class TabbedLayout extends SiteLayout
     {
         $nav_bar = parent::layout($active);
         $nav_bar[self::place_tabs] = static::getTabs($active);
+        $nav_bar[self::place_top_control_buttons] = static::getTopControlButtons($active);
         return $nav_bar;
     }
 
@@ -42,5 +44,12 @@ class TabbedLayout extends SiteLayout
 
         ];
         return $tabs;
+    }
+
+    public static function getTopControlButtons($active) {
+        $buttons = [
+
+        ];
+        return $buttons;
     }
 }

@@ -12,6 +12,7 @@ use app\commands\RbacController;
 use app\components\MainView;
 use app\controllers\MainController;
 use yii\base\ActionFilter;
+use yii\helpers\ArrayHelper;
 use yii\rbac\Role;
 
 class LayoutFilter extends ActionFilter
@@ -38,7 +39,7 @@ class LayoutFilter extends ActionFilter
          */
         $controller = $action->controller;
         $view = $action->controller->getView();
-        $controller->activeMap = array_merge(static::getActiveMap(),$controller->activeMap);
+        $controller->activeMap = ArrayHelper::merge(static::getActiveMap(),$controller->activeMap);
         $action->controller->layout = $this->layout;
         $view->setLayoutData($this->layout($controller->getTabsActivity()));
         return parent::beforeAction($action);

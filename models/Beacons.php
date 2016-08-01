@@ -275,6 +275,7 @@ class Beacons extends MainActiveRecord
         $fields['mapHeight'] = 'mapHeight';
         $fields['beaconPinX'] = 'beaconPinX';
         $fields['beaconPinY'] = 'beaconPinY';
+        $fields['content'] = 'content';
         return $fields;
     }
 
@@ -332,6 +333,16 @@ class Beacons extends MainActiveRecord
         }
         return 0;
     }
+
+    public function getContent() {
+        $beacons = BeaconContentElements::find()->where(['beacon_id' => $this->id])->all();
+        $content = [];
+        foreach($beacons as $beacon) {
+            $content[] = $beacon->toArray();
+        }
+        return $beacons;
+    }
+
 
 
     public function getMapHeight() {

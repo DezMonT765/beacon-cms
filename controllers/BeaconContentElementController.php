@@ -42,9 +42,10 @@ class BeaconContentElementController extends MainController
      * Lists all BeaconContentElements models.
      * @return mixed
      */
-    public function actionList() {
+    public function actionList($id) {
         $searchModel = new BeaconContentElementsSearch();
         $searchModel->load(Yii::$app->request->queryParams);
+        $searchModel->beacon_id = $id;
         $dataProvider = $searchModel->search();
         return $this->render('beacon-content-element-list', [
             'searchModel' => $searchModel,
@@ -63,7 +64,10 @@ class BeaconContentElementController extends MainController
         $beacon = $this->findModel(Beacons::className(), $id);
         if($model->load(Yii::$app->request->post())) {
             $model->beacon_id = $beacon->id;
-            return $this->redirect(['view', 'id' => $model->id]);
+            if(!$model->save()) {
+                Alert::addError('Content has not been saved',$model->errors);
+            }
+            return $this->redirect(['list', 'id' => $id]);
         }
         else {
             return $this->render('beacon-content-element-form', [
@@ -83,7 +87,7 @@ class BeaconContentElementController extends MainController
         $content_id = Yii::$app->request->getQueryParam('content_id');
         $model = $this->findModel(BeaconContentElements::className(), $content_id);
         if($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['list', 'id' => $id]);
         }
         else {
             return $this->render('beacon-content-element-form', [

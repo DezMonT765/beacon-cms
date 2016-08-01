@@ -28,9 +28,13 @@ use yii\widgets\ActiveForm;
             'imageUploadParam' => 'Beacons[picture]'
         ]
     ]); ?>
-
+    <?php if($model->picture) : ?>
+        <img src="<?=$model->getFile('picture')?>" width="150" class="thumbnail" alt="">
+    <?endif?>
     <?= $form->field($model, 'picture')->fileInput(['maxlength' => 255]) ?>
-
+    <?php if($model->horizontal_picture) : ?>
+        <img src="<?=$model->getFile('horizontal_picture')?>" width="150" class="thumbnail" alt="">
+    <?endif?>
     <?= $form->field($model, 'horizontal_picture')->fileInput(['maxlength' => 255]) ?>
 
     <?= $form->field($model, 'additional_info')->textarea(['rows' => 6]) ?>

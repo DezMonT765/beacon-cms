@@ -28,11 +28,11 @@ class BeaconContentElementsLayout extends BeaconManageLayout
 
 
     public static function getActiveMap() {
-        return ArrayHelper::merge(parent::getActiveMap(), [
+        return [
             'list' => [BeaconManageLayout::content_element_create_button(),BeaconContentElementsLayout::listing()],
             'create' => [BeaconContentElementsLayout::create()],
             'update' => [BeaconContentElementsLayout::update()],
-        ]);
+        ];
     }
 
 
@@ -54,18 +54,18 @@ class BeaconContentElementsLayout extends BeaconManageLayout
             $tabs[] =
                 ['label' => Yii::t('beacon_layout', ':beacon_content_elements'),
                  'url' => Url::to(['beacon-content-element/list'] + $_GET),
-                 'active' => self::getActive($active, BeaconManageLayout::listing())];
-            if(self::getActive($active,BeaconManageLayout::update())) {
+                 'active' => self::getActive($active, BeaconContentElementsLayout::listing())];
+            if(self::getActive($active,BeaconContentElementsLayout::update())) {
                 $tabs[] =
                     ['label' => Yii::t('beacon_layout', ':beacon_content_elements_update'),
                      'url' => Url::to(['beacon-content-element/update'] + $_GET),
-                     'active' => self::getActive($active, BeaconManageLayout::update())];
+                     'active' => self::getActive($active, BeaconContentElementsLayout::update())];
             }
-            if(self::getActive($active,BeaconManageLayout::create())) {
+            if(self::getActive($active,BeaconContentElementsLayout::create())) {
                 $tabs[] =
                     ['label' => Yii::t('beacon_layout', ':beacon_content_elements_create'),
                      'url' => Url::to(['beacon-content-element/create'] + $_GET),
-                     'active' => self::getActive($active, BeaconManageLayout::create())];
+                     'active' => self::getActive($active, BeaconContentElementsLayout::create())];
             }
         return $tabs;
     }

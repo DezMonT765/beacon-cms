@@ -6,6 +6,7 @@ use app\components\Crop;
 use app\components\FileSaveBehavior;
 use app\helpers\HelperImage;
 use Yii;
+use yii\web\Request;
 
 /**
  * This is the model class for table "beacon_content_elements".
@@ -76,7 +77,8 @@ class BeaconContentElements extends MainActiveRecord
             [['title', 'description'], 'required'],
             [['beacon_id'], 'integer'],
             [['description', 'additional_info'], 'string'],
-            [['title', 'picture', 'horizontal_picture'], 'string', 'max' => 255],
+            [['title'], 'string', 'max' => 255],
+            [['picture','horizontal_picture'],'file', 'extensions' => 'jpg, png', 'mimeTypes' => 'image/jpeg, image/png'],
             [['link'], 'string', 'max' => 512],
             [['beacon_id'], 'exist', 'skipOnError' => true, 'targetClass' => Beacons::className(), 'targetAttribute' => ['beacon_id' => 'id']],
         ];
@@ -105,5 +107,24 @@ class BeaconContentElements extends MainActiveRecord
     public function getBeacon()
     {
         return $this->hasOne(Beacons::className(), ['id' => 'beacon_id']);
+    }
+
+    public function fields() {
+        $fields = parent::fields();
+        $fields['absolutePicture'] = 'absolutePicture';
+        $fields['absoluteHorizontalPicture'] = 'absoluteHorizontalPicture';
+        return $fields;
+    }
+
+    public function getAbsoluteHorizontalPicture() {
+        if(Yii::$app->request instanceof Request)
+            return Yii::$app->request->getHostInfo() . $this->getFile('horizontal_picture');
+        else return null;
+    }
+
+    public function getAbsolutePicture() {
+        if(Yii::$app->request instanceof Request)
+            return Yii::$app->request->getHostInfo() . $this->getFile('picture');
+        else return null;
     }
 }

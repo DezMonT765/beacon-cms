@@ -37,7 +37,8 @@ const common = {
     ],
     resolve: {
         extensions: ['', '.js', '.jsx']
-    }
+    },
+
 };
 
 
@@ -71,6 +72,7 @@ switch(process.env.npm_lifecycle_event) {
                 entries: ['konva','react','react/lib/ReactDOM']
             }),
             configParts.extractCSS(PATHS.style)
+
         );
         break;
     default :

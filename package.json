@@ -1,0 +1,51 @@
+{
+  "name": "beacons",
+  "version": "1.0.0",
+  "description": "Yii 2 Basic Application Template ================================",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "build": "webpack --display-error-details",
+    "stats": "webpack --profile --json > stats.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://kyvLabs@bitbucket.org/kyvLabs/beacon-cms.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/kyvLabs/beacon-cms#readme",
+  "devDependencies": {
+    "babel-core": "^6.17.0",
+    "babel-loader": "^6.2.5",
+    "babel-preset-es2015": "^6.16.0",
+    "babel-preset-react": "^6.16.0",
+    "babel-preset-stage-3": "^6.17.0",
+    "clean-webpack-plugin": "^0.1.11",
+    "css-loader": "^0.25.0",
+    "extract-text-webpack-plugin": "^1.0.1",
+    "html-webpack-plugin": "^2.22.0",
+    "purifycss-webpack-plugin": "^2.0.3",
+    "style-loader": "^0.13.1",
+    "uglify-loader": "^1.3.0",
+    "webpack": "^1.13.2",
+    "webpack-merge": "^0.14.1",
+    "webpack-validator": "^2.2.8"
+  },
+  "dependencies": {
+    "expect": "^1.20.2",
+    "file-loader": "^0.9.0",
+    "konva": "^1.2.2",
+    "purecss": "^0.6.0",
+    "raphael": "^2.2.6",
+    "react": "^15.3.2",
+    "react-konva": "^1.0.6",
+    "redux": "^3.6.0",
+    "redux-logger": "^2.7.0",
+    "snapsvg": "^0.4.0",
+    "url-loader": "^0.5.7",
+    "uuid": "^2.0.3"
+  }
+}

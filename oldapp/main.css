@@ -1,0 +1,12 @@
+body {
+    background: cornsilk;
+}
+
+.cell {
+    border: 1px solid #aaaaaa;
+    width: 30px;
+    height: 30px;
+}
+.cell.toggled {
+    background: black;
+}

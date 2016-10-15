@@ -174,8 +174,9 @@ class ApiController extends MainController
     public function actionPasswordRestore() {
         $model = new ClientUsers();
         if($model->load(Yii::$app->request->post())) {
-            $model->sendPasswordRestoreEmail();
-            return ['status'=>true];
+            if($model->sendPasswordRestoreEmail()) {
+                return ['status'=>true];
+            }
         }
         return ['status'=>false];
     }

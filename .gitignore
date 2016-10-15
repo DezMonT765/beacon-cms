@@ -31,3 +31,4 @@ phpunit.phar
 /web/beacon_images
 
 /web/beacon-ce-images/
+/node_modules/

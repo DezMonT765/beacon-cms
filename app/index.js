@@ -4,7 +4,7 @@ import React from "react";
 import {createStore, applyMiddleware} from "redux";
 import * as ReactDOM from "react/lib/ReactDOM";
 import createLogger from "redux-logger";
-let nodeBuffer = new Map();
+let nodeBuffer = [];
 let idBuffer = new Set();
 document.addEventListener('contextmenu', (e)=> {
     e.preventDefault();
@@ -12,6 +12,7 @@ document.addEventListener('contextmenu', (e)=> {
 });
 document.addEventListener('mousedown', (e) => {
     nodeBuffer = [];
+    idBuffer.clear();
     if (e.buttons == 1)
         store.dispatch({
             type: 'TOGGLE_BRUSH',

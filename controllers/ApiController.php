@@ -189,6 +189,11 @@ class ApiController extends MainController
         {
             if($model->fbAuth())
             {
+                $user = ClientUsers::findByEmail($model->email);
+                if($user instanceof ClientUsers) {
+                    $user->group_ids = $model->group_ids;
+                    $user->save();
+                }
                 return ['auth_key' => $model->auth_key];
             }
         }

@@ -39,6 +39,7 @@
     "file-loader": "^0.9.0",
     "konva": "^1.2.2",
     "notification-component": "0.0.3",
+    "pixi.js": "^4.1.0",
     "purecss": "^0.6.0",
     "raphael": "^2.2.6",
     "react": "^15.3.2",

@@ -1,5 +1,5 @@
 export default class Brush {
-    constructor(color = '#fff',activated = false,toggled = false) {
+    constructor(color = 0xFFFFFF,activated = false,toggled = false) {
         this._color = color;
         this._activated = activated;
         this._toggled = toggled;

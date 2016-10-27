@@ -48,12 +48,12 @@ const brush = (state = new Brush(), action) => {
     }
 };
 
-const brushes = (state = {brushes: [new Brush('#000'), new Brush('#fff')], currentBrush: new Brush('#fff')}, action) => {
+const brushes = (state = {brushes: [new Brush(0x000000), new Brush(0xFFFFFF)], currentBrush: new Brush(0xFFFFFF)}, action) => {
     switch (action.type) {
         case 'TOGGLE_BRUSH' :
             let new_state = state;
             new_state.currentBrush = new_state.brushes[action.index];
-            new_state.brushes = [new Brush('#000'), new Brush('#fff')];
+            new_state.brushes = [new Brush(0x000000), new Brush(0xFFFFFF)];
             new_state.brushes[action.index] = brush(new_state.brushes[action.index], action);
             return new_state;
         default :

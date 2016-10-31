@@ -193,7 +193,7 @@ webpackJsonplib([0,3],{
 	        _react2.default.createElement(
 	            "button",
 	            { onClick: function onClick() {
-	                    canvas.clear.bind(canvas);
+	                    canvas.clear();
 	                    store.dispatch({
 	                        type: 'CLEAR_PINS'
 	                    });
@@ -38394,4 +38394,4 @@ webpackJsonplib([0,3],{
 /***/ }
 
 });
-//# sourceMappingURL=app.43cffe2a73c6b9b278ae.js.map
+//# sourceMappingURL=app.21bdf08a8825a2d3a149.js.map

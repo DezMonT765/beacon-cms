@@ -136,7 +136,7 @@ var BrushControls = ({brushes}) => {
                 brushes.map((brush, index) => (<BrushControl key={index} index={index} brush={brush}/>))
             }
             <button onClick={function () {
-                canvas.clear.bind(canvas);
+                canvas.clear();
                 store.dispatch({
                     type: 'CLEAR_PINS'
                 })

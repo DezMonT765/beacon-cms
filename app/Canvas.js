@@ -3,58 +3,45 @@ export const HEIGHT = 10;
 const dimensionX = 100;
 const dimensionY = 100;
 const cellPerLayer = 500;
-import Konva from "konva";
-import {makeImageRect} from "./helper";
 import Grid from "./Grid";
 import * as states from "./states";
+import * as helper from "./helper";
 import * as PIXI from "../node_modules/pixi.js/bin/pixi";
 var stage = null;
-export default function initCanvas(store, nodeBuffer, idBuffer) {
-    if (stage !== null) {
-        stage.destroy();
-    }
-    var renderer = PIXI.autoDetectRenderer(WIDTH * dimensionX, HEIGHT * dimensionY);
+export default class Canvas {
+    constructor(store, nodeBuffer, idBuffer) {
+        this._store = store;
+        if (stage !== null) {
+            stage.destroy();
+        }
+        var renderer = PIXI.autoDetectRenderer(WIDTH * dimensionX, HEIGHT * dimensionY);
+        renderer.plugins.interaction.moveWhenInside = true;
+        document.body.appendChild(renderer.view);
 
-    document.body.appendChild(renderer.view);
+        stage = new PIXI.Container();
+        stage.interactive = true;
 
-    stage = new PIXI.Container();
-    stage.interactive = true;
-
-    // stage = new Konva.Stage({
-    //     container: 'canvas',   // id of container <div>
-    //     width: WIDTH * dimensionX,
-    //     height: HEIGHT * dimensionY
-    // });
-
-    // let imageLayer = new Konva.Layer();
-    // let backgroundRect = new Konva.Rect({
-    //     x: 0,
-    //     y: 0,
-    //     width: WIDTH * dimensionX,
-    //     height: HEIGHT * dimensionY,
-    // });
-    // imageLayer.add(backgroundRect);
-    // let image = makeImageRect(backgroundRect, imageLayer);
-    // stage.add(imageLayer);
-    // image.src = '/img/background.jpg';
-
-    let grid = new Grid(renderer,stage, WIDTH, HEIGHT, dimensionX, dimensionY, cellPerLayer);
-    grid.build();
-    var onInteract = function(evt){
-            if (store.getState().currentBrush.activated) {
+        this._grid = new Grid(stage, WIDTH, HEIGHT, dimensionX, dimensionY, '/img/background.jpg', store);
+        this._grid._promise.then(function () {
+            this._grid.build();
+            // this._grid.addPin(0, 0);
+        }.bind(this));
+        var onInteract = function (evt) {
+            if (store.getState().brushes.currentBrush.activated) {
                 let x = Math.round(evt.data.global.x / WIDTH);
                 let y = Math.round(evt.data.global.y / HEIGHT);
-                let color = store.getState().currentBrush.color;
-                grid.drawRect({
-                    color : color,
-                    stroke : 0xAAAAAA,
-                    x : x * WIDTH,
-                    y : y * HEIGHT,
-                    width : WIDTH,
-                    height :  HEIGHT
-
+                let color = store.getState().brushes.currentBrush.color;
+                this._grid.drawRect({
+                    color: color,
+                    stroke: 0xAAAAAA,
+                    x: x * WIDTH,
+                    y: y * HEIGHT,
+                    width: WIDTH,
+                    height: HEIGHT,
                 });
-                grid.rects[x][y] = color === 0x000000 ? states.WALL : states.EMPTY;
+                if (Array.isArray(this._grid.rects[x]) && typeof this._grid.rects[x][y] !== 'undefined') {
+                    this._grid.rects[x][y] = color === 0x000000 ? states.WALL : states.EMPTY;
+                }
                 // renderer.render(stage);
                 // var node = evt.target;
                 // if (node) {
@@ -73,39 +60,55 @@ export default function initCanvas(store, nodeBuffer, idBuffer) {
                 //     node.getLayer().batchDraw();
                 // }
             }
-    };
-    function update() {
-        renderer.render(stage);
-        requestAnimationFrame(update);
-    }
-    update();
-    stage.on('mousedown',onInteract);
-    stage.on('mousemove',onInteract);
-    stage.on('click',onInteract);
+        }.bind(this);
 
-    setInterval(function () {
-        if (typeof(Storage) !== "undefined") {
-            let jsonRects = JSON.stringify(grid.rects);
-            localStorage.setItem("rects", jsonRects);
-        } else {
-            console.log('sad');
+        function update() {
+            renderer.render(stage);
+            requestAnimationFrame(update);
         }
-    }, 1000);
-    // function undo(e) {
-    //     if (e.keyCode == 90 && e.ctrlKey) {
-    //         for (let i = 0; i < nodeBuffer.length; i++) {
-    //             let node = nodeBuffer[i].node;
-    //             let color = nodeBuffer[i].color;
-    //             node.fill(color);
-    //             grid.rects[node.x() / WIDTH][node.y() / HEIGHT] = color === '#000' ? states.WALL : states.EMPTY;
-    //             node.getLayer().batchDraw();
-    //         }
-    //         nodeBuffer = [];
-    //         idBuffer.clear();
-    //     }
-    //
-    // }
-    //
-    // document.removeEventListener('keydown', undo);
-    // document.addEventListener('keydown', undo);
+
+        update();
+        this._grid._graphics.on('mousedown', onInteract);
+        this._grid._graphics.on('mousemove', onInteract);
+        this._grid._graphics.on('click', onInteract);
+
+        setInterval(function () {
+            if (typeof(Storage) !== "undefined") {
+                let jsonRects = JSON.stringify(this._grid.rects);
+                let jsonPins = JSON.stringify(helper.mapToObj(this._store.getState().pins.pins));
+                localStorage.setItem("rects", jsonRects);
+                localStorage.setItem("pins", jsonPins);
+            } else {
+                console.log('sad');
+            }
+        }.bind(this), 1000);
+// function undo(e) {
+//     if (e.keyCode == 90 && e.ctrlKey) {
+//         for (let i = 0; i < nodeBuffer.length; i++) {
+//             let node = nodeBuffer[i].node;
+//             let color = nodeBuffer[i].color;
+//             node.fill(color);
+//             grid.rects[node.x() / WIDTH][node.y() / HEIGHT] = color === '#000' ? states.WALL : states.EMPTY;
+//             node.getLayer().batchDraw();
+//         }
+//         nodeBuffer = [];
+//         idBuffer.clear();
+//     }
+//
+// }
+//
+// document.removeEventListener('keydown', undo);
+// document.addEventListener('keydown', undo);
+    }
+
+    clear() {
+        this._grid.rects = [];
+        for (let i = 0; i < dimensionX; i++) {
+            this._grid.rects[i] = new Array(100);
+            for (let j = 0; j < dimensionY; j++) {
+                this._grid.rects[i][j] = 0;
+            }
+        }
+        this._grid.build();
+    }
 }

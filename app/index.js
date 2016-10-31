@@ -1,11 +1,14 @@
-import initCanvas from "./Canvas";
+import Canvas from "./Canvas";
 import Brush from "./Brush";
 import React from "react";
-import {createStore, applyMiddleware} from "redux";
+import {v4} from "uuid";
+import * as helper from "./helper";
+import {createStore, combineReducers} from "redux";
 import * as ReactDOM from "react/lib/ReactDOM";
 import createLogger from "redux-logger";
 let nodeBuffer = [];
 let idBuffer = new Set();
+
 document.addEventListener('contextmenu', (e)=> {
     e.preventDefault();
     return false;
@@ -16,42 +19,105 @@ document.addEventListener('mousedown', (e) => {
     if (e.buttons == 1)
         store.dispatch({
             type: 'TOGGLE_BRUSH',
-            index : 0
+            index: 0
         });
     else if (e.buttons == 2) {
         store.dispatch({
             type: 'TOGGLE_BRUSH',
-            index : 1
+            index: 1
         });
     }
-    store.getState().currentBrush.activated = true;
+    store.getState().brushes.currentBrush.activated = true;
 });
 document.addEventListener('mouseup', (e) => {
-    store.getState().currentBrush.activated = false;
+    store.getState().brushes.currentBrush.activated = false;
 });
 
 document.addEventListener('dragend', (e) => {
-    store.getState().currentBrush.activated = false;
+    store.getState().brushes.currentBrush.activated = false;
 });
-
-
 
 
 const brush = (state = new Brush(), action) => {
     switch (action.type) {
         case 'TOGGLE_BRUSH' :
-            let brush = state;
+            let brush = {...state};
             brush.toggled = true;
             return brush;
+
         default :
             return state;
+    }
+};
+
+const pin = (state = {name: null, position: {x: null, y: null}}, action) => {
+    let new_state;
+    switch (action.type) {
+        case 'SET_PIN_POSITION' :
+            new_state = {...state};
+            new_state.name = action.name;
+            new_state.position = action.position;
+            return new_state;
+        case 'ADD_PIN' :
+            new_state = {...state};
+            new_state.name = action.name;
+            new_state.position = action.position;
+            return new_state;
+        default :
+            return state;
+    }
+};
+
+const pins = (state, action) => {
+    let new_state;
+    if (typeof state == 'undefined') {
+        let pins = null;
+        if (typeof(Storage) !== "undefined") {
+            try {
+                pins = JSON.parse(localStorage.getItem("pins"));
+                pins = helper.objToMap(pins);
+            }
+            catch (e) {
+                console.log(e);
+            }
+        }
+        if (pins == null) {
+            pins = new Map;
+        }
+        state = {pins: pins, currentPin: pin(undefined, action)}
+    }
+    switch (action.type) {
+        case 'TOGGLE_PIN' :
+            new_state = {...state};
+            new_state.currentPin = state.pins.get(action.name);
+            return new_state;
+        case 'ADD_PIN' :
+            new_state = {...state};
+            new_state.pins.set(action.name, pin(undefined, action));
+            return new_state;
+        case 'SET_PIN_POSITION' : {
+            new_state = {...state};
+            new_state.pins.set(action.name, pin(undefined, action));
+            return new_state;
+        }
+        case 'CLEAR_PINS' :
+            new_state = {...state};
+            new_state.pins = new Map();
+            return new_state;
+        case 'DELETE_PIN' :
+            new_state = {...state};
+            new_state.pins.delete(action.name);
+            return new_state;
+        default :
+            return state;
+
     }
 };
 
 const brushes = (state = {brushes: [new Brush(0x000000), new Brush(0xFFFFFF)], currentBrush: new Brush(0xFFFFFF)}, action) => {
     switch (action.type) {
         case 'TOGGLE_BRUSH' :
-            let new_state = state;
+            let new_state = {...state};
             new_state.currentBrush = new_state.brushes[action.index];
             new_state.brushes = [new Brush(0x000000), new Brush(0xFFFFFF)];
             new_state.brushes[action.index] = brush(new_state.brushes[action.index], action);
@@ -62,14 +128,20 @@ const brushes = (state = {brushes: [new Brush(0x000000), new Brush(0xFFFFFF)], c
 };
 
 
-var BrushControls = ({className, brushes}) => {
+var BrushControls = ({brushes}) => {
     return (
-        <div className={className}>
+        <div >
             Brushes
             {
                 brushes.map((brush, index) => (<BrushControl key={index} index={index} brush={brush}/>))
             }
-            <button onClick={initCanvas.bind(null, store,nodeBuffer,idBuffer)}>Clear</button>
+            <button onClick={function () {
+                canvas.clear.bind(canvas);
+                store.dispatch({
+                    type: 'CLEAR_PINS'
+                })
+            }}>Clear
+            </button>
         </div>);
 };
 class BrushControl extends React.Component {
@@ -87,27 +159,48 @@ class BrushControl extends React.Component {
 }
 
 
-class App extends React.Component {
-    componentDidMount() {
-        initCanvas(store,nodeBuffer,idBuffer);
-    }
+var PinControls = () => {
+    return (<div>
+        <button onClick={canvas._grid.addPin.bind(canvas._grid, 0, 0, v4())}>Add pin</button>
+        {store.getState().pins.currentPin.name !== null ?
+            <div>
+                <span>{store.getState().pins.currentPin.name}</span>
+                <button onClick={function () {
+                    let pin_name = store.getState().pins.currentPin.name;
+                    store.dispatch({
+                        type: 'DELETE_PIN',
+                        name: pin_name
+                    });
+                    canvas._grid.deletePin(pin_name);
+                }}>Delete pin
+                </button>
+            </div> :
+            ''
+        }
+    </div>)
+};
 
+class App extends React.Component {
     render() {
         return (
             <div className="container-fluid">
                 <div className="row-fluid">
                     <div className="col-md-10" id="canvas" style={{background: 'url(/background.jpg'}}></div>
+                    <div className="col-md-2">
+                        <BrushControls brushes={this.props.brushes}/>
+                        <PinControls/>
+                    </div>
                 </div>
-                <BrushControls brushes={this.props.brushes} className="col-md-2"/>
             </div>
         );
     }
 }
 
 const logger = createLogger();
-export const store = createStore(brushes);
+export const store = createStore(combineReducers({brushes: brushes, pins: pins}));
+var canvas = new Canvas(store);
 const render = () => {
-    ReactDOM.render(<App brushes={store.getState().brushes}/>, document.getElementById('root'));
+    ReactDOM.render(<App brushes={store.getState().brushes.brushes}/>, document.getElementById('root'));
 };
 render();
 store.subscribe(render);

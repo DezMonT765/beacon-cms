@@ -1,10 +1,10 @@
-import Konva from "konva";
-import {Graphics} from 'pixi.js';
-import Pin from './Pin';
-import * as states from './states'
+import * as PIXI from "../node_modules/pixi.js/bin/pixi";
+import Pin from "./Pin";
+import * as states from "./states";
+import * as helper from "./helper";
 import {v4} from "uuid";
 export default class Grid {
-    constructor(renderer,stage,width,height,dimensionX,dimensionY,cellPerLayer) {
+    constructor(stage, width, height, dimensionX, dimensionY, src, store) {
         console.log(states.colors);
         this._colors = states.colors;
         this._stage = stage;
@@ -12,63 +12,78 @@ export default class Grid {
         this._height = height;
         this._dimensionX = dimensionX;
         this._dimensionY = dimensionY;
-        this._pin = new Pin(width, height, dimensionX, dimensionY, this.rects);
-        this._cellPerLayer = cellPerLayer;
-        this._renderer = renderer;
-        this._graphics = new Graphics();
+        this._graphics = new PIXI.Graphics();
+        this._stage.addChild(this._graphics);
+        this._graphics.interactive = true;
+        this._src = src;
+        this._pins = new Map();
+        this._store = store;
+        this._promise = new Promise(function (resolve, reject) {
+            PIXI.loader
+                .add(src)
+                .load(this.setupBackground.bind(this, resolve, reject));
+            // resolve();
+        }.bind(this));
+
     }
+
     build() {
-        // let groupLayer = new Konva.Layer();
-        // var nodeCount = 0;
-        // var layer = new Konva.Layer();
+        this._graphics.clear();
         for (let i = 0; i < this._dimensionX; i++) {
             for (let j = 0; j < this._dimensionY; j++) {
-
-
                 this.drawRect({
-                    color : this._colors[this.rects[i][j]],
-                    stroke : 0xAAAAAA,
-                    x : i * this._width,
-                    y : j * this._height,
-                    width : this._width,
-                    height :  this._height
-
+                    color: this._colors[this.rects[i][j]],
+                    stroke: 0xAAAAAA,
+                    x: i * this._width,
+                    y: j * this._height,
+                    width: this._width,
+                    height: this._height,
+                    opacity: this.rects[i][j] === states.EMPTY ? 0.5 : 1
                 });
-                // let rect = new Konva.Rect({
-                //     id: v4(),
-                //     x: i * this._width,
-                //     y: j * this._height,
-                //     width: this._width,
-                //     height: this._height,
-                //     fill: this._colors[this.rects[i][j]],
-                //     stroke: '#aaa',
-                //     opacity: 0.5
-                // });
-                // if (this.rects[i][j] == states.PIN) {
-                //     this._pin.add(groupLayer, i * this._width, j * this._height);
-                // }
-                // layer.add(rect);
-                // nodeCount++;
-                // if (nodeCount >=  this._cellPerLayer) {
-                //     nodeCount = 0;
-                //     this._stage.add(layer);
-                //     layer = new Konva.Layer();
-                // }
+
             }
         }
-        this._stage.addChild(this._graphics);
-        this._renderer.render(this._stage);
-
-
+        let pins = this._store.getState().pins.pins;
+        for (let [key,value] of pins) {
+            this.addPin(value.position.x, value.position.y,value.name);
+        }
+        this._graphics.zIndex = 1;
+        helper.sortChildrenByZIndex(this._stage);
     }
+
+    addPin(x = 0, y = 0, name = v4()) {
+        this._pins.set(name, new Pin(x, y, name, this));
+    }
+
+    deletePin(name) {
+        this._pins.get(name).destroy();
+        this._pins.delete(name);
+    }
+
+    setupBackground(resolve, reject) {
+        this._sprite = new PIXI.Sprite(
+            PIXI.loader.resources[this._src].texture
+        );
+        this._sprite.width = this._width * this._dimensionX;
+        this._sprite.height = this._height * this._dimensionY;
+        this._sprite.x = 0;
+        this._sprite.y = 0;
+        this._stage.addChild(this._sprite);
+        resolve();
+    }
+
     drawRect(config) {
-        this._graphics.beginFill(config.color);
+        this._graphics.beginFill(config.color, 0);
+        this._graphics.drawRect(config.x, config.y, config.width, config.height);
+        this._graphics.endFill();
+        this._graphics.beginFill(config.color, config.opacity);
         this._graphics.lineStyle(1, config.stroke, 1);
-        this._graphics.drawRect(config.x,config.y,config.width,config.height);
+        this._graphics.drawRect(config.x, config.y, config.width, config.height);
         this._graphics.endFill();
     }
+
     get rects() {
-        if(this._rects === undefined) {
+        if (this._rects === undefined) {
             this._rects = null;
             if (typeof(Storage) !== "undefined") {
                 try {
@@ -90,12 +105,11 @@ export default class Grid {
         }
         return this._rects;
     }
+
     set rects(rects) {
         this._rects = rects;
     }
-    get renderer() {
-        return this._renderer;
-    }
+
     get stage() {
         return this._stage;
     }

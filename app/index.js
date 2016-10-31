@@ -3,6 +3,7 @@ import Brush from "./Brush";
 import React from "react";
 import {v4} from "uuid";
 import * as helper from "./helper";
+import * as states from "./states";
 import {createStore, combineReducers} from "redux";
 import * as ReactDOM from "react/lib/ReactDOM";
 import createLogger from "redux-logger";
@@ -41,7 +42,7 @@ document.addEventListener('dragend', (e) => {
 const brush = (state = new Brush(), action) => {
     switch (action.type) {
         case 'TOGGLE_BRUSH' :
-            let brush = {...state};
+            let brush = state;
             brush.toggled = true;
             return brush;
 
@@ -49,6 +50,20 @@ const brush = (state = new Brush(), action) => {
             return state;
     }
 };
+
+const brushes = (state = {brushes: [new Brush(states.colors[states.WALL]), new Brush(states.colors[states.EMPTY])], currentBrush: new Brush(states.colors[states.EMPTY])}, action) => {
+    switch (action.type) {
+        case 'TOGGLE_BRUSH' :
+            let new_state = state;
+            new_state.currentBrush = new_state.brushes[action.index];
+            new_state.brushes = [new Brush(states.colors[states.WALL]), new Brush(states.colors[states.EMPTY])];
+            new_state.brushes[action.index] = brush(new_state.brushes[action.index], action);
+            return new_state;
+        default :
+            return state;
+    }
+};
+
 
 const pin = (state = {name: null, position: {x: null, y: null}}, action) => {
     let new_state;
@@ -107,23 +122,11 @@ const pins = (state, action) => {
         case 'DELETE_PIN' :
             new_state = {...state};
             new_state.pins.delete(action.name);
+            new_state.currentPin = pin(undefined, action);
             return new_state;
         default :
             return state;
 
-    }
-};
-
-const brushes = (state = {brushes: [new Brush(0x000000), new Brush(0xFFFFFF)], currentBrush: new Brush(0xFFFFFF)}, action) => {
-    switch (action.type) {
-        case 'TOGGLE_BRUSH' :
-            let new_state = {...state};
-            new_state.currentBrush = new_state.brushes[action.index];
-            new_state.brushes = [new Brush(0x000000), new Brush(0xFFFFFF)];
-            new_state.brushes[action.index] = brush(new_state.brushes[action.index], action);
-            return new_state;
-        default :
-            return state;
     }
 };
 
@@ -136,10 +139,10 @@ var BrushControls = ({brushes}) => {
                 brushes.map((brush, index) => (<BrushControl key={index} index={index} brush={brush}/>))
             }
             <button onClick={function () {
-                canvas.clear();
                 store.dispatch({
                     type: 'CLEAR_PINS'
-                })
+                });
+                canvas.clear();
             }}>Clear
             </button>
         </div>);
@@ -149,7 +152,7 @@ class BrushControl extends React.Component {
         return (
             <div className="cell"
                  style={{
-                     background: this.props.brush.color,
+                     background: states.web_colors[this.props.brush.color],
                      border: this.props.brush.toggled ? '3px solid #B92626' : 'none'
                  }}
                  onClick={() => {

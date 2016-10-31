@@ -29,6 +29,9 @@ export default class Grid {
 
     build() {
         this._graphics.clear();
+        for ( let [key,pin] of this._pins) {
+            pin.destroy();
+        }
         for (let i = 0; i < this._dimensionX; i++) {
             for (let j = 0; j < this._dimensionY; j++) {
                 this.drawRect({

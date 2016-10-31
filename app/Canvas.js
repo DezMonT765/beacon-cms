@@ -40,7 +40,7 @@ export default class Canvas {
                     height: HEIGHT,
                 });
                 if (Array.isArray(this._grid.rects[x]) && typeof this._grid.rects[x][y] !== 'undefined') {
-                    this._grid.rects[x][y] = color === 0x000000 ? states.WALL : states.EMPTY;
+                    this._grid.rects[x][y] = (color === 0x000000 ? states.WALL : states.EMPTY);
                 }
                 // renderer.render(stage);
                 // var node = evt.target;

@@ -33,6 +33,10 @@ webpackJsonplib([0,3],{
 	
 	var helper = _interopRequireWildcard(_helper);
 	
+	var _states = __webpack_require__(7);
+	
+	var states = _interopRequireWildcard(_states);
+	
 	var _redux = __webpack_require__(43);
 	
 	var _ReactDOM = __webpack_require__(57);
@@ -88,10 +92,26 @@ webpackJsonplib([0,3],{
 	
 	    switch (action.type) {
 	        case 'TOGGLE_BRUSH':
-	            var _brush = _extends({}, state);
+	            var _brush = state;
 	            _brush.toggled = true;
 	            return _brush;
 	
+	        default:
+	            return state;
+	    }
+	};
+	
+	var brushes = function brushes() {
+	    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { brushes: [new _Brush2.default(states.colors[states.WALL]), new _Brush2.default(states.colors[states.EMPTY])], currentBrush: new _Brush2.default(states.colors[states.EMPTY]) };
+	    var action = arguments[1];
+	
+	    switch (action.type) {
+	        case 'TOGGLE_BRUSH':
+	            var new_state = state;
+	            new_state.currentBrush = new_state.brushes[action.index];
+	            new_state.brushes = [new _Brush2.default(states.colors[states.WALL]), new _Brush2.default(states.colors[states.EMPTY])];
+	            new_state.brushes[action.index] = brush(new_state.brushes[action.index], action);
+	            return new_state;
 	        default:
 	            return state;
 	    }
@@ -157,26 +177,11 @@ webpackJsonplib([0,3],{
 	        case 'DELETE_PIN':
 	            new_state = _extends({}, state);
 	            new_state.pins.delete(action.name);
+	            new_state.currentPin = pin(undefined, action);
 	            return new_state;
 	        default:
 	            return state;
 	
-	    }
-	};
-	
-	var brushes = function brushes() {
-	    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { brushes: [new _Brush2.default(0x000000), new _Brush2.default(0xFFFFFF)], currentBrush: new _Brush2.default(0xFFFFFF) };
-	    var action = arguments[1];
-	
-	    switch (action.type) {
-	        case 'TOGGLE_BRUSH':
-	            var new_state = _extends({}, state);
-	            new_state.currentBrush = new_state.brushes[action.index];
-	            new_state.brushes = [new _Brush2.default(0x000000), new _Brush2.default(0xFFFFFF)];
-	            new_state.brushes[action.index] = brush(new_state.brushes[action.index], action);
-	            return new_state;
-	        default:
-	            return state;
 	    }
 	};
 	
@@ -193,10 +198,10 @@ webpackJsonplib([0,3],{
 	        _react2.default.createElement(
 	            "button",
 	            { onClick: function onClick() {
-	                    canvas.clear();
 	                    store.dispatch({
 	                        type: 'CLEAR_PINS'
 	                    });
+	                    canvas.clear();
 	                } },
 	            "Clear"
 	        )
@@ -219,7 +224,7 @@ webpackJsonplib([0,3],{
 	
 	            return _react2.default.createElement("div", { className: "cell",
 	                style: {
-	                    background: this.props.brush.color,
+	                    background: states.web_colors[this.props.brush.color],
 	                    border: this.props.brush.toggled ? '3px solid #B92626' : 'none'
 	                },
 	                onClick: function onClick() {
@@ -530,6 +535,34 @@ webpackJsonplib([0,3],{
 	        key: "build",
 	        value: function build() {
 	            this._graphics.clear();
+	            var _iteratorNormalCompletion = true;
+	            var _didIteratorError = false;
+	            var _iteratorError = undefined;
+	
+	            try {
+	                for (var _iterator = this._pins[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	                    var _step$value = _slicedToArray(_step.value, 2);
+	
+	                    var key = _step$value[0];
+	                    var pin = _step$value[1];
+	
+	                    pin.destroy();
+	                }
+	            } catch (err) {
+	                _didIteratorError = true;
+	                _iteratorError = err;
+	            } finally {
+	                try {
+	                    if (!_iteratorNormalCompletion && _iterator.return) {
+	                        _iterator.return();
+	                    }
+	                } finally {
+	                    if (_didIteratorError) {
+	                        throw _iteratorError;
+	                    }
+	                }
+	            }
+	
 	            for (var i = 0; i < this._dimensionX; i++) {
 	                for (var j = 0; j < this._dimensionY; j++) {
 	                    this.drawRect({
@@ -544,30 +577,30 @@ webpackJsonplib([0,3],{
 	                }
 	            }
 	            var pins = this._store.getState().pins.pins;
-	            var _iteratorNormalCompletion = true;
-	            var _didIteratorError = false;
-	            var _iteratorError = undefined;
+	            var _iteratorNormalCompletion2 = true;
+	            var _didIteratorError2 = false;
+	            var _iteratorError2 = undefined;
 	
 	            try {
-	                for (var _iterator = pins[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-	                    var _step$value = _slicedToArray(_step.value, 2);
+	                for (var _iterator2 = pins[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+	                    var _step2$value = _slicedToArray(_step2.value, 2);
 	
-	                    var key = _step$value[0];
-	                    var value = _step$value[1];
+	                    var key = _step2$value[0];
+	                    var value = _step2$value[1];
 	
 	                    this.addPin(value.position.x, value.position.y, value.name);
 	                }
 	            } catch (err) {
-	                _didIteratorError = true;
-	                _iteratorError = err;
+	                _didIteratorError2 = true;
+	                _iteratorError2 = err;
 	            } finally {
 	                try {
-	                    if (!_iteratorNormalCompletion && _iterator.return) {
-	                        _iterator.return();
+	                    if (!_iteratorNormalCompletion2 && _iterator2.return) {
+	                        _iterator2.return();
 	                    }
 	                } finally {
-	                    if (_didIteratorError) {
-	                        throw _iteratorError;
+	                    if (_didIteratorError2) {
+	                        throw _iteratorError2;
 	                    }
 	                }
 	            }
@@ -36486,7 +36519,7 @@ webpackJsonplib([0,3],{
 /***/ 7:
 /***/ function(module, exports) {
 
-	"use strict";
+	'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
@@ -36498,6 +36531,9 @@ webpackJsonplib([0,3],{
 	var colors = exports.colors = [];
 	colors[EMPTY] = 0xFFFFFF;
 	colors[WALL] = 0x000000;
+	var web_colors = exports.web_colors = [];
+	web_colors[0xFFFFFF] = '#fff';
+	web_colors[0x000000] = '#000';
 
 /***/ },
 
@@ -38394,4 +38430,4 @@ webpackJsonplib([0,3],{
 /***/ }
 
 });
-//# sourceMappingURL=app.21bdf08a8825a2d3a149.js.map
+//# sourceMappingURL=app.2fb350543d66bd73cc31.js.map

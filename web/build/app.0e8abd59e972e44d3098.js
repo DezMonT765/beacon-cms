@@ -11,8 +11,6 @@ webpackJsonplib([0,3],{
 	});
 	exports.store = undefined;
 	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 	
 	var _Canvas = __webpack_require__(1);
@@ -45,17 +43,11 @@ webpackJsonplib([0,3],{
 	
 	var _reactRedux = __webpack_require__(194);
 	
-	var _PinControls = __webpack_require__(203);
+	var _App = __webpack_require__(203);
 	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
 	var nodeBuffer = [];
 	var idBuffer = new Set();
@@ -173,6 +165,9 @@ webpackJsonplib([0,3],{
 	        case 'CLEAR_PINS':
 	            new_state = _extends({}, state);
 	            new_state.pins = new Map();
+	            if (typeof canvas !== 'undefined') {
+	                canvas.clear();
+	            }
 	            return new_state;
 	        case 'DELETE_PIN':
 	            new_state = _extends({}, state);
@@ -188,103 +183,13 @@ webpackJsonplib([0,3],{
 	    }
 	};
 	
-	var BrushControls = function BrushControls(_ref) {
-	    var brushes = _ref.brushes;
-	
-	    return _react2.default.createElement(
-	        "div",
-	        null,
-	        "Brushes",
-	        brushes.map(function (brush, index) {
-	            return _react2.default.createElement(BrushControl, { key: index, index: index, brush: brush });
-	        }),
-	        _react2.default.createElement(
-	            "button",
-	            { onClick: function onClick() {
-	                    store.dispatch({
-	                        type: 'CLEAR_PINS'
-	                    });
-	                    canvas.clear();
-	                } },
-	            "Clear"
-	        )
-	    );
-	};
-	
-	var BrushControl = function (_React$Component) {
-	    _inherits(BrushControl, _React$Component);
-	
-	    function BrushControl() {
-	        _classCallCheck(this, BrushControl);
-	
-	        return _possibleConstructorReturn(this, (BrushControl.__proto__ || Object.getPrototypeOf(BrushControl)).apply(this, arguments));
-	    }
-	
-	    _createClass(BrushControl, [{
-	        key: "render",
-	        value: function render() {
-	            var _this2 = this;
-	
-	            return _react2.default.createElement("div", { className: "cell",
-	                style: {
-	                    background: states.web_colors[this.props.brush.color],
-	                    border: this.props.brush.toggled ? '3px solid #B92626' : 'none'
-	                },
-	                onClick: function onClick() {
-	                    store.dispatch({ type: 'TOGGLE_BRUSH', index: _this2.props.index });
-	                } });
-	        }
-	    }]);
-	
-	    return BrushControl;
-	}(_react2.default.Component);
-	
-	var App = function (_React$Component2) {
-	    _inherits(App, _React$Component2);
-	
-	    function App() {
-	        _classCallCheck(this, App);
-	
-	        return _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).apply(this, arguments));
-	    }
-	
-	    _createClass(App, [{
-	        key: "render",
-	        value: function render() {
-	            var canvas = this.props.canvas;
-	            var brushes = store.getState().brushes.brushes;
-	            return _react2.default.createElement(
-	                "div",
-	                { className: "container-fluid" },
-	                _react2.default.createElement(
-	                    "div",
-	                    { className: "row-fluid" },
-	                    _react2.default.createElement("div", { className: "col-md-10", id: "canvas" }),
-	                    _react2.default.createElement(
-	                        "div",
-	                        { className: "col-md-2" },
-	                        _react2.default.createElement(BrushControls, { brushes: brushes }),
-	                        _react2.default.createElement(_PinControls.PinControls, { canvas: canvas })
-	                    )
-	                )
-	            );
-	        }
-	    }]);
-	
-	    return App;
-	}(_react2.default.Component);
-	
-	App.contextTypes = {
-	    store: _react2.default.PropTypes.object
-	};
-	
 	var store = exports.store = (0, _redux.createStore)((0, _redux.combineReducers)({ brushes: brushes, pins: pins }));
 	var canvas = new _Canvas2.default(store);
 	var render = function render() {
 	    ReactDOM.render(_react2.default.createElement(
 	        _reactRedux.Provider,
 	        { store: store, canvas: canvas },
-	        _react2.default.createElement(App, { canvas: canvas })
+	        _react2.default.createElement(_App.App, { canvas: canvas })
 	    ), document.getElementById('root'));
 	};
 	render();
@@ -2942,6 +2847,77 @@ webpackJsonplib([0,3],{
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
+	exports.App = undefined;
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _PinControls = __webpack_require__(204);
+	
+	var _BrushControls = __webpack_require__(205);
+	
+	var _react = __webpack_require__(10);
+	
+	var React = _interopRequireWildcard(_react);
+	
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var App = exports.App = function (_React$Component) {
+	    _inherits(App, _React$Component);
+	
+	    function App() {
+	        _classCallCheck(this, App);
+	
+	        return _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).apply(this, arguments));
+	    }
+	
+	    _createClass(App, [{
+	        key: "render",
+	        value: function render() {
+	            var canvas = this.props.canvas;
+	            var store = this.context.store;
+	
+	            var brushes = store.getState().brushes.brushes;
+	            return React.createElement(
+	                "div",
+	                { className: "container-fluid" },
+	                React.createElement(
+	                    "div",
+	                    { className: "row-fluid" },
+	                    React.createElement("div", { className: "col-md-10", id: "canvas" }),
+	                    React.createElement(
+	                        "div",
+	                        { className: "col-md-2" },
+	                        React.createElement(_BrushControls.BrushControls, { brushes: brushes }),
+	                        React.createElement(_PinControls.PinControls, { canvas: canvas })
+	                    )
+	                )
+	            );
+	        }
+	    }]);
+	
+	    return App;
+	}(React.Component);
+	
+	App.contextTypes = {
+	    store: React.PropTypes.object
+	};
+
+/***/ },
+
+/***/ 204:
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
 	exports.PinControls = undefined;
 	
 	var _react = __webpack_require__(10);
@@ -2961,6 +2937,15 @@ webpackJsonplib([0,3],{
 	    return React.createElement(
 	        "div",
 	        null,
+	        React.createElement(
+	            "button",
+	            { onClick: function onClick() {
+	                    store.dispatch({
+	                        type: 'CLEAR_PINS'
+	                    });
+	                } },
+	            "Clear"
+	        ),
 	        React.createElement(
 	            "button",
 	            { onClick: canvas._grid.addPin.bind(canvas._grid, 0, 0, (0, _uuid.v4)()) },
@@ -2992,7 +2977,112 @@ webpackJsonplib([0,3],{
 	    store: React.PropTypes.object
 	};
 
+/***/ },
+
+/***/ 205:
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.BrushControls = undefined;
+	
+	var _react = __webpack_require__(10);
+	
+	var React = _interopRequireWildcard(_react);
+	
+	var _BrushControl = __webpack_require__(206);
+	
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+	
+	var BrushControls = exports.BrushControls = function BrushControls(_ref) {
+	    var brushes = _ref.brushes;
+	
+	    return React.createElement(
+	        "div",
+	        null,
+	        "Brushes",
+	        brushes.map(function (brush, index) {
+	            return React.createElement(_BrushControl.BrushControl, { key: index, index: index, brush: brush });
+	        })
+	    );
+	};
+
+/***/ },
+
+/***/ 206:
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.BrushControl = undefined;
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(10);
+	
+	var React = _interopRequireWildcard(_react);
+	
+	var _states = __webpack_require__(7);
+	
+	var states = _interopRequireWildcard(_states);
+	
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var BrushControl = exports.BrushControl = function (_React$Component) {
+	    _inherits(BrushControl, _React$Component);
+	
+	    function BrushControl(props, context) {
+	        _classCallCheck(this, BrushControl);
+	
+	        var _this = _possibleConstructorReturn(this, (BrushControl.__proto__ || Object.getPrototypeOf(BrushControl)).call(this, props, context));
+	
+	        var store = context.store;
+	        var index = props.index;
+	
+	        _this._store = store;
+	        _this._index = index;
+	        return _this;
+	    }
+	
+	    _createClass(BrushControl, [{
+	        key: "onClick",
+	        value: function onClick() {
+	            this._store.dispatch({ type: 'TOGGLE_BRUSH', index: this._index });
+	        }
+	    }, {
+	        key: "render",
+	        value: function render() {
+	            var brush = this.props.brush;
+	
+	            return React.createElement("div", { className: "cell",
+	                style: {
+	                    background: states.web_colors[brush.color],
+	                    border: brush.toggled ? '3px solid #B92626' : 'none'
+	                },
+	                onClick: this.onClick.bind(this) });
+	        }
+	    }]);
+	
+	    return BrushControl;
+	}(React.Component);
+	
+	BrushControl.contextTypes = {
+	    store: React.PropTypes.object
+	};
+
 /***/ }
 
 });
-//# sourceMappingURL=app.b4856f4326e27e4cb9cc.js.map
+//# sourceMappingURL=app.0e8abd59e972e44d3098.js.map

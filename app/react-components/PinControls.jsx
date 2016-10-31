@@ -4,6 +4,13 @@ export var PinControls = ({canvas}, {store}) => {
     const state = store.getState();
     const currentPinName = state.pins.currentPin.name;
     return (<div>
+        <button onClick={function () {
+            store.dispatch({
+                type: 'CLEAR_PINS'
+            });
+
+        }}>Clear
+        </button>
         <button onClick={
             canvas._grid.addPin.bind(canvas._grid, 0, 0, v4())
         }>Add pin</button>

@@ -7,7 +7,8 @@ import * as states from "./states";
 import {createStore, combineReducers} from "redux";
 import * as ReactDOM from "react/lib/ReactDOM";
 import {Provider} from "react-redux";
-import {PinControls} from "./react-components/PinControls";
+import {App} from "./react-components/App";
+
 let nodeBuffer = [];
 let idBuffer = new Set();
 
@@ -119,6 +120,9 @@ const pins = (state, action) => {
         case 'CLEAR_PINS' :
             new_state = {...state};
             new_state.pins = new Map();
+            if (typeof canvas !== 'undefined') {
+                canvas.clear();
+            }
             return new_state;
         case 'DELETE_PIN' :
             new_state = {...state};
@@ -133,39 +137,6 @@ const pins = (state, action) => {
 
     }
 };
-
-
-var BrushControls = ({brushes}) => {
-    return (
-        <div >
-            Brushes
-            {
-                brushes.map((brush, index) => (<BrushControl key={index} index={index} brush={brush}/>))
-            }
-            <button onClick={function () {
-                store.dispatch({
-                    type: 'CLEAR_PINS'
-                });
-                canvas.clear();
-            }}>Clear
-            </button>
-        </div>);
-};
-class BrushControl extends React.Component {
-    render() {
-        return (
-            <div className="cell"
-                 style={{
-                     background: states.web_colors[this.props.brush.color],
-                     border: this.props.brush.toggled ? '3px solid #B92626' : 'none'
-                 }}
-                 onClick={() => {
-                     store.dispatch({type: 'TOGGLE_BRUSH', index: this.props.index})
-                 }}></div>);
-    }
-}
-
-
 
 
 export const store = createStore(combineReducers({brushes: brushes, pins: pins}));

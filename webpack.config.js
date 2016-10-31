@@ -12,7 +12,7 @@ const PATHS = {
     style: [
         path.join(__dirname, 'app', 'main.css'),
     ],
-    build: path.join(__dirname, 'web/build')
+    build: path.join(__dirname,'web/build')
 };
 
 const common = {
@@ -32,7 +32,7 @@ const common = {
     plugins: [
         new HtmlWebpackPlugin({
             title: 'Webpack demo',
-            template : 'app/index.html'
+            template : 'app/beacon-map.php'
         })
     ],
     resolve: {
@@ -69,7 +69,7 @@ switch(process.env.npm_lifecycle_event) {
             ),
             configParts.extractBundle({
                 name: 'vendor',
-                entries: ['konva','react','react/lib/ReactDOM']
+                entries: ['./node_modules/pixi.js/bin/pixi','react','react/lib/ReactDOM']
             }),
             configParts.extractCSS(PATHS.style)
 

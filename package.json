@@ -44,6 +44,7 @@
     "raphael": "^2.2.6",
     "react": "^15.3.2",
     "react-konva": "^1.0.6",
+    "react-redux": "^4.4.5",
     "redux": "^3.6.0",
     "redux-logger": "^2.7.0",
     "snapsvg": "^0.4.0",

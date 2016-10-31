@@ -6,7 +6,8 @@ import * as helper from "./helper";
 import * as states from "./states";
 import {createStore, combineReducers} from "redux";
 import * as ReactDOM from "react/lib/ReactDOM";
-import createLogger from "redux-logger";
+import {Provider} from "react-redux";
+import {PinControls} from "./react-components/PinControls";
 let nodeBuffer = [];
 let idBuffer = new Set();
 
@@ -123,6 +124,9 @@ const pins = (state, action) => {
             new_state = {...state};
             new_state.pins.delete(action.name);
             new_state.currentPin = pin(undefined, action);
+            if (typeof canvas !== 'undefined') {
+                canvas._grid.deletePin(action.name);
+            }
             return new_state;
         default :
             return state;
@@ -162,48 +166,16 @@ class BrushControl extends React.Component {
 }
 
 
-var PinControls = () => {
-    return (<div>
-        <button onClick={canvas._grid.addPin.bind(canvas._grid, 0, 0, v4())}>Add pin</button>
-        {store.getState().pins.currentPin.name !== null ?
-            <div>
-                <span>{store.getState().pins.currentPin.name}</span>
-                <button onClick={function () {
-                    let pin_name = store.getState().pins.currentPin.name;
-                    store.dispatch({
-                        type: 'DELETE_PIN',
-                        name: pin_name
-                    });
-                    canvas._grid.deletePin(pin_name);
-                }}>Delete pin
-                </button>
-            </div> :
-            ''
-        }
-    </div>)
-};
 
-class App extends React.Component {
-    render() {
-        return (
-            <div className="container-fluid">
-                <div className="row-fluid">
-                    <div className="col-md-10" id="canvas" style={{background: 'url(/background.jpg'}}></div>
-                    <div className="col-md-2">
-                        <BrushControls brushes={this.props.brushes}/>
-                        <PinControls/>
-                    </div>
-                </div>
-            </div>
-        );
-    }
-}
 
-const logger = createLogger();
 export const store = createStore(combineReducers({brushes: brushes, pins: pins}));
 var canvas = new Canvas(store);
 const render = () => {
-    ReactDOM.render(<App brushes={store.getState().brushes.brushes}/>, document.getElementById('root'));
+    ReactDOM.render(
+        <Provider store={store} canvas={canvas}>
+            <App canvas={canvas}/>
+        </Provider>,
+        document.getElementById('root'));
 };
 render();
 store.subscribe(render);

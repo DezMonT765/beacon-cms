@@ -90,8 +90,9 @@ export default class Grid {
             this._rects = null;
             if (typeof(Storage) !== "undefined") {
                 try {
-                    this._rects = JSON.parse(localStorage.getItem("rects"));
-                    console.log(this._rects)
+                    let jsonArray = localStorage.getItem("rects");
+                    this._rects = JSON.parse(jsonArray);
+                    console.log(jsonArray);
                 }
                 catch (e) {
                     console.log(e);

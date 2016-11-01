@@ -653,6 +653,7 @@ webpackJsonplib([0,3],{
 	                if (typeof Storage !== "undefined") {
 	                    try {
 	                        this._rects = JSON.parse(localStorage.getItem("rects"));
+	                        console.log(this._rects);
 	                    } catch (e) {
 	                        console.log(e);
 	                    }
@@ -38430,4 +38431,4 @@ webpackJsonplib([0,3],{
 /***/ }
 
 });
-//# sourceMappingURL=app.2fb350543d66bd73cc31.js.map
+//# sourceMappingURL=app.d36be8155174a0d35074.js.map

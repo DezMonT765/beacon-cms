@@ -91,6 +91,7 @@ export default class Grid {
             if (typeof(Storage) !== "undefined") {
                 try {
                     this._rects = JSON.parse(localStorage.getItem("rects"));
+                    console.log(this._rects)
                 }
                 catch (e) {
                     console.log(e);

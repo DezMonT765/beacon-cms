@@ -36,14 +36,7 @@ class TranslationLoad extends Model
         ];
     }
 
-    public function behaviors()
-    {
-        return [
-           'filePath' => [
-               'class' => FileSaveBehavior::className(),
-           ]
-        ];
-    }
+
 
     public function loadTranslation()
     {
@@ -54,6 +47,7 @@ class TranslationLoad extends Model
         }
 
         $xlsImport = new xlsImport(Yii::$app->controller, Yii::$app->request->referrer,SourceMessage::className(), KReader::className(),$this,'file',$this->isUpdate);
+        $xlsImport->ignoreAttributes(['id']);
         $xlsImport->run();
 
         return true;

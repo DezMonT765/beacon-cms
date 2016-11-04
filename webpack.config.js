@@ -12,7 +12,7 @@ const PATHS = {
     style: [
         path.join(__dirname, 'app', 'main.css'),
     ],
-    build: path.join(__dirname,'web/build')
+    build: path.join(__dirname,'views/beacon/beacon-map')
 };
 
 const common = {
@@ -32,6 +32,7 @@ const common = {
     plugins: [
         new HtmlWebpackPlugin({
             title: 'Webpack demo',
+            filename : 'index.php',
             template : 'app/beacon-map.php'
         })
     ],

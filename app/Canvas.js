@@ -2,22 +2,19 @@ export const WIDTH = 10;
 export const HEIGHT = 10;
 const dimensionX = 100;
 const dimensionY = 100;
-const cellPerLayer = 500;
 import Grid from "./Grid";
 import * as states from "./states";
 import * as helper from "./helper";
 import * as PIXI from "../node_modules/pixi.js/bin/pixi";
 var stage = null;
 export default class Canvas {
-    constructor(store, nodeBuffer, idBuffer) {
+    constructor(store, canvasElement, nodeBuffer, idBuffer) {
         this._store = store;
         if (stage !== null) {
             stage.destroy();
         }
-        var renderer = PIXI.autoDetectRenderer(WIDTH * dimensionX, HEIGHT * dimensionY);
+        var renderer = PIXI.autoDetectRenderer(WIDTH * dimensionX, HEIGHT * dimensionY, {view: canvasElement});
         renderer.plugins.interaction.moveWhenInside = true;
-        document.body.appendChild(renderer.view);
-
         stage = new PIXI.Container();
         stage.interactive = true;
 
@@ -28,8 +25,8 @@ export default class Canvas {
         }.bind(this));
         var onInteract = function (evt) {
             if (store.getState().brushes.currentBrush.activated) {
-                let x = Math.round(evt.data.global.x / WIDTH);
-                let y = Math.round(evt.data.global.y / HEIGHT);
+                let x = Math.floor(evt.data.global.x / WIDTH);
+                let y = Math.floor(evt.data.global.y / HEIGHT);
                 let color = store.getState().brushes.currentBrush.color;
                 this._grid.drawRect({
                     color: color,

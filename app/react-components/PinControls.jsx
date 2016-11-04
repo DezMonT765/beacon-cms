@@ -8,11 +8,17 @@ export var PinControls = ({canvas}, {store}) => {
             store.dispatch({
                 type: 'CLEAR_PINS'
             });
-
+            if (typeof canvas !== 'undefined' || canvas !== null) {
+                canvas.clear();
+            }
         }}>Clear
         </button>
         <button onClick={
-            canvas._grid.addPin.bind(canvas._grid, 0, 0, v4())
+            function() {
+                if (typeof canvas !== 'undefined' || canvas !== null) {
+                    canvas._grid.addPin(0, 0, v4());
+                }
+            }
         }>Add pin</button>
         {currentPinName !== null ?
             <div>
@@ -22,6 +28,9 @@ export var PinControls = ({canvas}, {store}) => {
                         type: 'DELETE_PIN',
                         name: currentPinName
                     });
+                    if (typeof canvas !== 'undefined' || canvas !== null) {
+                        canvas._grid.deletePin(currentPinName);
+                    }
                 }}>Delete pin
                 </button>
             </div> :

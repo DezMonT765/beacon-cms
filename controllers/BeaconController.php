@@ -193,7 +193,7 @@ class BeaconController extends MainController
         $group = Groups::findOne($group_id);
         $map_provider = new ArrayDataProvider([
                                                 'allModels' => $group->map,
-                                                'pagination' => [
+                                                 'pagination' => [
                                                     'pageSize' => 1
                                                 ],
                                                ]);
@@ -208,7 +208,7 @@ class BeaconController extends MainController
              Please contact to support team, or add the map to the group by yourself.
              Also please ensure that you belong at least to one group');
         }
-        return $this->render('build/beacon-map', ['model' => $model,'group'=>$group,'map_provider'=>$map_provider]);
+        return $this->render('beacon-map', ['model' => $model,'group'=>$group,'map_provider'=>$map_provider]);
     }
 
 

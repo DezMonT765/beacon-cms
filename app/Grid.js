@@ -29,7 +29,7 @@ export default class Grid {
 
     build() {
         this._graphics.clear();
-        for ( let [key,pin] of this._pins) {
+        for (let [key,pin] of this._pins) {
             pin.destroy();
         }
         for (let i = 0; i < this._dimensionX; i++) {
@@ -48,14 +48,15 @@ export default class Grid {
         }
         let pins = this._store.getState().pins.pins;
         for (let [key,value] of pins) {
-            this.addPin(value.position.x, value.position.y,value.name);
+            this.addPin(value.position.x, value.position.y, value.name);
         }
         this._graphics.zIndex = 1;
         helper.sortChildrenByZIndex(this._stage);
     }
 
     addPin(x = 0, y = 0, name = v4()) {
-        this._pins.set(name, new Pin(x, y, name, this));
+        if (!this._pins.has(name))
+            this._pins.set(name, new Pin(x, y, name, this));
     }
 
     deletePin(name) {

@@ -12,7 +12,7 @@ const PATHS = {
     style: [
         path.join(__dirname, 'app', 'main.css'),
     ],
-    build: path.join(__dirname,'views/beacon/beacon-map')
+    build: path.join(__dirname,'web/libs/beacon-map')
 };
 
 const common = {
@@ -54,11 +54,7 @@ switch(process.env.npm_lifecycle_event) {
                 devtool: 'source-map',
                 output: {
                     path: PATHS.build,
-                    filename: '[name].[chunkhash].js',
-                    // This is used for require.ensure. The setup
-                    // will work without but this is useful to set.
-                    chunkFilename: '[chunkhash].js',
-
+                    filename: '[name].js',
                 }
             },
             configParts.clean(PATHS.build),

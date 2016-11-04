@@ -61,7 +61,8 @@ $config = [
                 ],
                 \yii\bootstrap\BootstrapPluginAsset::className() =>[
                     'js' => ['https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js'],
-                ]
+                ],
+
             ],
             'appendTimestamp' => true,
         ],

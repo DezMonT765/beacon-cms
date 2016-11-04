@@ -1,14 +1,12 @@
 <?php
-
 use app\models\Users;
-use yii\helpers\Html;
 use yii\grid\GridView;
+use yii\helpers\Html;
 use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\UsersSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
-
 $this->title = Yii::t('app', 'Users');
 ?>
 <div class="user-index">
@@ -17,30 +15,28 @@ $this->title = Yii::t('app', 'Users');
                              'dataProvider' => $dataProvider,
                              'filterModel' => $searchModel,
                              'layout' => "{summary}\n{pager}\n{items}\n{pager}",
+                             'tableOptions' => ['class' => 'table table-bordered'],
                              'columns' => [
                                  ['class' => 'yii\grid\SerialColumn'],
-
                                  [
-                                     'attribute'=>'email',
-                                     'format'=>'raw',
-                                     'value'=>function($data)
-                                     {
-                                         return Html::a($data->email,Url::to(['update','id'=>$data->id]));
+                                     'attribute' => 'email',
+                                     'format' => 'raw',
+                                     'value' => function ($data) {
+                                         return Html::a($data->email, Url::to(['update', 'id' => $data->id]));
                                      }
                                  ],
                                  [
-                                     'class'=>\dosamigos\grid\EditableColumn::className(),
+                                     'class' => \dosamigos\grid\EditableColumn::className(),
                                      'filter' => Users::$statuses,
-                                     'format'=>'raw',
-                                     'attribute'=>'status',
-                                     'url'=>['ajax-update'],
-                                     'type'=>'select',
+                                     'format' => 'raw',
+                                     'attribute' => 'status',
+                                     'url' => ['ajax-update'],
+                                     'type' => 'select',
                                      'display' => 'colors',
-                                     'value' => function($data){
+                                     'value' => function ($data) {
                                          return Users::getStatus($data->status);
                                      },
-                                     'editableOptions'=>function($model)
-                                     {
+                                     'editableOptions' => function ($model) {
                                          return [
                                              'source' => Users::$statuses,
                                              'value' => $model->status,
@@ -48,26 +44,22 @@ $this->title = Yii::t('app', 'Users');
                                      }
                                  ],
                                  [
-                                     'class'=>\dosamigos\grid\EditableColumn::className(),
+                                     'class' => \dosamigos\grid\EditableColumn::className(),
                                      'filter' => Users::roles(),
-                                     'format'=>'raw',
-                                     'attribute'=>'role',
-                                     'url'=>['ajax-update'],
-                                     'value' => function($data){
+                                     'format' => 'raw',
+                                     'attribute' => 'role',
+                                     'url' => ['ajax-update'],
+                                     'value' => function ($data) {
                                          return Users::getRole($data->role);
                                      },
-                                     'type'=>'select',
-                                     'editableOptions' => function($model)
-                                     {
+                                     'type' => 'select',
+                                     'editableOptions' => function ($model) {
                                          return [
                                              'source' => Yii::$app->user->identity->getEditableRoles($model->id),
                                              'sourceCache' => false,
                                          ];
                                      }
                                  ],
-
-
-
                                  ['class' => 'yii\grid\ActionColumn'],
                              ],
                          ]); ?>

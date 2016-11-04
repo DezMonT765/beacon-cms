@@ -26,6 +26,18 @@ export const pins = (state, action) => {
         case 'ADD_PIN' :
             new_state = {...state};
             new_state.pins.set(action.name, pin(undefined, action));
+            // $.ajax({
+            //     url : 'beacon-pin/save',
+            //     type : 'POST',
+            //     data : {
+            //         'BeaconPins[canvas_height]',
+            //         'BeaconPins[canvas_width]' ,
+            //         'BeaconPins[id]',
+            //         'BeaconPins[name]',
+            //         'BeaconPins[x]',
+            //         'BeaconPins[y]',
+            //     }
+            // });
             return new_state;
         case 'SET_PIN_POSITION' : {
             new_state = {...state};

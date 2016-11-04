@@ -19,4 +19,13 @@ body {
 .white {
     background : white;
 }
-/*# sourceMappingURL=style.e7a1e18f9ee7a7034c2c.css.map*/
+
+#canvas-holder {
+    padding-left: 0;
+    padding-right: 0;
+    margin-top:10px;
+}
+#canvas-holder > canvas {
+    border: 2px solid black;
+}
+/*# sourceMappingURL=style.css.map*/

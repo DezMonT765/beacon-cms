@@ -43,12 +43,17 @@ webpackJsonplib([0,3],{
 	var idBuffer = new Set();
 	
 	var BeaconMap = exports.BeaconMap = function () {
-	    function BeaconMap(mapContainerId) {
+	    function BeaconMap(mapContainerId, backgroundUrl, cellWidth, cellHeight, columnCount, rowCount) {
 	        _classCallCheck(this, BeaconMap);
 	
+	        this._mapContainerId = mapContainerId;
+	        this._backgroundUrl = backgroundUrl;
+	        this._width = cellWidth;
+	        this._height = cellHeight;
+	        this._dimensionX = columnCount;
+	        this._dimensionY = rowCount;
 	        this._store = (0, _redux.createStore)((0, _redux.combineReducers)({ brushes: _brushes.brushes, pins: _pins.pins }));
 	        this._store.subscribe(this.render.bind(this));
-	        this._mapContainerId = mapContainerId;
 	    }
 	
 	    _createClass(BeaconMap, [{
@@ -89,7 +94,12 @@ webpackJsonplib([0,3],{
 	            ReactDOM.render(_react2.default.createElement(
 	                _reactRedux.Provider,
 	                { store: this._store },
-	                _react2.default.createElement(_App.App, null)
+	                _react2.default.createElement(_App.App, { backgroundUrl: this._backgroundUrl,
+	                    width: this._width,
+	                    height: this._height,
+	                    dimensionX: this._dimensionX,
+	                    dimensionY: this._dimensionY
+	                })
 	            ), document.getElementById(this._mapContainerId));
 	        }
 	    }]);
@@ -374,6 +384,18 @@ webpackJsonplib([0,3],{
 	        case 'ADD_PIN':
 	            new_state = _extends({}, state);
 	            new_state.pins.set(action.name, (0, _pin.pin)(undefined, action));
+	            // $.ajax({
+	            //     url : 'beacon-pin/save',
+	            //     type : 'POST',
+	            //     data : {
+	            //         'BeaconPins[canvas_height]',
+	            //         'BeaconPins[canvas_width]' ,
+	            //         'BeaconPins[id]',
+	            //         'BeaconPins[name]',
+	            //         'BeaconPins[x]',
+	            //         'BeaconPins[y]',
+	            //     }
+	            // });
 	            return new_state;
 	        case 'SET_PIN_POSITION':
 	            {
@@ -2303,6 +2325,8 @@ webpackJsonplib([0,3],{
 	
 	var _PinControls = __webpack_require__(208);
 	
+	var _PinControls2 = _interopRequireDefault(_PinControls);
+	
 	var _BrushControls = __webpack_require__(209);
 	
 	var _react = __webpack_require__(1);
@@ -2335,7 +2359,7 @@ webpackJsonplib([0,3],{
 	    _createClass(App, [{
 	        key: "componentDidMount",
 	        value: function componentDidMount() {
-	            this._canvas = new _Canvas2.default(this._store, document.getElementById('canvas'));
+	            this._canvas = new _Canvas2.default(this._store, document.getElementById('canvas'), this.props.backgroundUrl, this.props.width, this.props.height, this.props.dimensionX, this.props.dimensionY);
 	        }
 	    }, {
 	        key: "render",
@@ -2343,21 +2367,17 @@ webpackJsonplib([0,3],{
 	            var brushes = this._store.getState().brushes.brushes;
 	            return React.createElement(
 	                "div",
-	                { className: "container-fluid" },
+	                { className: "row-fluid" },
 	                React.createElement(
 	                    "div",
-	                    { className: "row-fluid" },
-	                    React.createElement(
-	                        "div",
-	                        { className: "col-md-10" },
-	                        React.createElement("canvas", { id: "canvas" })
-	                    )
+	                    { className: "col-md-10", id: "canvas-holder" },
+	                    React.createElement("canvas", { id: "canvas" })
 	                ),
 	                React.createElement(
 	                    "div",
 	                    { className: "col-md-2" },
 	                    React.createElement(_BrushControls.BrushControls, { brushes: brushes }),
-	                    React.createElement(_PinControls.PinControls, { canvas: this._canvas })
+	                    React.createElement(_PinControls2.default, { canvas: this._canvas })
 	                )
 	            );
 	        }
@@ -2380,7 +2400,6 @@ webpackJsonplib([0,3],{
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	exports.HEIGHT = exports.WIDTH = undefined;
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
@@ -2406,43 +2425,48 @@ webpackJsonplib([0,3],{
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
-	var WIDTH = exports.WIDTH = 10;
-	var HEIGHT = exports.HEIGHT = 10;
-	var dimensionX = 100;
-	var dimensionY = 100;
-	
 	var stage = null;
 	
 	var Canvas = function () {
-	    function Canvas(store, canvasElement, nodeBuffer, idBuffer) {
+	    function Canvas(store, canvasElement, backgroundUrl) {
+	        var width = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 10;
+	        var height = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 10;
+	        var dimensionX = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : 100;
+	        var dimensionY = arguments.length > 6 && arguments[6] !== undefined ? arguments[6] : 100;
+	        var nodeBuffer = arguments[7];
+	        var idBuffer = arguments[8];
+	
 	        _classCallCheck(this, Canvas);
 	
 	        this._store = store;
 	        if (stage !== null) {
 	            stage.destroy();
 	        }
-	        var renderer = PIXI.autoDetectRenderer(WIDTH * dimensionX, HEIGHT * dimensionY, { view: canvasElement });
+	        this._width = width;
+	        this._height = height;
+	        this._dimensionX = dimensionX;
+	        this._dimensionY = dimensionY;
+	        var renderer = PIXI.autoDetectRenderer(this._width * dimensionX, this._height * dimensionY, { view: canvasElement });
 	        renderer.plugins.interaction.moveWhenInside = true;
 	        stage = new PIXI.Container();
 	        stage.interactive = true;
 	
-	        this._grid = new _Grid2.default(stage, WIDTH, HEIGHT, dimensionX, dimensionY, '/img/background.jpg', store);
+	        this._grid = new _Grid2.default(stage, this._width, this._height, dimensionX, dimensionY, backgroundUrl, store);
 	        this._grid._promise.then(function () {
 	            this._grid.build();
-	            // this._grid.addPin(0, 0);
 	        }.bind(this));
 	        var onInteract = function (evt) {
 	            if (store.getState().brushes.currentBrush.activated) {
-	                var x = Math.floor(evt.data.global.x / WIDTH);
-	                var y = Math.floor(evt.data.global.y / HEIGHT);
+	                var x = Math.floor(evt.data.global.x / this._width);
+	                var y = Math.floor(evt.data.global.y / this._height);
 	                var color = store.getState().brushes.currentBrush.color;
 	                this._grid.drawRect({
 	                    color: color,
 	                    stroke: 0xAAAAAA,
-	                    x: x * WIDTH,
-	                    y: y * HEIGHT,
-	                    width: WIDTH,
-	                    height: HEIGHT
+	                    x: x * this._width,
+	                    y: y * this._height,
+	                    width: this._width,
+	                    height: this._height
 	                });
 	                if (Array.isArray(this._grid.rects[x]) && typeof this._grid.rects[x][y] !== 'undefined') {
 	                    this._grid.rects[x][y] = color === 0x000000 ? states.WALL : states.EMPTY;
@@ -2510,9 +2534,9 @@ webpackJsonplib([0,3],{
 	        key: "clear",
 	        value: function clear() {
 	            this._grid.rects = [];
-	            for (var i = 0; i < dimensionX; i++) {
+	            for (var i = 0; i < this._dimensionX; i++) {
 	                this._grid.rects[i] = new Array(100);
-	                for (var j = 0; j < dimensionY; j++) {
+	                for (var j = 0; j < this._dimensionY; j++) {
 	                    this._grid.rects[i][j] = 0;
 	                }
 	            }
@@ -2671,7 +2695,7 @@ webpackJsonplib([0,3],{
 	            var y = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
 	            var name = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : (0, _uuid.v4)();
 	
-	            this._pins.set(name, new _Pin2.default(x, y, name, this));
+	            if (!this._pins.has(name)) this._pins.set(name, new _Pin2.default(x, y, name, this));
 	        }
 	    }, {
 	        key: "deletePin",
@@ -3015,7 +3039,8 @@ webpackJsonplib([0,3],{
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	exports.PinControls = undefined;
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
 	var _react = __webpack_require__(1);
 	
@@ -3025,60 +3050,116 @@ webpackJsonplib([0,3],{
 	
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 	
-	var PinControls = exports.PinControls = function PinControls(_ref, _ref2) {
-	    var canvas = _ref.canvas;
-	    var store = _ref2.store;
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
-	    var state = store.getState();
-	    var currentPinName = state.pins.currentPin.name;
-	    return React.createElement(
-	        "div",
-	        null,
-	        React.createElement(
-	            "button",
-	            { onClick: function onClick() {
-	                    store.dispatch({
-	                        type: 'CLEAR_PINS'
-	                    });
-	                    if (typeof canvas !== 'undefined' || canvas !== null) {
-	                        canvas.clear();
-	                    }
-	                } },
-	            "Clear"
-	        ),
-	        React.createElement(
-	            "button",
-	            { onClick: function onClick() {
-	                    if (typeof canvas !== 'undefined' || canvas !== null) {
-	                        canvas._grid.addPin(0, 0, (0, _uuid.v4)());
-	                    }
-	                } },
-	            "Add pin"
-	        ),
-	        currentPinName !== null ? React.createElement(
-	            "div",
-	            null,
-	            React.createElement(
-	                "span",
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var PinControls = function (_React$Component) {
+	    _inherits(PinControls, _React$Component);
+	
+	    function PinControls(props, context) {
+	        _classCallCheck(this, PinControls);
+	
+	        return _possibleConstructorReturn(this, (PinControls.__proto__ || Object.getPrototypeOf(PinControls)).call(this, props, context));
+	    }
+	
+	    _createClass(PinControls, [{
+	        key: "render",
+	        value: function render() {
+	            var store = this.context.store;
+	
+	            var state = store.getState();
+	            var canvas = this.props.canvas;
+	            var currentPinName = state.pins.currentPin.name;
+	            return React.createElement(
+	                "div",
 	                null,
-	                currentPinName
-	            ),
-	            React.createElement(
-	                "button",
-	                { onClick: function onClick() {
-	                        store.dispatch({
-	                            type: 'DELETE_PIN',
-	                            name: currentPinName
-	                        });
-	                        if (typeof canvas !== 'undefined' || canvas !== null) {
-	                            canvas._grid.deletePin(currentPinName);
-	                        }
-	                    } },
-	                "Delete pin"
-	            )
-	        ) : ''
-	    );
-	};
+	                React.createElement(
+	                    "div",
+	                    { className: "row" },
+	                    React.createElement(
+	                        "div",
+	                        { className: "form-group" },
+	                        React.createElement(
+	                            "button",
+	                            { className: "btn btn-default", onClick: function () {
+	                                    store.dispatch({
+	                                        type: 'CLEAR_PINS'
+	                                    });
+	                                    if (typeof canvas !== 'undefined' && canvas !== null) {
+	                                        canvas.clear();
+	                                    }
+	                                }.bind(this) },
+	                            "Clear"
+	                        )
+	                    ),
+	                    React.createElement(
+	                        "legend",
+	                        null,
+	                        "Manage panel"
+	                    ),
+	                    React.createElement(
+	                        "div",
+	                        { className: "form-group" },
+	                        React.createElement("input", { id: "beacon-pin", type: "text", value: "" })
+	                    ),
+	                    React.createElement(
+	                        "div",
+	                        { className: "form-group" },
+	                        React.createElement(
+	                            "button",
+	                            { className: "btn btn-default", id: "add-pin", onClick: function () {
+	                                    if (typeof canvas !== 'undefined' && canvas !== null) {
+	                                        var beacon = $('#beacon-pin');
+	                                        if (beacon.select2('data') !== null) {
+	                                            var id = beacon.select2('data').text;
+	                                            beacon.attr('value', '');
+	                                            beacon.select2('val', '');
+	                                            canvas._grid.addPin(0, 0, id);
+	                                        }
+	                                    }
+	                                }.bind(this) },
+	                            "Add pin"
+	                        )
+	                    ),
+	                    React.createElement(
+	                        "div",
+	                        { className: "form-group" },
+	                        currentPinName !== null ? React.createElement(
+	                            "div",
+	                            null,
+	                            React.createElement(
+	                                "span",
+	                                { className: "form-control" },
+	                                currentPinName
+	                            ),
+	                            React.createElement(
+	                                "button",
+	                                { className: "btn btn-default", onClick: function () {
+	                                        store.dispatch({
+	                                            type: 'DELETE_PIN',
+	                                            name: currentPinName
+	                                        });
+	                                        if (typeof canvas !== 'undefined' || canvas !== null) {
+	                                            canvas._grid.deletePin(currentPinName);
+	                                        }
+	                                    }.bind(this) },
+	                                "Delete pin"
+	                            )
+	                        ) : ''
+	                    )
+	                )
+	            );
+	        }
+	    }]);
+	
+	    return PinControls;
+	}(React.Component);
+	
+	exports.default = PinControls;
+	;
 	
 	PinControls.contextTypes = {
 	    store: React.PropTypes.object
@@ -3192,4 +3273,4 @@ webpackJsonplib([0,3],{
 /***/ }
 
 });
-//# sourceMappingURL=app.d0013a02def478da5d2b.js.map
+//# sourceMappingURL=app.js.map

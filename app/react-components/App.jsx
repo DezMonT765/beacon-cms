@@ -1,5 +1,5 @@
 import Canvas from "../Canvas";
-import {PinControls} from "./PinControls";
+import PinControls from "./PinControls";
 import {BrushControls} from "./BrushControls";
 import * as React from "react";
 export class App extends React.Component {
@@ -10,17 +10,15 @@ export class App extends React.Component {
     }
 
     componentDidMount() {
-        this._canvas = new Canvas(this._store, document.getElementById('canvas'))
+        this._canvas = new Canvas(this._store, document.getElementById('canvas'),this.props.backgroundUrl, this.props.width,this.props.height,this.props.dimensionX,this.props.dimensionY)
     }
 
     render() {
         const brushes = this._store.getState().brushes.brushes;
         return (
-            <div className="container-fluid">
-                <div className="row-fluid">
-                    <div className="col-md-10">
-                        <canvas id="canvas"/>
-                    </div>
+            <div className="row-fluid">
+                <div className="col-md-10" id="canvas-holder">
+                    <canvas id="canvas"/>
                 </div>
                 <div className="col-md-2">
                     <BrushControls brushes={brushes}/>

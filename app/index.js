@@ -11,10 +11,15 @@ let nodeBuffer = [];
 let idBuffer = new Set();
 
 export class BeaconMap {
-    constructor(mapContainerId) {
-        this._store =  createStore(combineReducers({brushes: brushes, pins: pins}));
+    constructor(mapContainerId, backgroundUrl, cellWidth, cellHeight, columnCount, rowCount) {
+        this._mapContainerId = mapContainerId;
+        this._backgroundUrl = backgroundUrl;
+        this._width = cellWidth;
+        this._height = cellHeight;
+        this._dimensionX = columnCount;
+        this._dimensionY = rowCount;
+        this._store = createStore(combineReducers({brushes: brushes, pins: pins}));
         this._store.subscribe(this.render.bind(this));
-        this._mapContainerId = mapContainerId
     }
 
     init() {
@@ -47,10 +52,16 @@ export class BeaconMap {
         });
         this.render();
     }
+
     render() {
         ReactDOM.render(
             <Provider store={this._store}>
-                <App/>
+                <App backgroundUrl={this._backgroundUrl}
+                     width={this._width}
+                     height={this._height}
+                     dimensionX={this._dimensionX}
+                     dimensionY={this._dimensionY}
+                />
             </Provider>,
             document.getElementById(this._mapContainerId));
     }

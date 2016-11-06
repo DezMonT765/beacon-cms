@@ -92,8 +92,8 @@ export default class Pin {
             url: this._grid._beaconUrls.beaconPinSaveUrl,
             type: 'POST',
             data: {
-                'BeaconPins[canvas_height]': this._stage.height,
-                'BeaconPins[canvas_width]': this._stage.width,
+                'BeaconPins[canvas_height]': this._height * this._dimensionX,
+                'BeaconPins[canvas_width]': this._width * this._dimensionY,
                 'BeaconPins[id]': this._id,
                 'BeaconPins[name]': this._name,
                 'BeaconPins[x]': x,

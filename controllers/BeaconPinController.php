@@ -43,7 +43,10 @@ class BeaconPinController extends MainController
                 Yii::$app->response->format = Response::FORMAT_JSON;
                 return ['success'=>true];
             }
-            else throw new ServerErrorHttpException('Pin not saved');
+            else {
+                $x = 3;
+                throw new ServerErrorHttpException('Pin not saved');
+            }
         }
         else throw new ServerErrorHttpException('Pin not saved');
     }

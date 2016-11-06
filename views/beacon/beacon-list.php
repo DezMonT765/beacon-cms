@@ -18,6 +18,7 @@ $this->title = Yii::t('app', 'Beacons');
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'layout' => "{summary}\n{pager}\n{items}\n{pager}",
+        'tableOptions' => ['class' => 'table table-bordered'],
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 

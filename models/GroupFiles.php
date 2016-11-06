@@ -13,6 +13,7 @@ use Yii;
  * @property string $type
  *
  * @property Groups $group
+ * @property BeaconMaps $beaconMap
  */
 class GroupFiles extends MainActiveRecord
 {
@@ -57,5 +58,9 @@ class GroupFiles extends MainActiveRecord
     public function getGroup()
     {
         return $this->hasOne(Groups::className(), ['id' => 'owner_id']);
+    }
+
+    public function getBeaconMap() {
+        return $this->hasOne(BeaconMaps::className(), ['id'=>'id']);
     }
 }

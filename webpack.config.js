@@ -1,6 +1,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-
+var webpack = require('webpack');
 const merge = require('webpack-merge');
 const configParts = require('./frontend-libs/webpack-parts');
 
@@ -12,7 +12,7 @@ const PATHS = {
     style: [
         path.join(__dirname, 'app', 'main.css'),
     ],
-    build: path.join(__dirname, 'web/build')
+    build: path.join(__dirname,'web/libs/beacon-map')
 };
 
 const common = {
@@ -20,6 +20,7 @@ const common = {
     // We'll be using the latter form given it's
     // convenient with more complex configurations.
     entry: {
+        fetch : 'whatwg-fetch',
         app: PATHS.app,
         style : PATHS.style,
     },
@@ -32,8 +33,9 @@ const common = {
     plugins: [
         new HtmlWebpackPlugin({
             title: 'Webpack demo',
-            template : 'app/index.html'
-        })
+            filename : 'index.php',
+            template : 'app/beacon-map.php'
+        }),
     ],
     resolve: {
         extensions: ['', '.js', '.jsx']
@@ -53,11 +55,7 @@ switch(process.env.npm_lifecycle_event) {
                 devtool: 'source-map',
                 output: {
                     path: PATHS.build,
-                    filename: '[name].[chunkhash].js',
-                    // This is used for require.ensure. The setup
-                    // will work without but this is useful to set.
-                    chunkFilename: '[chunkhash].js',
-
+                    filename: '[name].js',
                 }
             },
             configParts.clean(PATHS.build),
@@ -65,13 +63,14 @@ switch(process.env.npm_lifecycle_event) {
             configParts.babel(PATHS.app),
             configParts.setFreeVariable(
                 'process.env.NODE_ENV',
-                'dev'
+                'prod'
             ),
             configParts.extractBundle({
                 name: 'vendor',
-                entries: ['konva','react','react/lib/ReactDOM']
+                entries: ['./node_modules/pixi.js/bin/pixi','react','react/lib/ReactDOM']
             }),
-            configParts.extractCSS(PATHS.style)
+            configParts.extractCSS(PATHS.style),
+            configParts.minifyJS()
 
         );
         break;

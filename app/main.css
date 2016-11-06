@@ -1,6 +1,6 @@
 
 body {
-    background: cornsilk;
+    background: #fffcec;
 }
 
 .cell {
@@ -18,4 +18,13 @@ body {
 
 .white {
     background : white;
+}
+
+#canvas-holder {
+    padding-left: 0;
+    padding-right: 0;
+    margin-top:10px;
+}
+#canvas-holder > canvas {
+    border: 2px solid black;
 }

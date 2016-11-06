@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\BeaconMaps;
 use app\models\Groups;
 use app\models\Users;
 use Yii;
@@ -42,7 +43,10 @@ class BeaconPinController extends MainController
                 Yii::$app->response->format = Response::FORMAT_JSON;
                 return ['success'=>true];
             }
-            else throw new ServerErrorHttpException('Pin not saved');
+            else {
+                $x = 3;
+                throw new ServerErrorHttpException('Pin not saved');
+            }
         }
         else throw new ServerErrorHttpException('Pin not saved');
     }
@@ -58,7 +62,7 @@ class BeaconPinController extends MainController
                 $query->joinWith(['groups'=>function(ActiveQuery $query) use($group_id) {
                     $query->andFilterWhere([Groups::tableName(). '.id' => $group_id]);
                 }]);
-            }])->all();
+            }])->indexBy('name')->select([ BeaconPins::tableName(). '.id',BeaconPins::tableName().'.name','x','y'])->all();
 
         $beacon_pin_array = ['pins'=> $models];
         Yii::$app->response->format = Response::FORMAT_JSON;
@@ -76,6 +80,8 @@ class BeaconPinController extends MainController
         }
         else throw new ServerErrorHttpException('Beacon pin not removed');
     }
+
+
 
 
 

@@ -10,32 +10,38 @@ const X_POSITION_MULTIPLIER = 0.27;
 const Y_POSITION_MULTIPLIER = 0.84;
 const PIN_IMAGE_SRC = '/img/blue pin.png';
 export default class Pin {
-    constructor(x, y, name, grid) {
+    constructor(x, y, id, name, grid) {
 
 
-        grid._store.dispatch({
-            type: 'ADD_PIN',
-            name: name,
-            position: {x: x, y: y}
-        });
+        this._id = id;
+        this._name = name;
+        this._x = x;
+        this._y = y;
         this._width = grid._width;
         this._height = grid._height;
-        x = x * this._width;
-        y = y * this._height;
         this._dimensionX = grid._dimensionX;
         this._dimensionY = grid._dimensionY;
-        this._counter = 0;
-        this._rects = grid.rects;
-        this._stage = grid._stage;
-        this._group = new PIXI.Container();
-        this._group.x = x;
-        this._group.y = y;
-        this._group.zIndex = 2;
-        this._stage.addChild(this._group);
         this._beaconPinWidth = this._width * this._dimensionX * WIDTH_SCALE;
         this._beaconPinHeight = this._height * this._dimensionY * HEIGHT_SCALE;
-        this._name = name;
+
+
+
         this._grid = grid;
+        this._rects = grid.rects;
+        this._stage = grid._stage;
+
+        this.save(x,y);
+
+
+        this._counter = 0;
+
+        this._group = new PIXI.Container();
+        this._group.zIndex = 2;
+        this._stage.addChild(this._group);
+        x = x * this._width;
+        y = y * this._height;
+        this._group.x = x;
+        this._group.y = y;
         // this._group.anchor.set(0.3);
         this._rect = new PIXI.Graphics;
         Pin.drawRect(this._rect, {
@@ -79,6 +85,21 @@ export default class Pin {
         graphics.lineStyle(1, config.stroke, 1);
         graphics.drawRect(config.x, config.y, config.width, config.height);
         graphics.endFill();
+    }
+
+    save(x,y) {
+        $.ajax({
+            url: this._grid._beaconUrls.beaconPinSaveUrl,
+            type: 'POST',
+            data: {
+                'BeaconPins[canvas_height]': this._height * this._dimensionX,
+                'BeaconPins[canvas_width]': this._width * this._dimensionY,
+                'BeaconPins[id]': this._id,
+                'BeaconPins[name]': this._name,
+                'BeaconPins[x]': x,
+                'BeaconPins[y]': y,
+            }
+        });
     }
 
     setup(x, y) {
@@ -134,9 +155,12 @@ export default class Pin {
             let y = Math.round(newPosition.y / self._height);
             self._grid._store.dispatch({
                 type: 'SET_PIN_POSITION',
+                id: self._id,
                 name: self._name,
-                position: {x: x, y: y}
-            })
+                x: x,
+                y: y
+            });
+            self.save(x,y);
         }
     }
 
@@ -175,6 +199,13 @@ export default class Pin {
     }
 
     destroy() {
+        $.ajax({
+            url: this._grid._beaconUrls.beaconPinDeleteUrl,
+            type: 'POST',
+            data: {
+                'id': this._id,
+            }
+        });
         this._group.destroy();
     }
 

@@ -193,7 +193,7 @@ class BeaconController extends MainController
         $group = Groups::findOne($group_id);
         $map_provider = new ArrayDataProvider([
                                                 'allModels' => $group->map,
-                                                'pagination' => [
+                                                 'pagination' => [
                                                     'pageSize' => 1
                                                 ],
                                                ]);

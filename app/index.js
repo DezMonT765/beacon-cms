@@ -1,25 +1,56 @@
 import React from "react";
 import {v4} from "uuid";
 import {pins} from "./reducers/pins";
+import {pin} from "./reducers/pin";
 import {brushes} from "./reducers/brushes";
 import {createStore, combineReducers} from "redux";
 import * as ReactDOM from "react/lib/ReactDOM";
 import {Provider} from "react-redux";
+import * as helper from "./helper";
 import {App} from "./react-components/App";
 
 let nodeBuffer = [];
 let idBuffer = new Set();
 
 export class BeaconMap {
-    constructor(mapContainerId, backgroundUrl, cellWidth, cellHeight, columnCount, rowCount) {
+    /**
+     *
+     * @param mapContainerId
+     * @param config
+     * @param config.backgroundUrl
+     * @param config.beaconPinSaveUrl
+     * @param config.beaconPinDeleteUrl
+     * @param config.beaconPinListUrl
+     * @param config.beaconMapSaveUrl
+     * @param config.beaconMapGetUrl
+     * @param config.beaconPin
+     * @param config.width
+     * @param config.height
+     * @param config.dimensionX
+     * @param config.dimensionY
+     */
+    constructor(mapContainerId, config) {
         this._mapContainerId = mapContainerId;
-        this._backgroundUrl = backgroundUrl;
-        this._width = cellWidth;
-        this._height = cellHeight;
-        this._dimensionX = columnCount;
-        this._dimensionY = rowCount;
-        this._store = createStore(combineReducers({brushes: brushes, pins: pins}));
-        this._store.subscribe(this.render.bind(this));
+        this._gridConfig = config;
+        let self = this;
+        let mainReducer = combineReducers({brushes: brushes, pins: pins});
+        $.ajax({
+            url: config.beaconPinListUrl,
+            async: false,
+            dataType: "json",
+            cache: false,
+            success: function (data) {
+                self._store = createStore(mainReducer, {
+                    brushes: undefined, pins: {
+                        pins: helper.objToMap(data.pins),
+                        currentPin: {id : null,name : null,position : {x : null,y : null}}
+                    }
+                });
+                self._store.subscribe(self.render.bind(self));
+            }
+        });
+
+
     }
 
     init() {
@@ -56,12 +87,7 @@ export class BeaconMap {
     render() {
         ReactDOM.render(
             <Provider store={this._store}>
-                <App backgroundUrl={this._backgroundUrl}
-                     width={this._width}
-                     height={this._height}
-                     dimensionX={this._dimensionX}
-                     dimensionY={this._dimensionY}
-                />
+                <App gridConfig={this._gridConfig}/>
             </Provider>,
             document.getElementById(this._mapContainerId));
     }

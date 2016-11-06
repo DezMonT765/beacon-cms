@@ -270,11 +270,11 @@ class Beacons extends MainActiveRecord
         $fields['absoluteHorizontalPicture'] = 'absoluteHorizontalPicture';
         $fields['groupName'] = 'groupName';
         $fields['groupId'] = 'groupId';
-        $fields['absoluteMapFolderUrl'] = 'absoluteMapFolderUrl';
+        $fields['absoluteMapUrl'] = 'absoluteMapUrl';
         $fields['mapWidth'] = 'mapWidth';
         $fields['mapHeight'] = 'mapHeight';
-        $fields['beaconPinX'] = 'beaconPinX';
-        $fields['beaconPinY'] = 'beaconPinY';
+        $fields['x'] = 'x';
+        $fields['y'] = 'y';
         $fields['content'] = 'content';
         return $fields;
     }
@@ -285,18 +285,18 @@ class Beacons extends MainActiveRecord
     }
 
 
-    public function getBeaconPinX() {
+    public function getX() {
         if($this->beaconPins instanceof BeaconPins) {
-            $x = round($this->beaconPins->x / $this->beaconPins->canvas_width * 100,2);
+            $x = $this->beaconPins->x;
             return $x;
         }
         else return 0;
     }
 
 
-    public function getBeaconPinY() {
+    public function getY() {
         if($this->beaconPins instanceof BeaconPins) {
-            $y = round($this->beaconPins->y / $this->beaconPins->canvas_height * 100, 2);
+            $y = $this->beaconPins->y;
             return $y;
         }
         else return 0;
@@ -311,6 +311,18 @@ class Beacons extends MainActiveRecord
             if($group instanceof Groups) {
                 $dir = pathinfo($group->getFileByName($file_name, 'map'),PATHINFO_FILENAME);
                 $url = Url::to([$group->getFileViewPath('map') . $dir],true);
+                return $url;
+            }
+        }
+        return "";
+    }
+
+    public function getAbsoluteMapUrl() {
+        if($this->beaconPins instanceof BeaconPins && $this->beaconPins->groupFile instanceof GroupFiles) {
+            $file_name = $this->beaconPins->groupFile->name;
+            $group = $this->beaconPins->groupFile->group;
+            if($group instanceof Groups) {
+                $url = Url::to([$group->getFileByName($file_name, 'map')],true);
                 return $url;
             }
         }

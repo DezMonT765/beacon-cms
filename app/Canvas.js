@@ -1,27 +1,41 @@
 import Grid from "./Grid";
 import * as states from "./states";
-import * as helper from "./helper";
 import * as PIXI from "../node_modules/pixi.js/bin/pixi";
 var stage = null;
 export default class Canvas {
-    constructor(store, canvasElement, backgroundUrl, width = 10, height = 10, dimensionX = 100, dimensionY = 100, nodeBuffer, idBuffer) {
+    /**
+     *
+     * @param store
+     * @param canvasElement
+     * @param config
+     * @param config.backgroundUrl
+     * @param config.beaconMapSaveUrl
+     * @param config.width
+     * @param config.height
+     * @param config.dimensionX
+     * @param config.dimensionY
+     * @param config.dimension
+     */
+    constructor(store, canvasElement, config) {
         this._store = store;
         if (stage !== null) {
             stage.destroy();
         }
-        this._width = width;
-        this._height = height;
-        this._dimensionX = dimensionX;
-        this._dimensionY = dimensionY;
-        var renderer = PIXI.autoDetectRenderer(this._width * dimensionX, this._height * dimensionY, {view: canvasElement});
+        this._width = config.width = config.width || 10;
+        this._height = config.height = config.height || 10;
+        this._dimensionX = config.dimensionX = config.dimensionX || 100;
+        this._dimensionY = config.dimensionY = config.dimensionY || 100;
+        this.beaconMapSaveUrl = config.beaconMapSaveUrl;
+        var renderer = PIXI.autoDetectRenderer(this._width * config.dimensionX, this._height * config.dimensionY, {view: canvasElement});
         renderer.plugins.interaction.moveWhenInside = true;
         stage = new PIXI.Container();
         stage.interactive = true;
 
-        this._grid = new Grid(stage, this._width, this._height, dimensionX, dimensionY, backgroundUrl, store);
+        this._grid = new Grid(stage, store, config);
         this._grid._promise.then(function () {
             this._grid.build();
         }.bind(this));
+
         var onInteract = function (evt) {
             if (store.getState().brushes.currentBrush.activated) {
                 let x = Math.floor(evt.data.global.x / this._width);
@@ -67,17 +81,6 @@ export default class Canvas {
         this._grid._graphics.on('mousedown', onInteract);
         this._grid._graphics.on('mousemove', onInteract);
         this._grid._graphics.on('click', onInteract);
-
-        setInterval(function () {
-            if (typeof(Storage) !== "undefined") {
-                let jsonRects = JSON.stringify(this._grid.rects);
-                let jsonPins = JSON.stringify(helper.mapToObj(this._store.getState().pins.pins));
-                localStorage.setItem("rects", jsonRects);
-                localStorage.setItem("pins", jsonPins);
-            } else {
-                console.log('sad');
-            }
-        }.bind(this), 1000);
 // function undo(e) {
 //     if (e.keyCode == 90 && e.ctrlKey) {
 //         for (let i = 0; i < nodeBuffer.length; i++) {
@@ -106,5 +109,21 @@ export default class Canvas {
             }
         }
         this._grid.build();
+        this.save();
+    }
+
+    save() {
+        let jsonRects = JSON.stringify(this._grid.rects);
+        $.ajax({
+            url: this.beaconMapSaveUrl,
+            type: 'POST',
+            data: {
+                data: jsonRects
+            },
+            success: function (data) {
+                console.log(data['success']);
+            },
+            cache: false,
+        });
     }
 }

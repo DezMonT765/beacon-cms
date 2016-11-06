@@ -15,6 +15,7 @@ use yii\helpers\Url;
  * @property integer $canvas_width
  * @property integer $canvas_height
  * @property GroupFiles $groupFile
+ * @property GroupFiles $group_file_id
  *
  * @property Beacons $beacon
  */
@@ -76,4 +77,6 @@ class BeaconPins extends ActiveRecord
     public function getGroupFile() {
         return $this->hasOne(GroupFiles::className(), ['id' => 'group_file_id']);
     }
+
+
 }

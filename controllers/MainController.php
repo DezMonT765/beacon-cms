@@ -16,13 +16,13 @@ use yii\web\NotFoundHttpException;
 
 class MainController extends Controller
 {
-
+    const ACCESS_FILTER = 'access';
     public function behaviors()
     {
         return [
-            'access' => [
+            self::ACCESS_FILTER => [
                 'class' => AccessControl::className(),
-            ]
+            ],
         ];
     }
     public $activeMap = [];

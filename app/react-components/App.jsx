@@ -10,7 +10,7 @@ export class App extends React.Component {
     }
 
     componentDidMount() {
-        this._canvas = new Canvas(this._store, document.getElementById('canvas'),this.props.backgroundUrl, this.props.width,this.props.height,this.props.dimensionX,this.props.dimensionY)
+        this._canvas = new Canvas(this._store, document.getElementById('canvas'), this.props.gridConfig);
     }
 
     render() {

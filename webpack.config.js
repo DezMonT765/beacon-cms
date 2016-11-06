@@ -1,6 +1,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-
+var webpack = require('webpack');
 const merge = require('webpack-merge');
 const configParts = require('./frontend-libs/webpack-parts');
 
@@ -20,6 +20,7 @@ const common = {
     // We'll be using the latter form given it's
     // convenient with more complex configurations.
     entry: {
+        fetch : 'whatwg-fetch',
         app: PATHS.app,
         style : PATHS.style,
     },
@@ -34,7 +35,7 @@ const common = {
             title: 'Webpack demo',
             filename : 'index.php',
             template : 'app/beacon-map.php'
-        })
+        }),
     ],
     resolve: {
         extensions: ['', '.js', '.jsx']

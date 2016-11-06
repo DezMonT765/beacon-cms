@@ -1,5 +1,5 @@
 var lib =
-webpackJsonplib([0,3],{
+webpackJsonplib([0,4],{
 
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
@@ -21,15 +21,21 @@ webpackJsonplib([0,3],{
 	
 	var _pins = __webpack_require__(36);
 	
-	var _brushes = __webpack_require__(39);
+	var _pin = __webpack_require__(37);
 	
-	var _redux = __webpack_require__(43);
+	var _brushes = __webpack_require__(38);
 	
-	var _ReactDOM = __webpack_require__(57);
+	var _redux = __webpack_require__(42);
+	
+	var _ReactDOM = __webpack_require__(56);
 	
 	var ReactDOM = _interopRequireWildcard(_ReactDOM);
 	
-	var _reactRedux = __webpack_require__(194);
+	var _reactRedux = __webpack_require__(193);
+	
+	var _helper = __webpack_require__(202);
+	
+	var helper = _interopRequireWildcard(_helper);
 	
 	var _App = __webpack_require__(203);
 	
@@ -43,17 +49,44 @@ webpackJsonplib([0,3],{
 	var idBuffer = new Set();
 	
 	var BeaconMap = exports.BeaconMap = function () {
-	    function BeaconMap(mapContainerId, backgroundUrl, cellWidth, cellHeight, columnCount, rowCount) {
+	    /**
+	     *
+	     * @param mapContainerId
+	     * @param config
+	     * @param config.backgroundUrl
+	     * @param config.beaconPinSaveUrl
+	     * @param config.beaconPinDeleteUrl
+	     * @param config.beaconPinListUrl
+	     * @param config.beaconMapSaveUrl
+	     * @param config.beaconMapGetUrl
+	     * @param config.beaconPin
+	     * @param config.width
+	     * @param config.height
+	     * @param config.dimensionX
+	     * @param config.dimensionY
+	     */
+	    function BeaconMap(mapContainerId, config) {
 	        _classCallCheck(this, BeaconMap);
 	
 	        this._mapContainerId = mapContainerId;
-	        this._backgroundUrl = backgroundUrl;
-	        this._width = cellWidth;
-	        this._height = cellHeight;
-	        this._dimensionX = columnCount;
-	        this._dimensionY = rowCount;
-	        this._store = (0, _redux.createStore)((0, _redux.combineReducers)({ brushes: _brushes.brushes, pins: _pins.pins }));
-	        this._store.subscribe(this.render.bind(this));
+	        this._gridConfig = config;
+	        var self = this;
+	        var mainReducer = (0, _redux.combineReducers)({ brushes: _brushes.brushes, pins: _pins.pins });
+	        $.ajax({
+	            url: config.beaconPinListUrl,
+	            async: false,
+	            dataType: "json",
+	            cache: false,
+	            success: function success(data) {
+	                self._store = (0, _redux.createStore)(mainReducer, {
+	                    brushes: undefined, pins: {
+	                        pins: helper.objToMap(data.pins),
+	                        currentPin: { id: null, name: null, position: { x: null, y: null } }
+	                    }
+	                });
+	                self._store.subscribe(self.render.bind(self));
+	            }
+	        });
 	    }
 	
 	    _createClass(BeaconMap, [{
@@ -94,12 +127,7 @@ webpackJsonplib([0,3],{
 	            ReactDOM.render(_react2.default.createElement(
 	                _reactRedux.Provider,
 	                { store: this._store },
-	                _react2.default.createElement(_App.App, { backgroundUrl: this._backgroundUrl,
-	                    width: this._width,
-	                    height: this._height,
-	                    dimensionX: this._dimensionX,
-	                    dimensionY: this._dimensionY
-	                })
+	                _react2.default.createElement(_App.App, { gridConfig: this._gridConfig })
 	            ), document.getElementById(this._mapContainerId));
 	        }
 	    }]);
@@ -342,7 +370,7 @@ webpackJsonplib([0,3],{
 /***/ 36:
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
@@ -353,27 +381,10 @@ webpackJsonplib([0,3],{
 	
 	var _pin = __webpack_require__(37);
 	
-	var _helper = __webpack_require__(38);
-	
-	var helper = _interopRequireWildcard(_helper);
-	
-	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-	
 	var pins = exports.pins = function pins(state, action) {
 	    var new_state = void 0;
 	    if (typeof state == 'undefined') {
-	        var _pins = null;
-	        if (typeof Storage !== "undefined") {
-	            try {
-	                _pins = JSON.parse(localStorage.getItem("pins"));
-	                _pins = helper.objToMap(_pins);
-	            } catch (e) {
-	                console.log(e);
-	            }
-	        }
-	        if (_pins == null) {
-	            _pins = new Map();
-	        }
+	        var _pins = new Map();
 	        state = { pins: _pins, currentPin: (0, _pin.pin)(undefined, action) };
 	    }
 	    switch (action.type) {
@@ -384,18 +395,6 @@ webpackJsonplib([0,3],{
 	        case 'ADD_PIN':
 	            new_state = _extends({}, state);
 	            new_state.pins.set(action.name, (0, _pin.pin)(undefined, action));
-	            // $.ajax({
-	            //     url : 'beacon-pin/save',
-	            //     type : 'POST',
-	            //     data : {
-	            //         'BeaconPins[canvas_height]',
-	            //         'BeaconPins[canvas_width]' ,
-	            //         'BeaconPins[id]',
-	            //         'BeaconPins[name]',
-	            //         'BeaconPins[x]',
-	            //         'BeaconPins[y]',
-	            //     }
-	            // });
 	            return new_state;
 	        case 'SET_PIN_POSITION':
 	            {
@@ -432,20 +431,18 @@ webpackJsonplib([0,3],{
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 	
 	var pin = exports.pin = function pin() {
-	    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { name: null, position: { x: null, y: null } };
+	    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { id: null, name: null, x: null, y: null };
 	    var action = arguments[1];
 	
 	    var new_state = void 0;
 	    switch (action.type) {
 	        case 'SET_PIN_POSITION':
-	            new_state = _extends({}, state);
-	            new_state.name = action.name;
-	            new_state.position = action.position;
-	            return new_state;
 	        case 'ADD_PIN':
 	            new_state = _extends({}, state);
+	            new_state.id = action.id;
 	            new_state.name = action.name;
-	            new_state.position = action.position;
+	            new_state.x = action.x;
+	            new_state.y = action.y;
 	            return new_state;
 	        default:
 	            return state;
@@ -455,107 +452,6 @@ webpackJsonplib([0,3],{
 /***/ },
 
 /***/ 38:
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	
-	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
-	
-	exports.makeImageRect = makeImageRect;
-	exports.sortChildrenByZIndex = sortChildrenByZIndex;
-	exports.mapToObj = mapToObj;
-	exports.objToMap = objToMap;
-	function makeImageRect(rect, layer) {
-	    var image = new Image();
-	    image.onload = function () {
-	        rect.fillPatternImage(image);
-	        rect.fillPatternScaleX(rect.width() / image.width);
-	        rect.fillPatternScaleY(rect.height() / image.height);
-	        layer.draw();
-	    };
-	    return image;
-	}
-	
-	function sortChildrenByZIndex(container) {
-	    container.children.sort(function (a, b) {
-	        a.zIndex = a.zIndex || 0;
-	        b.zIndex = b.zIndex || 0;
-	        return a.zIndex - b.zIndex;
-	    });
-	}
-	
-	function mapToObj(map) {
-	    var obj = Object.create(null);
-	    var _iteratorNormalCompletion = true;
-	    var _didIteratorError = false;
-	    var _iteratorError = undefined;
-	
-	    try {
-	        for (var _iterator = map[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-	            var _step$value = _slicedToArray(_step.value, 2);
-	
-	            var k = _step$value[0];
-	            var v = _step$value[1];
-	
-	            // We don’t escape the key '__proto__'
-	            // which can cause problems on older engines
-	            obj[k] = v;
-	        }
-	    } catch (err) {
-	        _didIteratorError = true;
-	        _iteratorError = err;
-	    } finally {
-	        try {
-	            if (!_iteratorNormalCompletion && _iterator.return) {
-	                _iterator.return();
-	            }
-	        } finally {
-	            if (_didIteratorError) {
-	                throw _iteratorError;
-	            }
-	        }
-	    }
-	
-	    return obj;
-	}
-	
-	function objToMap(obj) {
-	    var map = new Map();
-	    var _iteratorNormalCompletion2 = true;
-	    var _didIteratorError2 = false;
-	    var _iteratorError2 = undefined;
-	
-	    try {
-	        for (var _iterator2 = Object.keys(obj)[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-	            var k = _step2.value;
-	
-	            map.set(k, obj[k]);
-	        }
-	    } catch (err) {
-	        _didIteratorError2 = true;
-	        _iteratorError2 = err;
-	    } finally {
-	        try {
-	            if (!_iteratorNormalCompletion2 && _iterator2.return) {
-	                _iterator2.return();
-	            }
-	        } finally {
-	            if (_didIteratorError2) {
-	                throw _iteratorError2;
-	            }
-	        }
-	    }
-	
-	    return map;
-	}
-
-/***/ },
-
-/***/ 39:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -567,13 +463,13 @@ webpackJsonplib([0,3],{
 	
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 	
-	var _Brush = __webpack_require__(40);
+	var _Brush = __webpack_require__(39);
 	
 	var _Brush2 = _interopRequireDefault(_Brush);
 	
-	var _brush = __webpack_require__(41);
+	var _brush = __webpack_require__(40);
 	
-	var _states = __webpack_require__(42);
+	var _states = __webpack_require__(41);
 	
 	var states = _interopRequireWildcard(_states);
 	
@@ -602,7 +498,7 @@ webpackJsonplib([0,3],{
 
 /***/ },
 
-/***/ 40:
+/***/ 39:
 /***/ function(module, exports) {
 
 	"use strict";
@@ -661,7 +557,7 @@ webpackJsonplib([0,3],{
 
 /***/ },
 
-/***/ 41:
+/***/ 40:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -671,7 +567,7 @@ webpackJsonplib([0,3],{
 	});
 	exports.brush = undefined;
 	
-	var _Brush = __webpack_require__(40);
+	var _Brush = __webpack_require__(39);
 	
 	var _Brush2 = _interopRequireDefault(_Brush);
 	
@@ -693,7 +589,7 @@ webpackJsonplib([0,3],{
 
 /***/ },
 
-/***/ 42:
+/***/ 41:
 /***/ function(module, exports) {
 
 	'use strict';
@@ -714,7 +610,7 @@ webpackJsonplib([0,3],{
 
 /***/ },
 
-/***/ 43:
+/***/ 42:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -722,27 +618,27 @@ webpackJsonplib([0,3],{
 	exports.__esModule = true;
 	exports.compose = exports.applyMiddleware = exports.bindActionCreators = exports.combineReducers = exports.createStore = undefined;
 	
-	var _createStore = __webpack_require__(44);
+	var _createStore = __webpack_require__(43);
 	
 	var _createStore2 = _interopRequireDefault(_createStore);
 	
-	var _combineReducers = __webpack_require__(52);
+	var _combineReducers = __webpack_require__(51);
 	
 	var _combineReducers2 = _interopRequireDefault(_combineReducers);
 	
-	var _bindActionCreators = __webpack_require__(54);
+	var _bindActionCreators = __webpack_require__(53);
 	
 	var _bindActionCreators2 = _interopRequireDefault(_bindActionCreators);
 	
-	var _applyMiddleware = __webpack_require__(55);
+	var _applyMiddleware = __webpack_require__(54);
 	
 	var _applyMiddleware2 = _interopRequireDefault(_applyMiddleware);
 	
-	var _compose = __webpack_require__(56);
+	var _compose = __webpack_require__(55);
 	
 	var _compose2 = _interopRequireDefault(_compose);
 	
-	var _warning = __webpack_require__(53);
+	var _warning = __webpack_require__(52);
 	
 	var _warning2 = _interopRequireDefault(_warning);
 	
@@ -766,7 +662,7 @@ webpackJsonplib([0,3],{
 
 /***/ },
 
-/***/ 44:
+/***/ 43:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -775,11 +671,11 @@ webpackJsonplib([0,3],{
 	exports.ActionTypes = undefined;
 	exports['default'] = createStore;
 	
-	var _isPlainObject = __webpack_require__(45);
+	var _isPlainObject = __webpack_require__(44);
 	
 	var _isPlainObject2 = _interopRequireDefault(_isPlainObject);
 	
-	var _symbolObservable = __webpack_require__(49);
+	var _symbolObservable = __webpack_require__(48);
 	
 	var _symbolObservable2 = _interopRequireDefault(_symbolObservable);
 	
@@ -1033,11 +929,11 @@ webpackJsonplib([0,3],{
 
 /***/ },
 
-/***/ 45:
+/***/ 44:
 /***/ function(module, exports, __webpack_require__) {
 
-	var getPrototype = __webpack_require__(46),
-	    isObjectLike = __webpack_require__(48);
+	var getPrototype = __webpack_require__(45),
+	    isObjectLike = __webpack_require__(47);
 	
 	/** `Object#toString` result references. */
 	var objectTag = '[object Object]';
@@ -1108,10 +1004,10 @@ webpackJsonplib([0,3],{
 
 /***/ },
 
-/***/ 46:
+/***/ 45:
 /***/ function(module, exports, __webpack_require__) {
 
-	var overArg = __webpack_require__(47);
+	var overArg = __webpack_require__(46);
 	
 	/** Built-in value references. */
 	var getPrototype = overArg(Object.getPrototypeOf, Object);
@@ -1121,7 +1017,7 @@ webpackJsonplib([0,3],{
 
 /***/ },
 
-/***/ 47:
+/***/ 46:
 /***/ function(module, exports) {
 
 	/**
@@ -1143,7 +1039,7 @@ webpackJsonplib([0,3],{
 
 /***/ },
 
-/***/ 48:
+/***/ 47:
 /***/ function(module, exports) {
 
 	/**
@@ -1179,15 +1075,15 @@ webpackJsonplib([0,3],{
 
 /***/ },
 
-/***/ 49:
+/***/ 48:
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(50);
+	module.exports = __webpack_require__(49);
 
 
 /***/ },
 
-/***/ 50:
+/***/ 49:
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
@@ -1196,7 +1092,7 @@ webpackJsonplib([0,3],{
 		value: true
 	});
 	
-	var _ponyfill = __webpack_require__(51);
+	var _ponyfill = __webpack_require__(50);
 	
 	var _ponyfill2 = _interopRequireDefault(_ponyfill);
 	
@@ -1216,7 +1112,7 @@ webpackJsonplib([0,3],{
 
 /***/ },
 
-/***/ 51:
+/***/ 50:
 /***/ function(module, exports) {
 
 	'use strict';
@@ -1245,7 +1141,7 @@ webpackJsonplib([0,3],{
 
 /***/ },
 
-/***/ 52:
+/***/ 51:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1253,13 +1149,13 @@ webpackJsonplib([0,3],{
 	exports.__esModule = true;
 	exports['default'] = combineReducers;
 	
-	var _createStore = __webpack_require__(44);
+	var _createStore = __webpack_require__(43);
 	
-	var _isPlainObject = __webpack_require__(45);
+	var _isPlainObject = __webpack_require__(44);
 	
 	var _isPlainObject2 = _interopRequireDefault(_isPlainObject);
 	
-	var _warning = __webpack_require__(53);
+	var _warning = __webpack_require__(52);
 	
 	var _warning2 = _interopRequireDefault(_warning);
 	
@@ -1393,7 +1289,7 @@ webpackJsonplib([0,3],{
 
 /***/ },
 
-/***/ 53:
+/***/ 52:
 /***/ function(module, exports) {
 
 	'use strict';
@@ -1424,7 +1320,7 @@ webpackJsonplib([0,3],{
 
 /***/ },
 
-/***/ 54:
+/***/ 53:
 /***/ function(module, exports) {
 
 	'use strict';
@@ -1481,7 +1377,7 @@ webpackJsonplib([0,3],{
 
 /***/ },
 
-/***/ 55:
+/***/ 54:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1492,7 +1388,7 @@ webpackJsonplib([0,3],{
 	
 	exports['default'] = applyMiddleware;
 	
-	var _compose = __webpack_require__(56);
+	var _compose = __webpack_require__(55);
 	
 	var _compose2 = _interopRequireDefault(_compose);
 	
@@ -1545,7 +1441,7 @@ webpackJsonplib([0,3],{
 
 /***/ },
 
-/***/ 56:
+/***/ 55:
 /***/ function(module, exports) {
 
 	"use strict";
@@ -1589,7 +1485,7 @@ webpackJsonplib([0,3],{
 
 /***/ },
 
-/***/ 194:
+/***/ 193:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1597,11 +1493,11 @@ webpackJsonplib([0,3],{
 	exports.__esModule = true;
 	exports.connect = exports.Provider = undefined;
 	
-	var _Provider = __webpack_require__(195);
+	var _Provider = __webpack_require__(194);
 	
 	var _Provider2 = _interopRequireDefault(_Provider);
 	
-	var _connect = __webpack_require__(198);
+	var _connect = __webpack_require__(197);
 	
 	var _connect2 = _interopRequireDefault(_connect);
 	
@@ -1612,7 +1508,7 @@ webpackJsonplib([0,3],{
 
 /***/ },
 
-/***/ 195:
+/***/ 194:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1622,11 +1518,11 @@ webpackJsonplib([0,3],{
 	
 	var _react = __webpack_require__(1);
 	
-	var _storeShape = __webpack_require__(196);
+	var _storeShape = __webpack_require__(195);
 	
 	var _storeShape2 = _interopRequireDefault(_storeShape);
 	
-	var _warning = __webpack_require__(197);
+	var _warning = __webpack_require__(196);
 	
 	var _warning2 = _interopRequireDefault(_warning);
 	
@@ -1696,7 +1592,7 @@ webpackJsonplib([0,3],{
 
 /***/ },
 
-/***/ 196:
+/***/ 195:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1713,7 +1609,7 @@ webpackJsonplib([0,3],{
 
 /***/ },
 
-/***/ 197:
+/***/ 196:
 /***/ function(module, exports) {
 
 	'use strict';
@@ -1743,7 +1639,7 @@ webpackJsonplib([0,3],{
 
 /***/ },
 
-/***/ 198:
+/***/ 197:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1755,31 +1651,31 @@ webpackJsonplib([0,3],{
 	
 	var _react = __webpack_require__(1);
 	
-	var _storeShape = __webpack_require__(196);
+	var _storeShape = __webpack_require__(195);
 	
 	var _storeShape2 = _interopRequireDefault(_storeShape);
 	
-	var _shallowEqual = __webpack_require__(199);
+	var _shallowEqual = __webpack_require__(198);
 	
 	var _shallowEqual2 = _interopRequireDefault(_shallowEqual);
 	
-	var _wrapActionCreators = __webpack_require__(200);
+	var _wrapActionCreators = __webpack_require__(199);
 	
 	var _wrapActionCreators2 = _interopRequireDefault(_wrapActionCreators);
 	
-	var _warning = __webpack_require__(197);
+	var _warning = __webpack_require__(196);
 	
 	var _warning2 = _interopRequireDefault(_warning);
 	
-	var _isPlainObject = __webpack_require__(45);
+	var _isPlainObject = __webpack_require__(44);
 	
 	var _isPlainObject2 = _interopRequireDefault(_isPlainObject);
 	
-	var _hoistNonReactStatics = __webpack_require__(201);
+	var _hoistNonReactStatics = __webpack_require__(200);
 	
 	var _hoistNonReactStatics2 = _interopRequireDefault(_hoistNonReactStatics);
 	
-	var _invariant = __webpack_require__(202);
+	var _invariant = __webpack_require__(201);
 	
 	var _invariant2 = _interopRequireDefault(_invariant);
 	
@@ -2142,7 +2038,7 @@ webpackJsonplib([0,3],{
 
 /***/ },
 
-/***/ 199:
+/***/ 198:
 /***/ function(module, exports) {
 
 	"use strict";
@@ -2174,7 +2070,7 @@ webpackJsonplib([0,3],{
 
 /***/ },
 
-/***/ 200:
+/***/ 199:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2182,7 +2078,7 @@ webpackJsonplib([0,3],{
 	exports.__esModule = true;
 	exports["default"] = wrapActionCreators;
 	
-	var _redux = __webpack_require__(43);
+	var _redux = __webpack_require__(42);
 	
 	function wrapActionCreators(actionCreators) {
 	  return function (dispatch) {
@@ -2192,7 +2088,7 @@ webpackJsonplib([0,3],{
 
 /***/ },
 
-/***/ 201:
+/***/ 200:
 /***/ function(module, exports) {
 
 	/**
@@ -2249,7 +2145,7 @@ webpackJsonplib([0,3],{
 
 /***/ },
 
-/***/ 202:
+/***/ 201:
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -2307,6 +2203,107 @@ webpackJsonplib([0,3],{
 
 /***/ },
 
+/***/ 202:
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+	
+	exports.makeImageRect = makeImageRect;
+	exports.sortChildrenByZIndex = sortChildrenByZIndex;
+	exports.mapToObj = mapToObj;
+	exports.objToMap = objToMap;
+	function makeImageRect(rect, layer) {
+	    var image = new Image();
+	    image.onload = function () {
+	        rect.fillPatternImage(image);
+	        rect.fillPatternScaleX(rect.width() / image.width);
+	        rect.fillPatternScaleY(rect.height() / image.height);
+	        layer.draw();
+	    };
+	    return image;
+	}
+	
+	function sortChildrenByZIndex(container) {
+	    container.children.sort(function (a, b) {
+	        a.zIndex = a.zIndex || 0;
+	        b.zIndex = b.zIndex || 0;
+	        return a.zIndex - b.zIndex;
+	    });
+	}
+	
+	function mapToObj(map) {
+	    var obj = Object.create(null);
+	    var _iteratorNormalCompletion = true;
+	    var _didIteratorError = false;
+	    var _iteratorError = undefined;
+	
+	    try {
+	        for (var _iterator = map[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	            var _step$value = _slicedToArray(_step.value, 2);
+	
+	            var k = _step$value[0];
+	            var v = _step$value[1];
+	
+	            // We don’t escape the key '__proto__'
+	            // which can cause problems on older engines
+	            obj[k] = v;
+	        }
+	    } catch (err) {
+	        _didIteratorError = true;
+	        _iteratorError = err;
+	    } finally {
+	        try {
+	            if (!_iteratorNormalCompletion && _iterator.return) {
+	                _iterator.return();
+	            }
+	        } finally {
+	            if (_didIteratorError) {
+	                throw _iteratorError;
+	            }
+	        }
+	    }
+	
+	    return obj;
+	}
+	
+	function objToMap(obj) {
+	    var map = new Map();
+	    var _iteratorNormalCompletion2 = true;
+	    var _didIteratorError2 = false;
+	    var _iteratorError2 = undefined;
+	
+	    try {
+	        for (var _iterator2 = Object.keys(obj)[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+	            var k = _step2.value;
+	
+	            map.set(k, obj[k]);
+	        }
+	    } catch (err) {
+	        _didIteratorError2 = true;
+	        _iteratorError2 = err;
+	    } finally {
+	        try {
+	            if (!_iteratorNormalCompletion2 && _iterator2.return) {
+	                _iterator2.return();
+	            }
+	        } finally {
+	            if (_didIteratorError2) {
+	                throw _iteratorError2;
+	            }
+	        }
+	    }
+	
+	    return map;
+	}
+
+/***/ },
+
 /***/ 203:
 /***/ function(module, exports, __webpack_require__) {
 
@@ -2359,7 +2356,7 @@ webpackJsonplib([0,3],{
 	    _createClass(App, [{
 	        key: "componentDidMount",
 	        value: function componentDidMount() {
-	            this._canvas = new _Canvas2.default(this._store, document.getElementById('canvas'), this.props.backgroundUrl, this.props.width, this.props.height, this.props.dimensionX, this.props.dimensionY);
+	            this._canvas = new _Canvas2.default(this._store, document.getElementById('canvas'), this.props.gridConfig);
 	        }
 	    }, {
 	        key: "render",
@@ -2407,13 +2404,9 @@ webpackJsonplib([0,3],{
 	
 	var _Grid2 = _interopRequireDefault(_Grid);
 	
-	var _states = __webpack_require__(42);
+	var _states = __webpack_require__(41);
 	
 	var states = _interopRequireWildcard(_states);
-	
-	var _helper = __webpack_require__(38);
-	
-	var helper = _interopRequireWildcard(_helper);
 	
 	var _pixi = __webpack_require__(206);
 	
@@ -2428,33 +2421,41 @@ webpackJsonplib([0,3],{
 	var stage = null;
 	
 	var Canvas = function () {
-	    function Canvas(store, canvasElement, backgroundUrl) {
-	        var width = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 10;
-	        var height = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 10;
-	        var dimensionX = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : 100;
-	        var dimensionY = arguments.length > 6 && arguments[6] !== undefined ? arguments[6] : 100;
-	        var nodeBuffer = arguments[7];
-	        var idBuffer = arguments[8];
-	
+	    /**
+	     *
+	     * @param store
+	     * @param canvasElement
+	     * @param config
+	     * @param config.backgroundUrl
+	     * @param config.beaconMapSaveUrl
+	     * @param config.width
+	     * @param config.height
+	     * @param config.dimensionX
+	     * @param config.dimensionY
+	     * @param config.dimension
+	     */
+	    function Canvas(store, canvasElement, config) {
 	        _classCallCheck(this, Canvas);
 	
 	        this._store = store;
 	        if (stage !== null) {
 	            stage.destroy();
 	        }
-	        this._width = width;
-	        this._height = height;
-	        this._dimensionX = dimensionX;
-	        this._dimensionY = dimensionY;
-	        var renderer = PIXI.autoDetectRenderer(this._width * dimensionX, this._height * dimensionY, { view: canvasElement });
+	        this._width = config.width = config.width || 10;
+	        this._height = config.height = config.height || 10;
+	        this._dimensionX = config.dimensionX = config.dimensionX || 100;
+	        this._dimensionY = config.dimensionY = config.dimensionY || 100;
+	        this.beaconMapSaveUrl = config.beaconMapSaveUrl;
+	        var renderer = PIXI.autoDetectRenderer(this._width * config.dimensionX, this._height * config.dimensionY, { view: canvasElement });
 	        renderer.plugins.interaction.moveWhenInside = true;
 	        stage = new PIXI.Container();
 	        stage.interactive = true;
 	
-	        this._grid = new _Grid2.default(stage, this._width, this._height, dimensionX, dimensionY, backgroundUrl, store);
+	        this._grid = new _Grid2.default(stage, store, config);
 	        this._grid._promise.then(function () {
 	            this._grid.build();
 	        }.bind(this));
+	
 	        var onInteract = function (evt) {
 	            if (store.getState().brushes.currentBrush.activated) {
 	                var x = Math.floor(evt.data.global.x / this._width);
@@ -2500,17 +2501,6 @@ webpackJsonplib([0,3],{
 	        this._grid._graphics.on('mousedown', onInteract);
 	        this._grid._graphics.on('mousemove', onInteract);
 	        this._grid._graphics.on('click', onInteract);
-	
-	        setInterval(function () {
-	            if (typeof Storage !== "undefined") {
-	                var jsonRects = JSON.stringify(this._grid.rects);
-	                var jsonPins = JSON.stringify(helper.mapToObj(this._store.getState().pins.pins));
-	                localStorage.setItem("rects", jsonRects);
-	                localStorage.setItem("pins", jsonPins);
-	            } else {
-	                console.log('sad');
-	            }
-	        }.bind(this), 1000);
 	        // function undo(e) {
 	        //     if (e.keyCode == 90 && e.ctrlKey) {
 	        //         for (let i = 0; i < nodeBuffer.length; i++) {
@@ -2541,6 +2531,23 @@ webpackJsonplib([0,3],{
 	                }
 	            }
 	            this._grid.build();
+	            this.save();
+	        }
+	    }, {
+	        key: "save",
+	        value: function save() {
+	            var jsonRects = JSON.stringify(this._grid.rects);
+	            $.ajax({
+	                url: this.beaconMapSaveUrl,
+	                type: 'POST',
+	                data: {
+	                    data: jsonRects
+	                },
+	                success: function success(data) {
+	                    console.log(data['success']);
+	                },
+	                cache: false
+	            });
 	        }
 	    }]);
 	
@@ -2572,11 +2579,11 @@ webpackJsonplib([0,3],{
 	
 	var _Pin2 = _interopRequireDefault(_Pin);
 	
-	var _states = __webpack_require__(42);
+	var _states = __webpack_require__(41);
 	
 	var states = _interopRequireWildcard(_states);
 	
-	var _helper = __webpack_require__(38);
+	var _helper = __webpack_require__(202);
 	
 	var helper = _interopRequireWildcard(_helper);
 	
@@ -2589,25 +2596,46 @@ webpackJsonplib([0,3],{
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
 	var Grid = function () {
-	    function Grid(stage, width, height, dimensionX, dimensionY, src, store) {
+	    /**
+	     *
+	     * @param stage
+	     * @param store
+	     * @param config
+	     * @param config.backgroundUrl
+	     * @param config.beaconPinSaveUrl
+	     * @param config.beaconPinListUrl
+	     * @param config.beaconPinDeleteUrl
+	     * @param config.beaconMapGetUrl
+	     * @param config.width
+	     * @param config.height
+	     * @param config.dimensionX
+	     * @param config.dimensionY
+	     */
+	    function Grid(stage, store, config) {
 	        _classCallCheck(this, Grid);
 	
 	        console.log(states.colors);
 	        this._colors = states.colors;
+	
 	        this._stage = stage;
-	        this._width = width;
-	        this._height = height;
-	        this._dimensionX = dimensionX;
-	        this._dimensionY = dimensionY;
+	        this._width = config.width;
+	        this._height = config.height;
+	        this._dimensionX = config.dimensionX;
+	        this._dimensionY = config.dimensionY;
+	        this._beaconUrls = {
+	            beaconPinSaveUrl: config.beaconPinSaveUrl,
+	            beaconPinListUrl: config.beaconPinListUrl,
+	            beaconPinDeleteUrl: config.beaconPinDeleteUrl,
+	            beaconMapGetUrl: config.beaconMapGetUrl
+	        };
 	        this._graphics = new PIXI.Graphics();
 	        this._stage.addChild(this._graphics);
 	        this._graphics.interactive = true;
-	        this._src = src;
+	        this._backgroundUrl = config.backgroundUrl;
 	        this._pins = new Map();
 	        this._store = store;
 	        this._promise = new Promise(function (resolve, reject) {
-	            PIXI.loader.add(src).load(this.setupBackground.bind(this, resolve, reject));
-	            // resolve();
+	            PIXI.loader.add(config.backgroundUrl).load(this.setupBackground.bind(this, resolve, reject));
 	        }.bind(this));
 	    }
 	
@@ -2668,7 +2696,7 @@ webpackJsonplib([0,3],{
 	                    var key = _step2$value[0];
 	                    var value = _step2$value[1];
 	
-	                    this.addPin(value.position.x, value.position.y, value.name);
+	                    this.addPin(value.x, value.y, value.id, value.name);
 	                }
 	            } catch (err) {
 	                _didIteratorError2 = true;
@@ -2693,20 +2721,38 @@ webpackJsonplib([0,3],{
 	        value: function addPin() {
 	            var x = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
 	            var y = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
-	            var name = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : (0, _uuid.v4)();
+	            var id = arguments[2];
+	            var name = arguments[3];
 	
-	            if (!this._pins.has(name)) this._pins.set(name, new _Pin2.default(x, y, name, this));
+	            if (typeof name !== 'undefined') {
+	                if (!this._pins.has(name)) {
+	                    this._store.dispatch({
+	                        type: 'ADD_PIN',
+	                        id: id,
+	                        name: name,
+	                        x: x,
+	                        y: y
+	                    });
+	                    this._pins.set(name, new _Pin2.default(x, y, id, name, this));
+	                }
+	            }
 	        }
 	    }, {
 	        key: "deletePin",
 	        value: function deletePin(name) {
-	            this._pins.get(name).destroy();
-	            this._pins.delete(name);
+	            if (this._pins.has(name)) {
+	                this._store.dispatch({
+	                    type: 'DELETE_PIN',
+	                    name: name
+	                });
+	                this._pins.get(name).destroy();
+	                this._pins.delete(name);
+	            }
 	        }
 	    }, {
 	        key: "setupBackground",
 	        value: function setupBackground(resolve, reject) {
-	            this._sprite = new PIXI.Sprite(PIXI.loader.resources[this._src].texture);
+	            this._sprite = new PIXI.Sprite(PIXI.loader.resources[this._backgroundUrl].texture);
 	            this._sprite.width = this._width * this._dimensionX;
 	            this._sprite.height = this._height * this._dimensionY;
 	            this._sprite.x = 0;
@@ -2728,24 +2774,31 @@ webpackJsonplib([0,3],{
 	    }, {
 	        key: "rects",
 	        get: function get() {
+	            var _this = this;
+	
 	            if (this._rects === undefined) {
-	                this._rects = null;
-	                if (typeof Storage !== "undefined") {
-	                    try {
-	                        this._rects = JSON.parse(localStorage.getItem("rects"));
-	                    } catch (e) {
-	                        console.log(e);
-	                    }
-	                }
-	                if (!Array.isArray(this._rects)) {
-	                    this._rects = [];
-	                    for (var i = 0; i < this._dimensionX; i++) {
-	                        this._rects[i] = new Array(this._dimensionX);
-	                        for (var j = 0; j < this._dimensionY; j++) {
-	                            this._rects[i][j] = 0; //Math.round(Math.random())
+	                (function () {
+	                    _this._rects = null;
+	                    var self = _this;
+	                    $.ajax({
+	                        url: self._beaconUrls.beaconMapGetUrl,
+	                        type: 'GET',
+	                        dataType: "json",
+	                        async: false,
+	                        success: function success(data) {
+	                            self._rects = data;
+	                        }
+	                    });
+	                    if (!Array.isArray(self._rects)) {
+	                        self._rects = [];
+	                        for (var i = 0; i < self._dimensionX; i++) {
+	                            self._rects[i] = new Array(self._dimensionX);
+	                            for (var j = 0; j < self._dimensionY; j++) {
+	                                self._rects[i][j] = 0; //Math.round(Math.random())
+	                            }
 	                        }
 	                    }
-	                }
+	                })();
 	            }
 	            return this._rects;
 	        },
@@ -2782,7 +2835,7 @@ webpackJsonplib([0,3],{
 	
 	var _uuid = __webpack_require__(34);
 	
-	var _states = __webpack_require__(42);
+	var _states = __webpack_require__(41);
 	
 	var states = _interopRequireWildcard(_states);
 	
@@ -2801,32 +2854,35 @@ webpackJsonplib([0,3],{
 	var PIN_IMAGE_SRC = '/img/blue pin.png';
 	
 	var Pin = function () {
-	    function Pin(x, y, name, grid) {
+	    function Pin(x, y, id, name, grid) {
 	        _classCallCheck(this, Pin);
 	
-	        grid._store.dispatch({
-	            type: 'ADD_PIN',
-	            name: name,
-	            position: { x: x, y: y }
-	        });
+	        this._id = id;
+	        this._name = name;
+	        this._x = x;
+	        this._y = y;
 	        this._width = grid._width;
 	        this._height = grid._height;
-	        x = x * this._width;
-	        y = y * this._height;
 	        this._dimensionX = grid._dimensionX;
 	        this._dimensionY = grid._dimensionY;
-	        this._counter = 0;
-	        this._rects = grid.rects;
-	        this._stage = grid._stage;
-	        this._group = new PIXI.Container();
-	        this._group.x = x;
-	        this._group.y = y;
-	        this._group.zIndex = 2;
-	        this._stage.addChild(this._group);
 	        this._beaconPinWidth = this._width * this._dimensionX * WIDTH_SCALE;
 	        this._beaconPinHeight = this._height * this._dimensionY * HEIGHT_SCALE;
-	        this._name = name;
+	
 	        this._grid = grid;
+	        this._rects = grid.rects;
+	        this._stage = grid._stage;
+	
+	        this.save(x, y);
+	
+	        this._counter = 0;
+	
+	        this._group = new PIXI.Container();
+	        this._group.zIndex = 2;
+	        this._stage.addChild(this._group);
+	        x = x * this._width;
+	        y = y * this._height;
+	        this._group.x = x;
+	        this._group.y = y;
 	        // this._group.anchor.set(0.3);
 	        this._rect = new PIXI.Graphics();
 	        Pin.drawRect(this._rect, {
@@ -2857,6 +2913,22 @@ webpackJsonplib([0,3],{
 	    }
 	
 	    _createClass(Pin, [{
+	        key: "save",
+	        value: function save(x, y) {
+	            $.ajax({
+	                url: this._grid._beaconUrls.beaconPinSaveUrl,
+	                type: 'POST',
+	                data: {
+	                    'BeaconPins[canvas_height]': this._stage.height,
+	                    'BeaconPins[canvas_width]': this._stage.width,
+	                    'BeaconPins[id]': this._id,
+	                    'BeaconPins[name]': this._name,
+	                    'BeaconPins[x]': x,
+	                    'BeaconPins[y]': y
+	                }
+	            });
+	        }
+	    }, {
 	        key: "setup",
 	        value: function setup(x, y) {
 	            this._sprite = new PIXI.Sprite(PIXI.loader.resources[PIN_IMAGE_SRC].texture);
@@ -2903,9 +2975,12 @@ webpackJsonplib([0,3],{
 	                var y = Math.round(newPosition.y / self._height);
 	                self._grid._store.dispatch({
 	                    type: 'SET_PIN_POSITION',
+	                    id: self._id,
 	                    name: self._name,
-	                    position: { x: x, y: y }
+	                    x: x,
+	                    y: y
 	                });
+	                self.save(x, y);
 	            };
 	        }
 	    }, {
@@ -2945,6 +3020,13 @@ webpackJsonplib([0,3],{
 	    }, {
 	        key: "destroy",
 	        value: function destroy() {
+	            $.ajax({
+	                url: this._grid._beaconUrls.beaconPinDeleteUrl,
+	                type: 'POST',
+	                data: {
+	                    'id': this._id
+	                }
+	            });
 	            this._group.destroy();
 	        }
 	    }, {
@@ -3093,6 +3175,15 @@ webpackJsonplib([0,3],{
 	                                    }
 	                                }.bind(this) },
 	                            "Clear"
+	                        ),
+	                        React.createElement(
+	                            "button",
+	                            { className: "btn btn-default", onClick: function () {
+	                                    if (typeof canvas !== 'undefined' && canvas !== null) {
+	                                        canvas.save();
+	                                    }
+	                                }.bind(this) },
+	                            "Save"
 	                        )
 	                    ),
 	                    React.createElement(
@@ -3114,10 +3205,11 @@ webpackJsonplib([0,3],{
 	                                    if (typeof canvas !== 'undefined' && canvas !== null) {
 	                                        var beacon = $('#beacon-pin');
 	                                        if (beacon.select2('data') !== null) {
-	                                            var id = beacon.select2('data').text;
+	                                            var id = beacon.select2('data').id;
+	                                            var name = beacon.select2('data').text;
 	                                            beacon.attr('value', '');
 	                                            beacon.select2('val', '');
-	                                            canvas._grid.addPin(0, 0, id);
+	                                            canvas._grid.addPin(0, 0, id, name);
 	                                        }
 	                                    }
 	                                }.bind(this) },
@@ -3138,10 +3230,7 @@ webpackJsonplib([0,3],{
 	                            React.createElement(
 	                                "button",
 	                                { className: "btn btn-default", onClick: function () {
-	                                        store.dispatch({
-	                                            type: 'DELETE_PIN',
-	                                            name: currentPinName
-	                                        });
+	
 	                                        if (typeof canvas !== 'undefined' || canvas !== null) {
 	                                            canvas._grid.deletePin(currentPinName);
 	                                        }
@@ -3190,7 +3279,7 @@ webpackJsonplib([0,3],{
 	
 	    return React.createElement(
 	        "div",
-	        null,
+	        { className: "row", style: { marginBottom: '10px' } },
 	        "Brushes",
 	        brushes.map(function (brush, index) {
 	            return React.createElement(_BrushControl.BrushControl, { key: index, index: index, brush: brush });
@@ -3216,7 +3305,7 @@ webpackJsonplib([0,3],{
 	
 	var React = _interopRequireWildcard(_react);
 	
-	var _states = __webpack_require__(42);
+	var _states = __webpack_require__(41);
 	
 	var states = _interopRequireWildcard(_states);
 	

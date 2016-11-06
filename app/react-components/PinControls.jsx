@@ -24,6 +24,12 @@ export default class PinControls extends React.Component {
                         }
                     }.bind(this)}>Clear
                     </button>
+                    <button className="btn btn-default" onClick={function () {
+                        if (typeof  canvas !== 'undefined' && canvas !== null) {
+                            canvas.save();
+                        }
+                    }.bind(this)}>Save
+                    </button>
                 </div>
                 <legend>Manage panel</legend>
                 <div className="form-group">
@@ -35,10 +41,11 @@ export default class PinControls extends React.Component {
                             if (typeof  canvas !== 'undefined' && canvas !== null) {
                                 var beacon = $('#beacon-pin');
                                 if (beacon.select2('data') !== null) {
-                                    var id = beacon.select2('data').text;
+                                    var id = beacon.select2('data').id;
+                                    var name = beacon.select2('data').text;
                                     beacon.attr('value', '');
                                     beacon.select2('val', '');
-                                    canvas._grid.addPin(0, 0, id);
+                                    canvas._grid.addPin(0, 0, id, name);
                                 }
                             }
                         }.bind(this)}>
@@ -51,10 +58,7 @@ export default class PinControls extends React.Component {
                         <div>
                             <span className="form-control">{ currentPinName}</span>
                             <button className="btn btn-default" onClick={function () {
-                                store.dispatch({
-                                    type: 'DELETE_PIN',
-                                    name: currentPinName
-                                });
+
                                 if (typeof  canvas !== 'undefined' || canvas !== null) {
                                     canvas._grid.deletePin(currentPinName);
                                 }

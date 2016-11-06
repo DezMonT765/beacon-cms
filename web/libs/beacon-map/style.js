@@ -1,20 +1,2 @@
-var lib =
-webpackJsonplib([2,4],{
-
-/***/ 0:
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __webpack_require__(211);
-
-
-/***/ },
-
-/***/ 211:
-/***/ function(module, exports) {
-
-	// removed by extract-text-webpack-plugin
-
-/***/ }
-
-});
+var lib=webpackJsonplib([2,4],{0:function(n,i,o){n.exports=o(211)},211:function(n,i){}});
 //# sourceMappingURL=style.js.map

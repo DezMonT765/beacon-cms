@@ -63,13 +63,14 @@ switch(process.env.npm_lifecycle_event) {
             configParts.babel(PATHS.app),
             configParts.setFreeVariable(
                 'process.env.NODE_ENV',
-                'dev'
+                'prod'
             ),
             configParts.extractBundle({
                 name: 'vendor',
                 entries: ['./node_modules/pixi.js/bin/pixi','react','react/lib/ReactDOM']
             }),
-            configParts.extractCSS(PATHS.style)
+            configParts.extractCSS(PATHS.style),
+            configParts.minifyJS()
 
         );
         break;

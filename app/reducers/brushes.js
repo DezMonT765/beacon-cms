@@ -2,7 +2,7 @@ import Brush from "../Brush";
 import {brush} from "./brush";
 import * as states from "../states";
 export const brushes = (state = {
-    brushes: [
+    bushes: [
         new Brush(states.colors[states.WALL]),
         new Brush(states.colors[states.EMPTY])],
     currentBrush: new Brush(states.colors[states.EMPTY])

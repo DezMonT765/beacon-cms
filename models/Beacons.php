@@ -176,7 +176,7 @@ class Beacons extends MainActiveRecord
             [['pictureFile'], 'file', 'extensions' => 'jpg, png', 'mimeTypes' => 'image/jpeg, image/png',],
             ['link', 'url'],
             [['groupToBind', 'absolutePicture', 'groupName', 'groupId', 'absoluteHorizontalPicture', 'link',
-              'additional_info', 'absoluteMapFolderUrl', 'mapWidth', 'mapHeight', 'beaconPinX', 'beaconPinY'], 'safe']
+              'additional_info', 'absoluteMapFolderUrl', 'mapWidth', 'mapHeight', 'x', 'y'], 'safe']
         ];
     }
 

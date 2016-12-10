@@ -21,6 +21,11 @@
         },
         {
             "type": "vcs",
+            "url": "https://github.com/DezMonT765/yii2-bundle"
+        },
+
+        {
+            "type": "vcs",
             "url": "https://github.com/DezMonT765/zyx-phpmailer"
         },
         {
@@ -32,14 +37,15 @@
         "php": ">=5.4.0",
         "yiisoft/yii2": "2.0.8",
         "yiisoft/yii2-bootstrap": "*",
+        "dezmont765/yii2-bundle" : "dev-master",
         "dezmont765/yii2-grid-view-library" : "dev-master",
         "zyx/zyx-phpmailer": "dev-log-fix",
-        "bower-asset/select2-skins": "dev-master",
-        "lajax/yii2-language-picker": "dev-master",
-        "phpoffice/phpexcel" : "dev-master",
+        "bower-asset/select2-skins": "*",
+        "lajax/yii2-language-picker": "*",
+        "phpoffice/phpexcel" : "*",
         "vova07/yii2-imperavi-widget": "*",
         "2amigos/yii2-transliterator-helper": "*",
-        "php-excel-reader/spreadsheet-reader": "dev-master"
+        "php-excel-reader/spreadsheet-reader": "*"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",

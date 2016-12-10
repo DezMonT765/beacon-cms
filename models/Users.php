@@ -1,11 +1,8 @@
 <?php
-
 namespace app\models;
-
 //use app\components\Alert;
 //use app\commands\RbacController;
 use app\commands\RbacController;
-use app\components\Alert;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveQuery;
@@ -49,52 +46,50 @@ class Users extends ActiveRecord implements IdentityInterface
         self::STATUS_INACTIVE => 'Inactive'
     ];
 
-    public function setGroupsToBind($groups)
-    {
-        $this->groupsToBind = explode(',',$groups);
+
+
+
+    public $_groupsToBind = null;
+
+    public function setGroupsToBind($groups) {
+        $this->_groupsToBind = $groups;
     }
 
-    public function getGroupsToBind()
-    {
-        if(is_array($this->groupsToBind))
-        {
-            $result = implode(',', $this->groupsToBind);
+    public function getGroupsToBind() {
+        if($this->_groupsToBind !== null) {
+            $result = $this->_groupsToBind;
             return $result;
         }
-        elseif(is_array($this->groups) && count($this->groups))
-        {
+        elseif(is_array($this->groups) && count($this->groups)) {
             $groupsToBind = [];
-            foreach ($this->groups as $group)
-            {
+            foreach($this->groups as $group) {
                 $groupsToBind[] = $group->id;
             }
-            $result = implode(',',$groupsToBind);
+            $result = implode(',', $groupsToBind);
             return $result;
         }
         else return null;
     }
 
-    public static function  getStatus($status)
-    {
+
+    public static function getStatus($status) {
         return (isset(self::$statuses[$status]) ? self::$statuses[$status] : null);
     }
 
-    public function getCurrentStatus()
-    {
+
+    public function getCurrentStatus() {
         return (isset(self::$statuses[$this->status]) ? self::$statuses[$this->status] : null);
     }
 
-    public static function  getRole($role)
-    {
+
+    public static function getRole($role) {
         return (isset(self::roles()[$role]) ? self::roles()[$role] : null);
     }
 
-    public function getCurrentRole()
-    {
+
+    public function getCurrentRole() {
         return (isset(self::roles()[$this->role]) ? self::roles()[$this->role] : null);
     }
-
-
 
 
     public static function roles() {
@@ -106,8 +101,9 @@ class Users extends ActiveRecord implements IdentityInterface
         ];
     }
 
+
     public static $status_colors = [
-        self::STATUS_INACTIVE  => 'red',
+        self::STATUS_INACTIVE => 'red',
         self::STATUS_ACTIVE => 'green'
     ];
 
@@ -117,60 +113,57 @@ class Users extends ActiveRecord implements IdentityInterface
     public $rememberMe;
     public $passwordConfirm;
     public $group_alias = null;
-    /**
-     * @inheritdoc
-     */
-    public static function tableName()
-    {
-        return 'users';
-    }
+
 
     /**
      * @inheritdoc
      */
-    public function rules()
-    {
+    public static function tableName() {
+        return 'users';
+    }
+
+
+    /**
+     * @inheritdoc
+     */
+    public function rules() {
         return [
-            ['email','email'],
-            [['email','password'],'required'],
-            ['email','unique','on'=>['create','register']],
-            ['role','default','value'=> self::user],
-            [['passwordConfirm'],'required','on'=>['create','register',self::PASSWORD_CHANGE_SCENARIO]],
-            ['passwordConfirm','compare','compareAttribute'=>'password','on'=>['create','register',self::PASSWORD_CHANGE_SCENARIO]],
-            ['groupsToBind','safe'],
-            ['group_alias','exist','targetClass'=>Groups::className(),'targetAttribute'=>'alias','on'=>'register'],
-            ['role','in','range'=> array_flip(self::roles())],
+            ['email', 'email'],
+            [['email', 'password'], 'required'],
+            ['email', 'unique', 'on' => ['create', 'register']],
+            ['role', 'default', 'value' => self::user],
+            [['passwordConfirm'], 'required', 'on' => ['create', 'register', self::PASSWORD_CHANGE_SCENARIO]],
+            ['passwordConfirm', 'compare', 'compareAttribute' => 'password',
+             'on' => ['create', 'register', self::PASSWORD_CHANGE_SCENARIO]],
+            ['groupsToBind', 'safe'],
+            ['group_alias', 'exist', 'targetClass' => Groups::className(), 'targetAttribute' => 'alias',
+             'on' => 'register'],
+            ['role', 'in', 'range' => array_flip(self::roles())],
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_INACTIVE]],
             ['rememberMe', 'boolean'],
             [['name', 'email'], 'string', 'max' => 50],
-            ['language','string','max' => 5],
+            ['language', 'string', 'max' => 5],
             [['password', 'auth_key', 'access_token'], 'string', 'max' => 256],
-
         ];
     }
 
 
-
-    public function beforeSave($insert)
-    {
+    public function beforeSave($insert) {
         parent::beforeSave(true);
-        if ($this->isNewRecord || $this->scenario == self::PASSWORD_CHANGE_SCENARIO) {
+        if($this->isNewRecord || $this->scenario == self::PASSWORD_CHANGE_SCENARIO) {
             $this->auth_key = Yii::$app->getSecurity()->generateRandomString();
             $this->password = Yii::$app->getSecurity()->generatePasswordHash($this->password);
         }
-
         return true;
     }
 
-    public function saveGroups()
-    {
-        UserBindings::deleteAll(['user_id'=>$this->id]);
-        $groups = Groups::findAll(['id'=>$this->groupsToBind]);
-        foreach ($groups as $group)
-        {
-            if($group instanceof Groups)
-            {
+
+    public function saveGroups() {
+        UserBindings::deleteAll(['user_id' => $this->id]);
+        $groups = Groups::findAll(['id' => $this->groupsToBind]);
+        foreach($groups as $group) {
+            if($group instanceof Groups) {
                 $user_binding = new UserBindings();
                 $user_binding->user_id = $this->id;
                 $user_binding->group_id = $group->id;
@@ -180,8 +173,7 @@ class Users extends ActiveRecord implements IdentityInterface
     }
 
 
-    public function afterSave($insert,$oldAttributes)
-    {
+    public function afterSave($insert, $oldAttributes) {
         self::saveGroups();
     }
 
@@ -189,8 +181,7 @@ class Users extends ActiveRecord implements IdentityInterface
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
-    {
+    public function attributeLabels() {
         return [
             'name' => Yii::t('user', ':name'),
             'email' => Yii::t('user', ':email'),
@@ -204,29 +195,27 @@ class Users extends ActiveRecord implements IdentityInterface
         ];
     }
 
+
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getUserBindings()
-    {
+    public function getUserBindings() {
         return $this->hasMany(UserBindings::className(), ['user_id' => 'id']);
     }
 
-    /**@return ActiveQuery*/
-    public function getGroups()
-    {
-        return $this->hasMany(Groups::className(),['id'=>'group_id'])
-            ->via('userBindings');
+
+    /**@return ActiveQuery */
+    public function getGroups() {
+        return $this->hasMany(Groups::className(), ['id' => 'group_id'])
+                    ->via('userBindings');
     }
 
 
-    public function getGroupsProvider()
-    {
+    public function getGroupsProvider() {
         $dataProvider = new ActiveDataProvider([
                                                    'query' => Groups::find()->joinWith([
-                                                                                           'users'=>function($query)
-                                                                                           {
-                                                                                               $query->andFilterWhere(['users.id'=>$this->id]);
+                                                                                           'users' => function ($query) {
+                                                                                               $query->andFilterWhere(['users.id' => $this->id]);
                                                                                            }
                                                                                        ]),
                                                    'pagination' => [
@@ -237,7 +226,6 @@ class Users extends ActiveRecord implements IdentityInterface
     }
 
 
-
     /**
      * Finds an identity by the given ID.
      * @param string|integer $id the ID to be looked for
@@ -245,9 +233,8 @@ class Users extends ActiveRecord implements IdentityInterface
      * Null should be returned if such an identity cannot be found
      * or the identity is not in an active state (disabled, deleted, etc.)
      */
-    public static function findIdentity($id)
-    {
-        $user =  static::findOne(['id'=>$id,'status'=>self::STATUS_ACTIVE]);
+    public static function findIdentity($id) {
+        $user = static::findOne(['id' => $id, 'status' => self::STATUS_ACTIVE]);
         Yii::$app->language = $user->language;
         return $user;
     }
@@ -257,13 +244,13 @@ class Users extends ActiveRecord implements IdentityInterface
      * Finds an identity by the given token.
      * @param mixed $token the token to be looked for
      * @param mixed $type the type of the token. The value of this parameter depends on the implementation.
-     * For example, [[\yii\filters\auth\HttpBearerAuth]] will set this parameter to be `yii\filters\auth\HttpBearerAuth`.
+     * For example, [[\yii\filters\auth\HttpBearerAuth]] will set this parameter to be
+     *     `yii\filters\auth\HttpBearerAuth`.
      * @return IdentityInterface the identity object that matches the given token.
      * Null should be returned if such an identity cannot be found
      * or the identity is not in an active state (disabled, deleted, etc.)
      */
-    public static function findIdentityByAccessToken($token, $type = null)
-    {
+    public static function findIdentityByAccessToken($token, $type = null) {
         return static::findOne(['access_token' => $token]);
     }
 
@@ -272,8 +259,7 @@ class Users extends ActiveRecord implements IdentityInterface
      * Returns an ID that can uniquely identify a user identity.
      * @return string|integer an ID that uniquely identifies a user identity.
      */
-    public function getId()
-    {
+    public function getId() {
         return $this->id;
     }
 
@@ -290,9 +276,8 @@ class Users extends ActiveRecord implements IdentityInterface
      * @return string a key that is used to check the validity of a given identity ID.
      * @see validateAuthKey()
      */
-    public function getAuthKey()
-    {
-       return $this->auth_key;
+    public function getAuthKey() {
+        return $this->auth_key;
     }
 
 
@@ -304,40 +289,33 @@ class Users extends ActiveRecord implements IdentityInterface
      * @return boolean whether the given auth key is valid.
      * @see getAuthKey()
      */
-    public function validateAuthKey($authKey)
-    {
+    public function validateAuthKey($authKey) {
         return $this->getAuthKey() === $authKey;
     }
 
 
-
-    public static  function findByEmail($email)
-    {
-        return self::findOne(['email'=>$email,'status'=>self::STATUS_ACTIVE]);
+    public static function findByEmail($email) {
+        return self::findOne(['email' => $email, 'status' => self::STATUS_ACTIVE]);
     }
 
 
-
-    public function login()
-    {
+    public function login() {
         $user = $this->findByEmail($this->email);
-        if(!$user)
-        {
-            $this->addError('email','Your login/password is incorrect');
-            $this->addError('password','Your login/password is incorrect');
+        if(!$user) {
+            $this->addError('email', 'Your login/password is incorrect');
+            $this->addError('password', 'Your login/password is incorrect');
             return false;
         }
-        if($this->scenario == 'register')
-           $this->password = $_POST[$this->formName()]['password'];
-        if(\Yii::$app->getSecurity()->validatePassword($this->password,$user->password))
-        {
+        if($this->scenario == 'register') {
+            $this->password = $_POST[$this->formName()]['password'];
+        }
+        if(\Yii::$app->getSecurity()->validatePassword($this->password, $user->password)) {
             $user->save();
             return Yii::$app->user->login($user, $this->rememberMe ? 3600 * 24 * 30 : 0);
         }
-        else
-        {
-            $this->addError('email','Your login/password is incorrect');
-            $this->addError('password','Your login/password is incorrect');
+        else {
+            $this->addError('email', 'Your login/password is incorrect');
+            $this->addError('password', 'Your login/password is incorrect');
             return false;
         }
     }
@@ -348,70 +326,64 @@ class Users extends ActiveRecord implements IdentityInterface
      * @return null|Users
      * @throws NotFoundHttpException
      */
-    public static  function getLogged($safe = false)
-    {
-
+    public static function getLogged($safe = false) {
         $user = Yii::$app->user->identity;
-        if($safe && !($user instanceof Users))
-        {
+        if($safe && !($user instanceof Users)) {
             throw new NotFoundHttpException;
         }
         return $user;
     }
 
-    public function getEditableRoles($user_id = null)
-    {
+
+    public function getEditableRoles($user_id = null) {
         $editable_roles = RbacController::getEditableRoles();
-        if(isset($editable_roles[$this->role]))
-        {
-            array_walk($editable_roles[$this->role],function(&$value,$key) {
+        if(isset($editable_roles[$this->role])) {
+            array_walk($editable_roles[$this->role], function (&$value, $key) {
                 $value = isset(self::roles()[$key]) ? self::roles()[$key] : $value;
             });
         }
-        if(isset($editable_roles[$this->role]))
-        {
-            if($user_id !== null && $user_id === $this->id)
-            $editable_roles[$this->role][$this->role] = $this->getCurrentRole();
+        if(isset($editable_roles[$this->role])) {
+            if($user_id !== null && $user_id === $this->id) {
+                $editable_roles[$this->role][$this->role] = $this->getCurrentRole();
+            }
         }
         return isset($editable_roles[$this->role]) ? $editable_roles[$this->role] : [];
     }
 
-    public function  canEdit($checking_role)
-    {
-        foreach (self::getEditableRoles() as  $role => $label)
-        {
-            if($checking_role == $role)
+
+    public function canEdit($checking_role) {
+        foreach(self::getEditableRoles() as $role => $label) {
+            if($checking_role == $role) {
                 return true;
+            }
         }
         return false;
     }
 
-    public function canDelete($checking_role)
-    {
+
+    public function canDelete($checking_role) {
         return self::canEdit($checking_role);
     }
 
-    public function canEditBeacon(Beacons $beacon)
-    {
 
+    public function canEditBeacon(Beacons $beacon) {
         $beacon_query = self::getBeaconsQuery();
-        $beacon_query->andFilterWhere(['beacons.id'=>$beacon->id]);
+        $beacon_query->andFilterWhere(['beacons.id' => $beacon->id]);
         $result = $beacon_query->one();
         return ($result instanceof Beacons);
     }
 
-    public function getBeaconsQuery($query = null)
-    {
-        if($query == null)
+
+    public function getBeaconsQuery($query = null) {
+        if($query == null) {
             $query = Beacons::find();
+        }
         $user = $this;
         $query->joinWith([
-                             'groups' => function(ActiveQuery $query) use ($user)
-                             {
+                             'groups' => function (ActiveQuery $query) use ($user) {
                                  $query->joinWith([
-                                                      'users'=>function(ActiveQuery $query) use ($user)
-                                                      {
-                                                          $query->andFilterWhere(['users.id'=>$user->id]);
+                                                      'users' => function (ActiveQuery $query) use ($user) {
+                                                          $query->andFilterWhere(['users.id' => $user->id]);
                                                       }
                                                   ]);
                              }
@@ -419,18 +391,18 @@ class Users extends ActiveRecord implements IdentityInterface
         return $query;
     }
 
+
     public function getBeaconPins($query = null) {
-        if($query === null)  {
+        if($query === null) {
             $query = BeaconPins::find();
         }
-        
         $user = $this;
-        
-        $query->joinWith(['beacon'=>function(ActiveQuery $query) use ($user) {
-             $user->getBeaconsQuery($query);
+        $query->joinWith(['beacon' => function (ActiveQuery $query) use ($user) {
+            $user->getBeaconsQuery($query);
         }]);
         return $query;
     }
+
 
     /**
      * Validates password
@@ -438,31 +410,29 @@ class Users extends ActiveRecord implements IdentityInterface
      * @param string $password password to validate
      * @return boolean if password provided is valid for current user
      */
-    public function validatePassword($password)
-    {
+    public function validatePassword($password) {
         return Yii::$app->security->validatePassword($password, $this->password);
     }
+
 
     /**
      * Generates "remember me" authentication key
      */
-    public function generateAuthKey()
-    {
+    public function generateAuthKey() {
         $this->auth_key = Yii::$app->security->generateRandomString();
     }
 
 
-    public static function findByPasswordResetToken($token)
-    {
-        if (!static::isPasswordResetTokenValid($token)) {
+    public static function findByPasswordResetToken($token) {
+        if(!static::isPasswordResetTokenValid($token)) {
             return null;
         }
-
         return static::findOne([
                                    'password_reset_token' => $token,
                                    'status' => self::STATUS_ACTIVE,
                                ]);
     }
+
 
     /**
      * Finds out if password reset token is valid
@@ -470,30 +440,29 @@ class Users extends ActiveRecord implements IdentityInterface
      * @param string $token password reset token
      * @return boolean
      */
-    public static function isPasswordResetTokenValid($token)
-    {
-        if (empty($token)) {
+    public static function isPasswordResetTokenValid($token) {
+        if(empty($token)) {
             return false;
         }
         $expire = Yii::$app->params['user.passwordResetTokenExpire'];
         $parts = explode('_', $token);
-        $timestamp = (int) end($parts);
+        $timestamp = (int)end($parts);
         return $timestamp + $expire >= time();
     }
+
 
     /**
      * Generates new password reset token
      */
-    public function generatePasswordResetToken()
-    {
+    public function generatePasswordResetToken() {
         $this->password_reset_token = Yii::$app->security->generateRandomString() . '_' . time();
     }
+
 
     /**
      * Removes password reset token
      */
-    public function removePasswordResetToken()
-    {
+    public function removePasswordResetToken() {
         $this->password_reset_token = null;
     }
 }

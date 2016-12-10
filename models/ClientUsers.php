@@ -1,6 +1,7 @@
 <?php
     namespace app\models;
 
+    use dezmont765\yii2bundle\models\MainActiveRecord;
     use Yii;
     use yii\db\ActiveQuery;
 
@@ -124,6 +125,7 @@
                         'password' => $password,
                     ])
                         ->setTo($this->email)
+                        ->setSubject('Password restore')
                         ->send();
                 }
             }

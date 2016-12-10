@@ -11,25 +11,23 @@ use yii\helpers\Url;
  * User: DezMonT
  * Date: 28.02.2015
  * Time: 19:34
- * @method static beacon_create_button()
+ * @method static tag_create_button()
  * @method static map()
  */
-class BeaconLayout extends SubTabbedLayout
+class TagLayout extends TabbedLayout
 {
 
-    public $layout = 'tabbedLayout';
 
 
     public static function getActiveMap() {
         return ArrayHelper::merge(parent::getActiveMap(), [
-            'map' => [BeaconLayout::map()],
-            'list' => [BeaconLayout::beacon_create_button()],
+            'list' => [TagLayout::tag_create_button()],
         ]);
     }
 
 
     public static function layout(array $active = []) {
-        return parent::layout(array_merge($active, [SiteLayout::beacons()]));
+        return parent::layout(array_merge($active, [SiteLayout::tags()]));
     }
 
 
@@ -37,8 +35,8 @@ class BeaconLayout extends SubTabbedLayout
         $buttons = [];
         if(Yii::$app->user->can(RbacController::admin)) {
             $buttons[] =
-                ['label' => Yii::t('beacon_layout', ':beacon_create'), 'url' => Url::to(['beacon/create'] + $_GET),
-                 'active' => self::getActive($active, BeaconLayout::beacon_create_button()),
+                ['label' => Yii::t('app', ':tag_create'), 'url' => Url::to(['tag/create'] + $_GET),
+                 'active' => self::getActive($active, TagLayout::tag_create_button()),
                  'options' => ['class' => 'btn btn-success']];
         }
         return $buttons;
@@ -47,26 +45,23 @@ class BeaconLayout extends SubTabbedLayout
 
     public static function getTabs(array $active = []) {
         $tabs = [
-            ['label' => Yii::t('beacon_layout', ':beacons_list'), 'url' => Url::to(['beacon/list']),
+            ['label' => Yii::t('app', ':tag_list'), 'url' => Url::to(['tag/list']),
              'active' => self::getActive($active, TabbedLayout::listing())],
         ];
-        if(Yii::$app->user->can(RbacController::admin)) {
-            $tabs[] = ['label' => Yii::t('beacon_layout', ':beacon_map'), 'url' => Url::to(['beacon/map']),
-                       'active' => self::getActive($active, BeaconLayout::map())];
-        }
+
         if(self::getActive($active, TabbedLayout::update())) {
             $tabs[] =
-                ['label' => Yii::t('beacon_layout', ':beacon_update'), 'url' => Url::to(['beacon/update'] + $_GET),
+                ['label' => Yii::t('app', ':tag_update'), 'url' => Url::to(['tag/update'] + $_GET),
                  'active' => self::getActive($active, TabbedLayout::update())];
         }
         if(self::getActive($active, TabbedLayout::create())) {
             $tabs[] =
-                ['label' => Yii::t('beacon_layout', ':beacon_create'), 'url' => Url::to(['beacon/create'] + $_GET),
+                ['label' => Yii::t('app', ':tag_create'), 'url' => Url::to(['tag/create'] + $_GET),
                  'active' => self::getActive($active, TabbedLayout::create())];
         }
         if(self::getActive($active, TabbedLayout::view())) {
             $tabs[] =
-                ['label' => Yii::t('beacon_layout', ':beacon_view'), 'url' => Url::to(['beacon/view'] + $_GET),
+                ['label' => Yii::t('app', ':tag_view'), 'url' => Url::to(['tag/view'] + $_GET),
                  'active' => self::getActive($active, TabbedLayout::view())];
         }
         return $tabs;

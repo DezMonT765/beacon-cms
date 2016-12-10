@@ -19,6 +19,7 @@ use yii\web\UploadedFile;
  * @property int $minor
  * @property string $place
  * @property string $description
+ * @mixin  FileSaveBehavior
  *
  * @property BeaconBindings[] $beaconBindings
  * @property Beacons $beacons
@@ -38,7 +39,6 @@ class Groups extends MainActiveRecord
 
 
     public function init() {
-        /**@var Beacons | FileSaveBehavior $this*/
         $this->addFilesAttribute('map',GroupFiles::className(),'name',GroupFiles::TYPE_DEFAULT,'owner_id','type',
                                  '@group_save_dir','@group_view_url',null,null,'@group_view_url',function($attribute,$file_full_path,$file_path,$file_name) {
                 FileHelper::createDirectory($file_path . $file_name);

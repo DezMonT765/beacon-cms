@@ -1,10 +1,11 @@
 <?php
 namespace app\models;
 
-use app\behaviors\IncrementBehavior;
 use app\components\Crop;
 use app\components\FileSaveBehavior;
 use app\helpers\HelperImage;
+use dezmont765\yii2bundle\behaviors\ModelBindingBehavior;
+use dezmont765\yii2bundle\models\MainActiveRecord;
 use Yii;
 use yii\helpers\Url;
 use yii\web\Request;
@@ -23,19 +24,20 @@ use yii\web\UploadedFile;
  * @property integer $minor
  * @property integer $major
  * @property string $groupToBind
+ * @property string $tagsToBind
  * @property BeaconPins $beaconPins
+ * @mixin ModelBindingBehavior
+ * @mixin FileSaveBehavior
  *
  * @property BeaconBindings[] $beaconBindings
  * @property BeaconStatistic $beaconStatistic
  */
 class Beacons extends MainActiveRecord
 {
-
     public $crop;
 
 
     public function init() {
-        /**@var Beacons | FileSaveBehavior $this */
         $crop = $this->crop;
         $this->addFileAttribute('picture', '@beacon_save_dir', '@beacon_view_dir', null,
                                 null, '@beacon_view_url',
@@ -90,17 +92,31 @@ class Beacons extends MainActiveRecord
     public function behaviors() {
         return [
             FileSaveBehavior::className(),
+            [
+                'class' => ModelBindingBehavior::className(),
+                ModelBindingBehavior::BINDING_STORES => [
+                    'groupToBind' => [
+                        ModelBindingBehavior::BINDING_STORE_ATTRIBUTE => '_groupToBind',
+                        ModelBindingBehavior::BINDING_MODEL_QUERY => $this->getGroups(),
+                        ModelBindingBehavior::BINDING_MODEL_CLASS => Groups::className(),
+                        ModelBindingBehavior::BINDING_ATTRIBUTE => 'id',
+                        ModelBindingBehavior::BINDING_INTERMEDIATE_MODEL_CLASS => BeaconBindings::className(),
+                        ModelBindingBehavior::BINDING_INTERMEDIATE_MODEL_ATTRIBUTE => 'beacon_id',
+                        ModelBindingBehavior::BINDING_INTERMEDIATE_RELATED_ATTRIBUTE => 'group_id',
+                    ],
+                    'tagsToBind' => [
+                        ModelBindingBehavior::BINDING_STORE_ATTRIBUTE => '_tagsToBind',
+                        ModelBindingBehavior::BINDING_MODEL_QUERY => $this->getTags(),
+                        ModelBindingBehavior::BINDING_MODEL_CLASS => Tags::className(),
+                        ModelBindingBehavior::BINDING_ATTRIBUTE => 'id',
+                        ModelBindingBehavior::BINDING_ATTRIBUTE_DELIMITER => ',',
+                        ModelBindingBehavior::BINDING_INTERMEDIATE_MODEL_CLASS => BeaconTags::className(),
+                        ModelBindingBehavior::BINDING_INTERMEDIATE_MODEL_ATTRIBUTE => 'beacon_id',
+                        ModelBindingBehavior::BINDING_INTERMEDIATE_RELATED_ATTRIBUTE => 'tag_id',
+                    ],
+                ],
+            ]
         ];
-    }
-
-
-    public function getGroupsName() {
-        $groups = $this->groups;
-        $names = [];
-        foreach($groups as $group) {
-            $names[] = $group->name;
-        }
-        return implode(',', $names);
     }
 
 
@@ -117,26 +133,29 @@ class Beacons extends MainActiveRecord
     }
 
 
+    public $_groupToBind = null;
+
+
     public function setGroupToBind($group) {
-        $this->groupToBind = $group;
+        $this->_groupToBind = $group;
     }
 
 
     public function getGroupToBind() {
-        if($this->groupToBind !== null) {
-            return $this->groupToBind;
-        }
-        else {
-            $group = $this->getGroups()->one();
-            if($group instanceof Groups) {
-                $result = $group->id;
-                return $result;
-            }
-            else {
-                $result = '';
-                return $result;
-            }
-        }
+        return $this->getSingleBinding('groupToBind');
+    }
+
+
+    public $_tagsToBind = null;
+
+    // todo it is so easy to forget about it, need to resolve this somehow
+    public function setTagsToBind($tags) {
+        $this->_tagsToBind = explode(',', $tags);
+    }
+
+
+    public function getTagsToBind() {
+        return $this->getMultipleBinding('tagsToBind');
     }
 
 
@@ -145,21 +164,20 @@ class Beacons extends MainActiveRecord
     }
 
 
+    public $_groupName = null;
+
+
+    public function setGroupName($groupName) {
+        $this->_groupName = $groupName;
+    }
+
+
     public function getGroupName() {
-        if($this->groupName !== null) {
-            return $this->groupName;
+        $group = $this->getGroups()->one();
+        if($group instanceof Groups) {
+            return $group->name;
         }
-        else {
-            $group = $this->getGroups()->one();
-            if($group instanceof Groups) {
-                $result = $group->name;
-                return $result;
-            }
-            else {
-                $result = '';
-                return $result;
-            }
-        }
+        else return null;
     }
 
 
@@ -175,8 +193,9 @@ class Beacons extends MainActiveRecord
             [['title', 'uuid'], 'string', 'max' => 50],
             [['pictureFile'], 'file', 'extensions' => 'jpg, png', 'mimeTypes' => 'image/jpeg, image/png',],
             ['link', 'url'],
-            [['groupToBind', 'absolutePicture', 'groupName', 'groupId', 'absoluteHorizontalPicture', 'link',
-              'additional_info', 'absoluteMapFolderUrl', 'mapWidth', 'mapHeight', 'beaconPinX', 'beaconPinY'], 'safe']
+            [['groupToBind', 'tagsToBind', 'absolutePicture', 'groupName', 'groupId', 'absoluteHorizontalPicture',
+              'link',
+              'additional_info', 'absoluteMapFolderUrl', 'mapWidth', 'mapHeight', 'x', 'y'], 'safe']
         ];
     }
 
@@ -197,28 +216,6 @@ class Beacons extends MainActiveRecord
             'minor' => Yii::t('beacon', ':minor'),
             'major' => Yii::t('beacon', ':major'),
         ];
-    }
-
-
-    public function saveGroup() {
-        if(Yii::$app->request instanceof Request && !empty(Yii::$app->request->getBodyParam(self::formName()))) {
-            if(!empty($this->groupToBind)) {
-                BeaconBindings::deleteAll(['beacon_id' => $this->id]);
-                $group = Groups::findOne(['id' => $this->groupToBind]);
-                if($group instanceof Groups) {
-                    $beacon_binding = new BeaconBindings();
-                    $beacon_binding->beacon_id = $this->id;
-                    $beacon_binding->group_id = $group->id;
-                    $beacon_binding->save();
-                }
-            }
-        }
-    }
-
-
-    public function afterSave($insert, $changedAttributes) {
-        parent::afterSave($insert, $changedAttributes);
-        self::saveGroup();
     }
 
 
@@ -267,6 +264,7 @@ class Beacons extends MainActiveRecord
         $fields = parent::fields();
         $fields['absolutePicture'] = 'absolutePicture';
         $fields['groupToBind'] = 'groupToBind';
+        $fields['tagsToBind'] = 'tagsToBind';
         $fields['absoluteHorizontalPicture'] = 'absoluteHorizontalPicture';
         $fields['groupName'] = 'groupName';
         $fields['groupId'] = 'groupId';
@@ -309,20 +307,21 @@ class Beacons extends MainActiveRecord
             $file_name = $this->beaconPins->groupFile->name;
             $group = $this->beaconPins->groupFile->group;
             if($group instanceof Groups) {
-                $dir = pathinfo($group->getFileByName($file_name, 'map'),PATHINFO_FILENAME);
-                $url = Url::to([$group->getFileViewPath('map') . $dir],true);
+                $dir = pathinfo($group->getFileByName($file_name, 'map'), PATHINFO_FILENAME);
+                $url = Url::to([$group->getFileViewPath('map') . $dir], true);
                 return $url;
             }
         }
         return "";
     }
 
+
     public function getAbsoluteMapUrl() {
         if($this->beaconPins instanceof BeaconPins && $this->beaconPins->groupFile instanceof GroupFiles) {
             $file_name = $this->beaconPins->groupFile->name;
             $group = $this->beaconPins->groupFile->group;
             if($group instanceof Groups) {
-                $url = Url::to([$group->getFileByName($file_name, 'map')],true);
+                $url = Url::to([$group->getFileByName($file_name, 'map')], true);
                 return $url;
             }
         }
@@ -346,6 +345,7 @@ class Beacons extends MainActiveRecord
         return 0;
     }
 
+
     public function getContent() {
         $beacons = BeaconContentElements::find()->where(['beacon_id' => $this->id])->all();
         $content = [];
@@ -354,7 +354,6 @@ class Beacons extends MainActiveRecord
         }
         return $beacons;
     }
-
 
 
     public function getMapHeight() {
@@ -371,5 +370,19 @@ class Beacons extends MainActiveRecord
             }
         }
         return 0;
+    }
+
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getBeaconTags() {
+        return $this->hasMany(BeaconTags::className(), ['beacon_id' => 'id']);
+    }
+
+
+    private function getTags() {
+        return $this->hasMany(Tags::className(), ['id' => 'tag_id'])
+                    ->via('beaconTags');
     }
 }

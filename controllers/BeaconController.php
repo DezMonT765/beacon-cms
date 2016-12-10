@@ -18,7 +18,6 @@ use yii\data\ArrayDataProvider;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\ForbiddenHttpException;
-use yii\web\NotFoundHttpException;
 
 /**
  * BeaconController implements the CRUD actions for Beacons model.
@@ -52,7 +51,7 @@ class BeaconController extends MainController
                         'roles' => ['@'],
                     ],
                     [
-                        'actions' => ['create', 'delete', 'map','content-elements'],
+                        'actions' => ['create', 'delete', 'map', 'content-elements'],
                         'allow' => true,
                         'roles' => [RbacController::admin],
                     ],
@@ -66,7 +65,7 @@ class BeaconController extends MainController
             ],
         ];
         $behaviors['layout'] = [
-            'class' =>BeaconLayout::className()
+            'class' => BeaconLayout::className()
         ];
         $behaviors['manage-layout'] = [
             'class' => BeaconManageLayout::className(),
@@ -97,7 +96,7 @@ class BeaconController extends MainController
      * @return mixed
      */
     public function actionView($id) {
-        $model = $this->findModel($id);
+        $model = $this->findModel(Beacons::className(), $id);
         self::checkAccess(RbacController::update_beacon, ['beacon' => $model]);
         return $this->render('beacon-view', [
             'model' => $model,
@@ -130,7 +129,7 @@ class BeaconController extends MainController
      * @return mixed
      */
     public function actionUpdate($id) {
-        $model = $this->findModel($id);
+        $model = $this->findModel(Beacons::className(), $id);
         self::checkAccess(RbacController::update_beacon, ['beacon' => $model]);
         if($model->load(Yii::$app->request->post())) {
             if(!Yii::$app->user->can(RbacController::admin)) {
@@ -140,11 +139,9 @@ class BeaconController extends MainController
                 return $this->redirect(['view', 'id' => $model->id]);
             }
         }
-        else {
-            return $this->render('beacon-form', [
-                'model' => $model,
-            ]);
-        }
+        return $this->render('beacon-form', [
+            'model' => $model,
+        ]);
     }
 
 
@@ -155,25 +152,8 @@ class BeaconController extends MainController
      * @return mixed
      */
     public function actionDelete($id) {
-        $this->findModel($id)->delete();
+        $this->findModel(Beacons::className(), $id)->delete();
         return $this->redirect(['list']);
-    }
-
-
-    /**
-     * Finds the Beacons model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
-     * @return Beacons the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    protected function findModel($id) {
-        if(($model = Beacons::findOne($id)) !== null) {
-            return $model;
-        }
-        else {
-            throw new NotFoundHttpException('The requested page does not exist.');
-        }
     }
 
 
@@ -188,27 +168,26 @@ class BeaconController extends MainController
 
 
     public function actionMap($group_id = null) {
-        
         $model = new BeaconPins();
         $group = Groups::findOne($group_id);
         $map_provider = new ArrayDataProvider([
-                                                'allModels' => $group->map,
-                                                 'pagination' => [
-                                                    'pageSize' => 1
-                                                ],
-                                               ]);
-        
+                                                  'allModels' => $group->map,
+                                                  'pagination' => [
+                                                      'pageSize' => 1
+                                                  ],
+                                              ]);
         if(!$group instanceof Groups) {
             $user = Users::getLogged(true);
-            if(isset($user->groups[0]))
+            if(isset($user->groups[0])) {
                 $group = $user->groups[0];
+            }
         }
         if(!$group instanceof Groups) {
             throw new ForbiddenHttpException('Chosen group doesn\'t contain any map. 
              Please contact to support team, or add the map to the group by yourself.
              Also please ensure that you belong at least to one group');
         }
-        return $this->render('beacon-map', ['model' => $model,'group'=>$group,'map_provider'=>$map_provider]);
+        return $this->render('beacon-map', ['model' => $model, 'group' => $group, 'map_provider' => $map_provider]);
     }
 
 
@@ -224,6 +203,8 @@ class BeaconController extends MainController
         else Alert::addError(Yii::t('messages', ':map_not_load'));
         return $this->redirect(['map']);
     }
+
+
     public function actionContentElements($id) {
         $searchModel = new BeaconContentElementsSearch();
         $searchModel->load(Yii::$app->request->queryParams);

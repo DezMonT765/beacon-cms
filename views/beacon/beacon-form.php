@@ -29,6 +29,13 @@ use yii\widgets\ActiveForm;
                     <?= $form->field($model, 'groupToBind')->textInput(['class' => '']) ?>
                 <? endif ?>
 
+                <?= $form->field($model, 'tagsToBind')->textInput(['class'=>'']) ?>
+                <script>
+                    initSelect($('#<?= Html::getInputId($model,'tagsToBind')?>'),
+                        "<?=Url::to(['tag/get-selection-list'])?>","<?=Url::to(['tag/get-selection-by-id'])?>",true,'100%');
+
+                </script>
+
                 <?= $form->field($model, 'uuid')->textInput(['maxlength' => 50]) ?>
 
                 <?= $form->field($model, 'major')->textInput() ?>
@@ -85,6 +92,13 @@ use yii\widgets\ActiveForm;
         <?if($model->isNewRecord && isset($group) && $group instanceof \app\models\Groups) :?>
         var value = <?=$group->id?>;
             getBeaconData(value);
+        <?endif?>
+    });
+
+    initSelect($('#<?= Html::getInputId($model, 'groupToBind')?>'),
+        "<?=Url::to(['group/get-selection-list'])?>", "<?=Url::to(['group/get-selection-by-id'])?>", false, '100%').on('change', function (e) {
+        <?if($model->isNewRecord) : ?>
+        getBeaconData(e.val);
         <?endif?>
     });
 

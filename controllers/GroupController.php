@@ -83,7 +83,7 @@ class GroupController extends MainController
     public function actionView($id)
     {
         return $this->render('group-view', [
-            'model' => $this->findModel($id),
+            'model' => $this->findModel(Groups::className(),$id)
         ]);
     }
 
@@ -94,7 +94,7 @@ class GroupController extends MainController
         {
             foreach ($_POST['keys'] as $key)
             {
-                $model = $this->findModel($key);
+                $model = $this->findModel(Groups::className(),$key);
                 if($model)
                 {
                     if($model->delete()){
@@ -107,7 +107,7 @@ class GroupController extends MainController
 
     public function actionAsAjax($id)
     {
-        $model = $this->findModel($id);
+        $model = $this->findModel(Groups::className(),$id);
         Yii::$app->response->format = Response::FORMAT_JSON;
         return $model->toArray();
     }
@@ -142,7 +142,7 @@ class GroupController extends MainController
      */
     public function actionUpdate($id)
     {
-        $model = $this->findModel($id);
+        $model = $this->findModel(Groups::className(),$id);
         if($model->load(Yii::$app->request->post()) && $model->save())
         {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -164,29 +164,12 @@ class GroupController extends MainController
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $this->findModel(Groups::className(),$id)->delete();
         return $this->redirect(['list']);
     }
 
 
-    /**
-     * Finds the Groups model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
-     * @return Groups the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    protected function findModel($id)
-    {
-        if(($model = Groups::findOne($id)) !== null)
-        {
-            return $model;
-        }
-        else
-        {
-            throw new NotFoundHttpException('The requested page does not exist.');
-        }
-    }
+
 
 
     public function actionGetSelectionList()
@@ -240,7 +223,7 @@ class GroupController extends MainController
     }
 
     public function actionCreateBeacon($id) {
-        $group = $this->findModel($id);
+        $group = $this->findModel(Groups::className(),$id);
         $model = new Beacons();
         $model->groupToBind = $group->id;
         if($model->load(Yii::$app->request->post())) {

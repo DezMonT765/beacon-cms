@@ -23,9 +23,8 @@ class Select2Asset extends AssetBundle
         'select2/select2.min.js',
     ];
     public $css = [
-        'fontawesome/css/font-awesome.min.css',
         'select2/select2.css',
-        'select2-skins/select2-skins.css',
+        'select2-skins/select2-skins.min.css',
     ];
 
     public $depends = [

@@ -24,7 +24,12 @@ use yii\widgets\ActiveForm;
     <?= $form->field($model, 'passwordConfirm')->passwordInput() ?>
     <?php endif?>
         <?php if(Yii::$app->user->can(\app\commands\RbacController::admin)):?>
-    <?= $form->field($model, 'groupsToBind')->textInput(['class'=>'']) ?>
+            <?= $form->field($model, 'groupsToBind')->textInput(['class'=>'']) ?>
+            <script>
+                initSelect($('#<?= Html::getInputId($model,'groupsToBind')?>'),
+                    "<?=Url::to(['group/get-selection-list'])?>","<?=Url::to(['group/get-selection-by-id'])?>",true,'100%');
+
+            </script>
         <?php endif?>
     <?= $form->field($model, 'role')->dropDownList(Yii::$app->user->identity->getEditableRoles($model->id)) ?>
         <?= $form->field($model, 'language')->dropDownList(Languages::getLanguageNames(true)) ?>
@@ -38,9 +43,5 @@ use yii\widgets\ActiveForm;
     </div>
 
 </div>
-<script>
-    initSelect($('#<?= Html::getInputId($model,'groupsToBind')?>'),
-        "<?=Url::to(['group/get-selection-list'])?>","<?=Url::to(['group/get-selection-by-id'])?>",true,'100%');
 
-</script>
 

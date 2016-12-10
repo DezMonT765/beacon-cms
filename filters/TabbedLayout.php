@@ -1,6 +1,5 @@
 <?php
 namespace app\filters;
-
 /**
  * Created by PhpStorm.
  * User: DezMonT
@@ -12,16 +11,14 @@ namespace app\filters;
  * @method static create()
  * @method static view()
  */
-
 class TabbedLayout extends SiteLayout
 {
     const place_tabs = 'tabs';
     const place_top_control_buttons = 'place_top_control_buttons';
     public $layout = 'tabbedLayout';
 
-    public static function getActiveMap()
-    {
 
+    public static function getActiveMap() {
         return [
             'list' => [TabbedLayout::listing()],
             'create' => [TabbedLayout::create()],
@@ -30,25 +27,24 @@ class TabbedLayout extends SiteLayout
         ];
     }
 
-    public static function layout(array $active = [])
-    {
+
+    public static function layout(array $active = []) {
         $nav_bar = parent::layout($active);
         $nav_bar[self::place_tabs] = static::getTabs($active);
         $nav_bar[self::place_top_control_buttons] = static::getTopControlButtons($active);
         return $nav_bar;
     }
 
-    public static function getTabs(array $active = [])
-    {
-        $tabs = [
 
+    public static function getTabs(array $active = []) {
+        $tabs = [
         ];
         return $tabs;
     }
 
+
     public static function getTopControlButtons($active) {
         $buttons = [
-
         ];
         return $buttons;
     }

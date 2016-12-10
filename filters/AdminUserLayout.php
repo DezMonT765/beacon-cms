@@ -24,7 +24,7 @@ class AdminUserLayout extends SubTabbedLayout
         return $nav_bar;
     }
 
-    public static function getTabs($active = [])
+    public static function getTabs(array $active = [])
     {
 
         $tabs =  [

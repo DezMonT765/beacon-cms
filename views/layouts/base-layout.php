@@ -15,6 +15,7 @@ use yii\helpers\Html;
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <?= Html::csrfMetaTags() ?>
         <title><?= Html::encode($this->title) ?></title>
+        <script src="https://use.fontawesome.com/952fc1c114.js"></script>
         <?php $this->head() ?>
     </head>
     <body>

@@ -120,7 +120,7 @@ class UserController extends MainController
      */
     public function actionView($id)
     {
-        $model = $this->findModel($id);
+        $model = $this->findModel(Users::className(),$id);
         self::checkAccess(RbacController::update_profile,['user'=>$model]);
         return $this->render('user-view', [
             'model' => $model,
@@ -155,7 +155,7 @@ class UserController extends MainController
      */
     public function actionUpdate($id)
     {
-        $model = $this->findModel($id);
+        $model = $this->findModel(Users::className(),$id);
         self::checkAccess(RbacController::update_profile,['user'=>$model]);
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -178,27 +178,13 @@ class UserController extends MainController
      */
     public function actionDelete($id)
     {
-        $model = $this->findModel($id);
+        $model = $this->findModel(Users::className(),$id);
         self::checkAccess(RbacController::delete_profile,['user'=>$model]);
         $model->delete();
         return $this->redirect(['list']);
     }
 
-    /**
-     * Finds the Users model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
-     * @return Users the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    protected function findModel($id)
-    {
-        if (($model = Users::findOne($id)) !== null) {
-            return $model;
-        } else {
-            throw new NotFoundHttpException('The requested page does not exist.');
-        }
-    }
+
 
     public function actionEditableRoles()
     {

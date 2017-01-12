@@ -2,6 +2,7 @@
 namespace app\controllers;
 
 use app\actions\ApiLogin;
+use app\commands\RbacController;
 use app\components\Alert;
 use app\filters\AuthKeyFilter;
 use app\filters\FilterJson;
@@ -19,7 +20,6 @@ use yii\filters\VerbFilter;
  */
 class MaintainApiController extends MainController
 {
-    public $model = null;
     public $model_class = null;
 
     const INVALID_REQUEST_DATA = 400;
@@ -67,6 +67,9 @@ class MaintainApiController extends MainController
 
     public function actionBeacons() {
         if($this->model instanceof Users) {
+            /**
+             * @var $beacons Beacons[]
+             */
             $beacons = $this->model->getBeaconsQuery()->all();
             $result = [];
             foreach($beacons as $beacon) {
@@ -80,11 +83,15 @@ class MaintainApiController extends MainController
 
     public function actionEdit($id) {
         $model = Beacons::findOne($id);
-        if($model->load(\Yii::$app->request->post())) {
+        self::checkAccess(RbacController::update_beacon, ['beacon' => $model, 'user' => $this->model]);
+        if(isset($_POST[$model->formName()])) {
+            $attributes = $_POST[$model->formName()];
+            $model->title = $attributes['title'];
+            $model->description = $attributes['description'];
             if($model->save()) {
                 return ['status' => self::OK];
             }
-            else return ['status' => self::SERVER_ERROR, 'errors' => $model->errors,'alert'=>Alert::getErrors()];
+            else return ['status' => self::SERVER_ERROR, 'errors' => $model->errors, 'alert' => Alert::getErrors()];
         }
         else return ['status' => self::INVALID_REQUEST_DATA];
     }

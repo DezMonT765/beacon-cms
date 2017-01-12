@@ -2,9 +2,9 @@
 namespace app\actions;
 use app\helpers\Helper;
 use app\models\MainActiveRecord;
-use HttpException;
 use Yii;
 use yii\base\Action;
+use yii\web\HttpException;
 
 /**
  * Created by PhpStorm.

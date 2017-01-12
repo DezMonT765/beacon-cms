@@ -34,6 +34,7 @@ use yii\web\HttpException;
  * test","absolutePicture":"http://yii2.test/beacon_images/1/PDJaGxSxhms1PTiT.png","status":200},{"status":400}]
  * {"name":"Bad Request","message":"Invalid data","code":0,"status":400,"type":"yii\\web\\HttpException"}
  * @property MainActiveRecord $model
+ * @mixin AuthKeyFilter
  */
 class ApiController extends MainController
 {
@@ -53,7 +54,6 @@ class ApiController extends MainController
     }
 
 
-    public $model = null;
 
 
     public function actions() {
@@ -94,8 +94,8 @@ class ApiController extends MainController
                     $query = Beacons::find()->filterWhere([Beacons::tableName() . '.uuid' => $beacon['uuid'],
                                                            Beacons::tableName() . '.minor' => $beacon['minor'],
                                                            Beacons::tableName() . '.major' => $beacon['major']]);
-                    if($this->client_user instanceof ClientUsers) {
-                        $client_group_ids = $this->client_user->getGroupIds();
+                    if($this->model instanceof ClientUsers) {
+                        $client_group_ids = $this->model->getGroupIds();
                         if(is_array($client_group_ids) && count($client_group_ids) > 0) {
                             $query->joinWith(['groups' => function (ActiveQuery $query) use ($client_group_ids) {
                                 $query->andWhere(['in', Groups::tableName() . '.id', $client_group_ids]);
@@ -111,7 +111,7 @@ class ApiController extends MainController
                     if($beacon instanceof Beacons) {
                         $beacon_statistic = new ClientBeacons();
                         $beacon_statistic->beacon_id = $beacon->id;
-                        if($this->client_user instanceof ClientUsers) {
+                        if($this->model instanceof ClientUsers) {
                             $beacon_statistic->client_id = $this->model->id;
                         }
                         $beacon_statistic->save();
@@ -269,8 +269,8 @@ class ApiController extends MainController
 
     public function actionBeaconsList() {
         $query = Beacons::find();
-        if($this->client_user instanceof ClientUsers) {
-            $client_group_ids = $this->client_user->getGroupIds();
+        if($this->model instanceof ClientUsers) {
+            $client_group_ids = $this->model->getGroupIds();
             if(is_array($client_group_ids) && count($client_group_ids) > 0) {
                 $query->joinWith(['groups' => function (ActiveQuery $query) use ($client_group_ids) {
                     $query->andWhere(['in', Groups::tableName() . '.id', $client_group_ids]);

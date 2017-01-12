@@ -28,6 +28,7 @@ class TagController extends MainController
         $behaviors = [
             'json-filter' => [
                 'class' => FilterJson::className(),
+                'only' => ['json-list']
             ],
 
             'access' => [

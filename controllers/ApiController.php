@@ -10,6 +10,7 @@ use app\models\ClientBeacons;
 use app\models\ClientUsers;
 use app\models\Groups;
 use app\models\Info;
+use app\models\MainActiveRecord;
 use Yii;
 use yii\db\ActiveQuery;
 use yii\filters\VerbFilter;
@@ -32,7 +33,7 @@ use yii\web\HttpException;
  * [{"title":"Nice beaconsss","description":"Simple beacon for
  * test","absolutePicture":"http://yii2.test/beacon_images/1/PDJaGxSxhms1PTiT.png","status":200},{"status":400}]
  * {"name":"Bad Request","message":"Invalid data","code":0,"status":400,"type":"yii\\web\\HttpException"}
- * @property ClientUsers $client_user
+ * @property MainActiveRecord $model
  */
 class ApiController extends MainController
 {
@@ -52,7 +53,7 @@ class ApiController extends MainController
     }
 
 
-    public $client_user = null;
+    public $model = null;
 
 
     public function actions() {
@@ -77,6 +78,8 @@ class ApiController extends MainController
             ],
             'auth' => [
                 'class' => AuthKeyFilter::className(),
+                'model_class' => ClientUsers::className(),
+                'param' => 'auth_key',
                 'except' => ['login', 'register', 'fb-auth', 'test', 'groups', 'test-query', 'password-restore']
             ],
         ];
@@ -109,7 +112,7 @@ class ApiController extends MainController
                         $beacon_statistic = new ClientBeacons();
                         $beacon_statistic->beacon_id = $beacon->id;
                         if($this->client_user instanceof ClientUsers) {
-                            $beacon_statistic->client_id = $this->client_user->id;
+                            $beacon_statistic->client_id = $this->model->id;
                         }
                         $beacon_statistic->save();
                         $beacon = $beacon->toArray();
@@ -135,8 +138,8 @@ class ApiController extends MainController
                 $query = Beacons::find()->filterWhere([Beacons::tableName() . '.uuid' => $beacon['uuid'],
                                                        Beacons::tableName() . '.minor' => $beacon['minor'],
                                                        Beacons::tableName() . '.major' => $beacon['major']]);
-                if($this->client_user instanceof ClientUsers) {
-                    $client_group_ids = $this->client_user->getGroupIds();
+                if($this->model instanceof ClientUsers) {
+                    $client_group_ids = $this->model->getGroupIds();
                     if(is_array($client_group_ids) && count($client_group_ids) > 0) {
                         $query->joinWith(['groups' => function (ActiveQuery $query) use ($client_group_ids) {
                             $query->andWhere(['in', Groups::tableName() . '.id', $client_group_ids]);
@@ -206,8 +209,6 @@ class ApiController extends MainController
 
 
     public function actionPasswordRestore() {
-        $mail = mail('dezmont765@gmail.com','lama','hura');
-        var_dump($mail);
         $model = new ClientUsers();
         if($model->load(Yii::$app->request->post())) {
             if($model->sendPasswordRestoreEmail()) {
@@ -240,14 +241,14 @@ class ApiController extends MainController
         $info = file_get_contents('php://input');
         if($info = json_decode($info, true)) {
             foreach($info as $key => $value) {
-                $model = Info::findOne(['key' => $key, 'client_id' => $this->client_user->id]);
+                $model = Info::findOne(['key' => $key, 'client_id' => $this->model->id]);
                 if(!($model instanceof Info)) {
                     $model = new Info();
                 }
                 $model->key = $key;
                 $model->value = $value;
-                if($this->client_user instanceof ClientUsers) {
-                    $model->client_id = $this->client_user->id;
+                if($this->model instanceof ClientUsers) {
+                    $model->client_id = $this->model->id;
                 }
                 $model->save();
             }

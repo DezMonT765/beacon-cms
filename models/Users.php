@@ -24,6 +24,8 @@ use yii\web\NotFoundHttpException;
  * @property string $groupsToBind
  * @property string $language
  * @property string $password_reset_token
+ * @property string $api_key
+ * @property string $group_ids
  *
  *
  * relations
@@ -142,9 +144,10 @@ class Users extends ActiveRecord implements IdentityInterface
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_INACTIVE]],
             ['rememberMe', 'boolean'],
+            ['group_ids', 'safe'],
             [['name', 'email'], 'string', 'max' => 50],
             ['language', 'string', 'max' => 5],
-            [['password', 'auth_key', 'access_token'], 'string', 'max' => 256],
+            [['password', 'auth_key', 'api_key', 'access_token'], 'string', 'max' => 256],
         ];
     }
 
@@ -154,6 +157,9 @@ class Users extends ActiveRecord implements IdentityInterface
         if($this->isNewRecord || $this->scenario == self::PASSWORD_CHANGE_SCENARIO) {
             $this->auth_key = Yii::$app->getSecurity()->generateRandomString();
             $this->password = Yii::$app->getSecurity()->generatePasswordHash($this->password);
+        }
+        if(empty($this->api_key)) {
+            $this->api_key = Yii::$app->getSecurity()->generateRandomString();
         }
         return true;
     }
@@ -318,6 +324,22 @@ class Users extends ActiveRecord implements IdentityInterface
             $this->addError('password', 'Your login/password is incorrect');
             return false;
         }
+    }
+
+
+    public function apiLogin() {
+        $user = $this->findByEmail($this->email);
+        if($user instanceof Users) {
+            if(!Yii::$app->getSecurity()->validatePassword($this->password, $user->password)) {
+                $this->addError('password', 'Your password is invalid');
+                return false;
+            }
+            else {
+                $this->api_key = $user->api_key;
+                return true;
+            }
+        }
+        else return false;
     }
 
 

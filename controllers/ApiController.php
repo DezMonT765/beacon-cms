@@ -266,22 +266,23 @@ class ApiController extends MainController
     }
 
 
-    public function actionTest() {
-        return [5, 18];
-    }
-
-
-    public function actionTestQuery() {
-        $get = Yii::$app->request->getQueryParams();
-        $post = Yii::$app->request->getBodyParams();
-        $result = "";
-        foreach($get as $key => $value) {
-            $result .= "Key : " . $key . ', ' . 'Value : ' . $value . ";";
+    public function actionBeaconsList() {
+        $query = Beacons::find();
+        if($this->client_user instanceof ClientUsers) {
+            $client_group_ids = $this->client_user->getGroupIds();
+            if(is_array($client_group_ids) && count($client_group_ids) > 0) {
+                $query->joinWith(['groups' => function (ActiveQuery $query) use ($client_group_ids) {
+                    $query->andWhere(['in', Groups::tableName() . '.id', $client_group_ids]);
+                }]);
+            }
+            else {
+                $query->joinWith(['groups' => function (ActiveQuery $query) {
+                    $query->andWhere([Groups::tableName() . '.name' => 'Default']);
+                }]);
+            }
         }
-        foreach($post as $key => $value) {
-            $result .= "Key : " . $key . ', ' . 'Value : ' . $value . ";";
-        }
-        return $result;
+        $beacon = $query->asArray()->all();
+        return $beacon;
     }
 
 

@@ -5,7 +5,11 @@ export var BrushControls = ({brushes}) => {
         <div className="row" style={{marginBottom : '10px'}}>
             Brushes
             {
-                brushes.map((brush, index) => (<BrushControl key={index} index={index} brush={brush}/>))
+                brushes.map((brush, index) =>
+                    (<BrushControl key={index}
+                                   index={index}
+                                   brush={brush}/>
+                    ))
             }
         </div>);
 };

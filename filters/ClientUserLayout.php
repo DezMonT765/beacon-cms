@@ -16,12 +16,12 @@ class ClientUserLayout extends SubTabbedLayout
 
     public $layout = 'tabbedLayout';
 
-    public static function layout($active = [])
+    public static function layout(array $active = [])
     {
         return parent::layout(array_merge($active,[SiteLayout::client_users()]));
     }
 
-    public static function getTabs($active = [])
+    public static function getTabs(array $active = [])
     {
         $tabs =  [
             ['label'=>Yii::t('client_user', ':client_user'),'url'=>Url::to(['client-user/list']),'active'=>self::getActive($active,TabbedLayout::listing())],

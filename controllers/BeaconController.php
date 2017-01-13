@@ -3,7 +3,7 @@ namespace app\controllers;
 
 use app\actions\SaveEditorImage;
 use app\commands\RbacController;
-use app\components\Alert;
+use dezmont765\yii2bundle\components\Alert;
 use app\filters\BeaconLayout;
 use app\filters\BeaconManageLayout;
 use app\models\BeaconContentElementsSearch;

@@ -2,8 +2,7 @@
 namespace app\controllers;
 
 use app\commands\RbacController;
-use app\components\Alert;
-use app\filters\AuthKeyFilter;
+use dezmont765\yii2bundle\components\Alert;
 use app\filters\FilterJson;
 use app\filters\TagLayout;
 use app\models\Tags;
@@ -30,7 +29,6 @@ class TagController extends MainController
                 'class' => FilterJson::className(),
                 'only' => ['json-list']
             ],
-
             'access' => [
                 'class' => AccessControl::className(),
                 'except' => ['json-list'],
@@ -182,6 +180,7 @@ class TagController extends MainController
         Yii::$app->response->format = Response::FORMAT_JSON;
         return $model->toArray();
     }
+
 
     public function actionJsonList() {
         $models = Tags::find()->asArray()->all();

@@ -33,7 +33,7 @@ class CanEditBeacon extends Rule
         if(!$user instanceof Users) {
             $user = isset($params['user']) ? $params['user'] : null;
         }
-        if($user instanceof User) {
+        if($user instanceof Users) {
             return (isset($params['beacon'])) ? $user->canEditBeacon($params['beacon']) : false;
         }
         else return false;

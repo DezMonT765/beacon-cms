@@ -10,6 +10,7 @@ use app\filters\UserLayout;
 use app\actions\UserEditableAction;
 use app\filters\UserManageLayout;
 use app\models\BeaconsSearch;
+use dezmont765\yii2bundle\components\Alert;
 use Yii;
 use app\models\Users;
 use app\models\UsersSearch;

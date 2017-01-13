@@ -3,12 +3,12 @@ namespace app\controllers;
 
 use app\actions\ApiLogin;
 use app\commands\RbacController;
-use app\components\Alert;
 use app\filters\AuthKeyFilter;
 use app\filters\FilterJson;
 use app\models\Beacons;
 use app\models\MainActiveRecord;
 use app\models\Users;
+use dezmont765\yii2bundle\components\Alert;
 use yii\filters\VerbFilter;
 
 /**
@@ -70,7 +70,12 @@ class MaintainApiController extends MainController
             /**
              * @var $beacons Beacons[]
              */
-            $beacons = $this->model->getBeaconsQuery()->all();
+            if(\Yii::$app->user->can(RbacController::admin, ['user' => $this->model])) {
+                $beacons = Beacons::find()->all();
+            }
+            else {
+                $beacons = $this->model->getBeaconsQuery()->all();
+            }
             $result = [];
             foreach($beacons as $beacon) {
                 $result[] = $beacon->toArray();

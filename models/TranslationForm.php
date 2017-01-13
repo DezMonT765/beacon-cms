@@ -1,8 +1,7 @@
 <?php
 namespace app\models;
-use app\components\Alert;
-use app\models\Message;
-use app\models\SourceMessage;
+
+use dezmont765\yii2bundle\components\Alert;
 use Yii;
 use yii\base\Model;
 
@@ -12,7 +11,6 @@ use yii\base\Model;
  * Date: 16.04.2015
  * Time: 12:53
  */
-
 class TranslationForm extends Model
 {
     public $language;
@@ -20,26 +18,26 @@ class TranslationForm extends Model
     public $translation;
     public $source_message;
 
-    public function rules()
-    {
+
+    public function rules() {
         return [
-            [['language','category','translation','source_message'],'required'],
+            [['language', 'category', 'translation', 'source_message'], 'required'],
         ];
     }
 
-    public function attributeLabels()
-    {
+
+    public function attributeLabels() {
         return [
-            'category' =>  Yii::t('translation', ':category'),
-            'source_message' =>  Yii::t('translation', ':message'),
-            'translation' =>  Yii::t('translation', ':translation'),
+            'category' => Yii::t('translation', ':category'),
+            'source_message' => Yii::t('translation', ':message'),
+            'translation' => Yii::t('translation', ':translation'),
         ];
     }
 
-    public function createMessage()
-    {
-        if(!$this->validate()){
-            Alert::addError(Yii::t('messages','Translation has not been saved'),$this->errors);
+
+    public function createMessage() {
+        if(!$this->validate()) {
+            Alert::addError(Yii::t('messages', 'Translation has not been saved'), $this->errors);
             return false;
         }
         $sourceMessage = new SourceMessage();
@@ -47,8 +45,9 @@ class TranslationForm extends Model
         $sourceMessage->category = $this->category;
         $sourceMessage->message = $this->source_message;
         $sourceMessage->messageTranslation = $this->translation;
-        if(!$sourceMessage->save())
-             Alert::addError(Yii::t('messages','Translation has not been saved'),$sourceMessage->errors);
+        if(!$sourceMessage->save()) {
+            Alert::addError(Yii::t('messages', 'Translation has not been saved'), $sourceMessage->errors);
+        }
         return false;
     }
 

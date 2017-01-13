@@ -1,5 +1,6 @@
 <?php
 namespace app\components;
+use dezmont765\yii2bundle\components\Alert;
 use app\controllers\MainController;
 use InvalidArgumentException;
 use Yii;

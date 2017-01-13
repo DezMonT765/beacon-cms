@@ -1,5 +1,5 @@
 <?php
-use app\components\Alert;
+use dezmont765\yii2bundle\components\Alert;
 use app\filters\SiteLayout;
 use app\filters\TabbedLayout;
 use yii\bootstrap\Nav;
@@ -28,7 +28,7 @@ $this->beginContent('@app/views/layouts/base-layout.php'); ?>
     ?>
 
     <div class="container">
-        <?= Alert::printAlert($this); ?>
+        <?= Alert::printAlert(); ?>
         <div class="row">
             <?= Nav::widget(
                 [

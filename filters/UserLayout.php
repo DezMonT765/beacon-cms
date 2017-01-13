@@ -16,13 +16,13 @@ use yii\helpers\Url;
 class UserLayout extends TabbedLayout
 {
 
-    public static function layout($active = [])
+    public static function layout(array $active = [])
     {
         return  parent::layout(array_merge($active,[SiteLayout::users()]));
 
     }
 
-    public static function getTabs($active = [])
+    public static function getTabs(array $active = [])
     {
             $tabs = [
                 ['label'=>Yii::t('site_layout',':my_profile'),'url'=>Url::to(['user/view'] + $_GET),'active'=>self::getActive($active,TabbedLayout::view())],

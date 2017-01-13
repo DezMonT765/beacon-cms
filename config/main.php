@@ -1,6 +1,6 @@
 <?php
 require_once(dirname(__DIR__) . '/components/MainView.php');
-require_once(dirname(__DIR__) .'/models/Languages.php');
+require_once(dirname(__DIR__) . '/models/Languages.php');
 use app\components\MainView;
 use app\models\Languages;
 
@@ -8,27 +8,31 @@ $params = array_merge(
     require(__DIR__ . '/params.php'),
     require(__DIR__ . '/params-local.php')
 );
-
 $config = [
     'id' => 'basic',
     'language' => 'en-US',
     'basePath' => dirname(__DIR__),
-    'bootstrap' => ['log'],
+    'bootstrap' => ['log', 'alert'],
     'defaultRoute' => 'site/index',
     'aliases' => [
         '@file_save_dir' => '@app/web/files/',
         '@file_view_url' => '/files/',
-        '@beacon_save_dir' =>'@app/web/beacon_images/',
+        '@beacon_save_dir' => '@app/web/beacon_images/',
         '@beacon_view_url' => '/beacon_images',
-        '@beacon_ce_save_dir' =>'@app/web/beacon-ce-images/',
+        '@beacon_ce_save_dir' => '@app/web/beacon-ce-images/',
         '@beacon_ce_url' => '/beacon-ce-images',
         '@backend_beacon_view_dir' => '@app/web/beacon_images',
-        '@frontend_beacon_view_dir' =>'@app/web/beacon_images',
-        '@group_save_dir' =>'@app/web/group_images/',
+        '@frontend_beacon_view_dir' => '@app/web/beacon_images',
+        '@group_save_dir' => '@app/web/group_images/',
         '@group_view_url' => '/group_images',
         '@backend_group_view_dir' => '@app/web/group_images',
-        '@frontend_group_view_dir' =>'@app/web/group_images'
+        '@frontend_group_view_dir' => '@app/web/group_images'
     ],
+    'on beforeRequest' => function ($event) {
+        Yii::$container->set(\dezmont765\yii2bundle\widgets\alert\AlertWidget::className(), [
+//            'viewType' => \dezmont765\yii2bundle\widgets\alert\AlertWidget::DETAILED_VIEW,
+        ]);
+    },
     'components' => [
         'cache' => [
             'class' => 'yii\caching\FileCache',
@@ -41,28 +45,27 @@ $config = [
             'enableAutoLogin' => true,
         ],
         'assetManager' => [
-            'bundles' =>[
+            'bundles' => [
                 \yii\web\JqueryAsset::className() => [
-                    'js'=> [
+                    'js' => [
                         "http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js",
                         "http://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"
                     ],
                     'jsOptions' =>
-                    [
-                        'position' => MainView::POS_HEAD,
-                    ],
+                        [
+                            'position' => MainView::POS_HEAD,
+                        ],
                 ],
                 \yii\bootstrap\BootstrapAsset::className() => [
                     'baseUrl' => '@web',
                     'basePath' => '@webroot',
-//                    'css'=>['css/lumen.min.css'],
-//                    'css' => ['https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css'],
+                    //                    'css'=>['css/lumen.min.css'],
+                    //                    'css' => ['https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css'],
                     'css' => ['css/bootstrap.min.css']
                 ],
-                \yii\bootstrap\BootstrapPluginAsset::className() =>[
+                \yii\bootstrap\BootstrapPluginAsset::className() => [
                     'js' => ['https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js'],
                 ],
-
             ],
             'appendTimestamp' => true,
         ],
@@ -80,24 +83,22 @@ $config = [
         ],
         'authManager' => [
             'class' => yii\rbac\DbManager::className(),
-            'cache'=>'cache',
-            'defaultRoles'=>['super_admin','admin', 'user','promo_user'],
+            'cache' => 'cache',
+            'defaultRoles' => ['super_admin', 'admin', 'user', 'promo_user'],
         ],
         'apcCache' => [
             'class' => yii\caching\MemCache::className(),
         ],
-
         'mailer' => [
-            'class' =>'\zyx\phpmailer\Mailer',
+            'class' => '\zyx\phpmailer\Mailer',
             'viewPath' => '@app/mail',
             // send all mails to a file by default. You have to set
             // 'useFileTransport' to false and configure a transport
             // for the mailer to send real emails.
             'useFileTransport' => false,
-            'messageConfig'    => [
-                'from' => ['noreply@beacons.com'=>'Beacon CMS'],
+            'messageConfig' => [
+                'from' => ['noreply@beacons.com' => 'Beacon CMS'],
             ],
-
         ],
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
@@ -108,8 +109,9 @@ $config = [
                 ],
             ],
         ],
-
-
+        'alert' => [
+            'class' => \dezmont765\yii2bundle\components\Alert::className(),
+        ],
         'session' => [
             'class' => 'yii\web\DbSession'
         ],
@@ -125,13 +127,11 @@ $config = [
         ],
         'languagepicker' => [
             'class' => '\lajax\languagepicker\widgets\LanguagePicker',
-            'languages' => function(){
+            'languages' => function () {
                 return Languages::getLanguageNames(true);
             }
         ]
     ],
     'params' => $params,
 ];
-
-
 return $config;

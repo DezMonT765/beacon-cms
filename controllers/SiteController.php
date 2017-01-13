@@ -3,7 +3,7 @@
 namespace app\controllers;
 
 use app\commands\RbacController;
-use app\components\Alert;
+use dezmont765\yii2bundle\components\Alert;
 use app\filters\SiteLayout;
 use app\models\LoginForm;
 use app\models\PasswordResetForm;

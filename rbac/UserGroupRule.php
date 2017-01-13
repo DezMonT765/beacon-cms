@@ -21,7 +21,10 @@ class UserGroupRule extends Rule
         /**@var Users $current_user
          */
         $current_user = Yii::$app->user->identity;
-        if (!Yii::$app->user->isGuest) {
+        if(!$current_user instanceof Users) {
+            $current_user = isset($params['user']) ? $params['user'] : null;
+        }
+        if ($current_user instanceof Users) {
             $role = $current_user->role;
             if(isset(RbacController::getRoleHierarchy()[$item->name]) || array_key_exists($item->name,RbacController::getRoleHierarchy()))
                 return RbacController::generateRoleCondition($item->name,$role);

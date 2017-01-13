@@ -7,7 +7,7 @@
  */
 namespace app\models;
 
-use app\components\Alert;
+use dezmont765\yii2bundle\components\Alert;
 use DateTime;
 use Exception;
 use Yii;

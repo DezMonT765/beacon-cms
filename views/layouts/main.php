@@ -1,5 +1,5 @@
 <?php
-use app\components\Alert;
+use dezmont765\yii2bundle\components\Alert;
 use app\filters\SiteLayout;
 use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;

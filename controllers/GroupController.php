@@ -3,7 +3,7 @@ namespace app\controllers;
 
 use app\behaviors\AliasBehavior;
 use app\commands\RbacController;
-use app\components\Alert;
+use dezmont765\yii2bundle\components\Alert;
 use app\filters\AuthKeyFilter;
 use app\filters\FilterJson;
 use app\filters\GroupLayout;

@@ -1,11 +1,10 @@
 <?php
 namespace app\controllers;
 
-use app\components\Alert;
+use dezmont765\yii2bundle\components\Alert;
 use app\filters\KeyFilter;
 use app\models\Groups;
 use Yii;
-use yii\helpers\ArrayHelper;
 
 /**
  * Created by PhpStorm.

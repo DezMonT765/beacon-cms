@@ -2,7 +2,7 @@
 
 namespace app\models;
 
-use app\components\Alert;
+use dezmont765\yii2bundle\components\Alert;
 use app\components\xlsImport;
 use Yii;
 use yii\i18n\DbMessageSource;

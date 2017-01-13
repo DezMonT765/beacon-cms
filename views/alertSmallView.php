@@ -1,4 +1,6 @@
-<?php use \app\components\Alert;?>
+<?php
+use dezmont765\yii2bundle\components\Alert;
+?>
 <div class="alert alert-<?=$general_color?> alert-dismissible" style="margin-top: 20px">
 
     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>

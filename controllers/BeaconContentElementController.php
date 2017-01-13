@@ -1,7 +1,7 @@
 <?php
 namespace app\controllers;
 
-use app\components\Alert;
+use dezmont765\yii2bundle\components\Alert;
 use app\filters\BeaconContentElementsLayout;
 use app\models\BeaconContentElements;
 use app\models\BeaconContentElementsSearch;

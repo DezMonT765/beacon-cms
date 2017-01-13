@@ -10,7 +10,7 @@ use Exception;
 use Yii;
 use app\models\ClientUsers;
 use app\models\ClientUsersSearch;
-use app\components\Alert;
+use dezmont765\yii2bundle\components\Alert;
 use yii\web\Response;
 use dosamigos\editable\EditableAction;
 

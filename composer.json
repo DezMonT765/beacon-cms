@@ -31,6 +31,10 @@
         {
             "type" : "vcs",
             "url" : "https://github.com/DezMonT765/yii2-language-picker"
+        },
+        {
+            "type": "composer",
+            "url": "https://asset-packagist.org"
         }
     ],
     "require": {
@@ -41,7 +45,7 @@
         "dezmont765/yii2-grid-view-library" : "dev-master",
         "zyx/zyx-phpmailer": "dev-log-fix",
         "bower-asset/select2-skins": "*",
-        "lajax/yii2-language-picker": "*",
+        "lajax/yii2-language-picker": "dev-master",
         "phpoffice/phpexcel" : "*",
         "vova07/yii2-imperavi-widget": "*",
         "2amigos/yii2-transliterator-helper": "*",

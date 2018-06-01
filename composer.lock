@@ -1,11 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "hash": "9be6031fd972655955d80c8ad7aef5f4",
-    "content-hash": "d0c32eb5f53e973dcaeb6233331f68d4",
+    "content-hash": "c6dc7d9f10b4f9c5eed63074e17c3017",
     "packages": [
         {
             "name": "2amigos/yii2-dosamigos-asset-bundle",
@@ -48,7 +47,7 @@
                 "extension",
                 "yii"
             ],
-            "time": "2014-09-01 13:43:36"
+            "time": "2014-09-01T13:43:36+00:00"
         },
         {
             "name": "2amigos/yii2-editable-widget",
@@ -92,7 +91,7 @@
                 "x-editable",
                 "yii"
             ],
-            "time": "2015-02-20 15:13:36"
+            "time": "2015-02-20T15:13:36+00:00"
         },
         {
             "name": "2amigos/yii2-transliterator-helper",
@@ -135,7 +134,7 @@
                 "transliterator",
                 "yii"
             ],
-            "time": "2014-01-17 15:55:42"
+            "time": "2014-01-17T15:55:42+00:00"
         },
         {
             "name": "bower-asset/bootstrap",
@@ -361,7 +360,7 @@
                 "form",
                 "select2"
             ],
-            "time": "2016-03-25 18:24:33"
+            "time": "2016-03-25T18:24:33+00:00"
         },
         {
             "name": "bower-asset/yii2-pjax",
@@ -455,7 +454,7 @@
                 "markdown",
                 "markdown-extra"
             ],
-            "time": "2016-09-14 20:40:20"
+            "time": "2016-09-14T20:40:20+00:00"
         },
         {
             "name": "dezmont765/yii2-bundle",
@@ -498,7 +497,7 @@
                 "source": "https://github.com/DezMonT765/yii2-bundle/tree/master",
                 "issues": "https://github.com/DezMonT765/yii2-bundle/issues"
             },
-            "time": "2016-12-10 15:11:45"
+            "time": "2016-12-10T15:11:45+00:00"
         },
         {
             "name": "dezmont765/yii2-grid-view-library",
@@ -545,7 +544,7 @@
             "support": {
                 "source": "https://github.com/DezMonT765/yii2-grid-view-library/tree/master"
             },
-            "time": "2015-04-04 15:31:03"
+            "time": "2015-04-04T15:31:03+00:00"
         },
         {
             "name": "ezyang/htmlpurifier",
@@ -589,20 +588,20 @@
             "keywords": [
                 "html"
             ],
-            "time": "2016-07-16 12:58:58"
+            "time": "2016-07-16T12:58:58+00:00"
         },
         {
             "name": "lajax/yii2-language-picker",
-            "version": "1.1.2",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/DezMonT765/yii2-language-picker.git",
-                "reference": "21d19af6601cbd5a4354cc6bf8d1ac619f89dbf7"
+                "reference": "c1e8770a7f662b246e567bcac37eb1f4858f6f7f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/DezMonT765/yii2-language-picker/zipball/21d19af6601cbd5a4354cc6bf8d1ac619f89dbf7",
-                "reference": "21d19af6601cbd5a4354cc6bf8d1ac619f89dbf7",
+                "url": "https://api.github.com/repos/DezMonT765/yii2-language-picker/zipball/c1e8770a7f662b246e567bcac37eb1f4858f6f7f",
+                "reference": "c1e8770a7f662b246e567bcac37eb1f4858f6f7f",
                 "shasum": ""
             },
             "require": {
@@ -635,9 +634,9 @@
                 "yii2"
             ],
             "support": {
-                "source": "https://github.com/DezMonT765/yii2-language-picker/tree/1.1.2"
+                "source": "https://github.com/DezMonT765/yii2-language-picker/tree/master"
             },
-            "time": "2015-04-07 14:33:15"
+            "time": "2015-04-30T13:30:12+00:00"
         },
         {
             "name": "php-excel-reader/spreadsheet-reader",
@@ -685,7 +684,7 @@
                 "reader",
                 "spreadsheet"
             ],
-            "time": "2016-11-30 15:43:14"
+            "time": "2016-11-30T15:43:14+00:00"
         },
         {
             "name": "phpmailer/phpmailer",
@@ -745,7 +744,7 @@
                 }
             ],
             "description": "PHPMailer is a full-featured email creation and transfer class for PHP",
-            "time": "2016-12-09 10:03:48"
+            "time": "2016-12-09T10:03:48+00:00"
         },
         {
             "name": "phpoffice/phpexcel",
@@ -802,7 +801,8 @@
                 "xls",
                 "xlsx"
             ],
-            "time": "2015-05-01 07:00:55"
+            "abandoned": "phpoffice/phpspreadsheet",
+            "time": "2015-05-01T07:00:55+00:00"
         },
         {
             "name": "phpspec/php-diff",
@@ -840,7 +840,7 @@
                 }
             ],
             "description": "A comprehensive library for generating differences between two hashable objects (strings or arrays).",
-            "time": "2016-04-07 12:29:16"
+            "time": "2016-04-07T12:29:16+00:00"
         },
         {
             "name": "soundasleep/html2text",
@@ -890,7 +890,7 @@
                 "php",
                 "text"
             ],
-            "time": "2016-06-09 04:56:16"
+            "time": "2016-06-09T04:56:16+00:00"
         },
         {
             "name": "vova07/yii2-imperavi-widget",
@@ -952,7 +952,7 @@
                 "yii 2",
                 "yii2"
             ],
-            "time": "2015-12-10 21:16:23"
+            "time": "2015-12-10T21:16:23+00:00"
         },
         {
             "name": "yiisoft/yii2",
@@ -1046,7 +1046,7 @@
                 "framework",
                 "yii2"
             ],
-            "time": "2016-04-28 14:50:20"
+            "time": "2016-04-28T14:50:20+00:00"
         },
         {
             "name": "yiisoft/yii2-bootstrap",
@@ -1096,7 +1096,7 @@
                 "bootstrap",
                 "yii2"
             ],
-            "time": "2016-03-17 03:29:28"
+            "time": "2016-03-17T03:29:28+00:00"
         },
         {
             "name": "yiisoft/yii2-composer",
@@ -1143,7 +1143,7 @@
                 "extension installer",
                 "yii2"
             ],
-            "time": "2016-02-06 00:49:24"
+            "time": "2016-02-06T00:49:24+00:00"
         },
         {
             "name": "zyx/zyx-phpmailer",
@@ -1192,7 +1192,7 @@
                 "wiki": "https://github.com/SDKiller/zyx-phpmailer/wiki",
                 "source": "https://github.com/SDKiller/zyx-phpmailer"
             },
-            "time": "2015-04-07 19:15:43"
+            "time": "2015-04-07T19:15:43+00:00"
         }
     ],
     "packages-dev": [
@@ -1269,7 +1269,7 @@
                 "faker",
                 "fixtures"
             ],
-            "time": "2016-04-29 12:21:54"
+            "time": "2016-04-29T12:21:54+00:00"
         },
         {
             "name": "yiisoft/yii2-codeception",
@@ -1315,7 +1315,7 @@
                 "yii2"
             ],
             "abandoned": "codeception/codeception",
-            "time": "2016-03-17 03:41:26"
+            "time": "2016-03-17T03:41:26+00:00"
         },
         {
             "name": "yiisoft/yii2-debug",
@@ -1362,7 +1362,7 @@
                 "debugger",
                 "yii2"
             ],
-            "time": "2016-11-24 09:42:29"
+            "time": "2016-11-24T09:42:29+00:00"
         },
         {
             "name": "yiisoft/yii2-faker",
@@ -1409,7 +1409,7 @@
                 "faker",
                 "yii2"
             ],
-            "time": "2015-03-01 06:22:44"
+            "time": "2015-03-01T06:22:44+00:00"
         },
         {
             "name": "yiisoft/yii2-gii",
@@ -1462,7 +1462,7 @@
                 "gii",
                 "yii2"
             ],
-            "time": "2016-03-18 14:09:46"
+            "time": "2016-03-18T14:09:46+00:00"
         }
     ],
     "aliases": [],
@@ -1470,7 +1470,8 @@
     "stability-flags": {
         "dezmont765/yii2-bundle": 20,
         "dezmont765/yii2-grid-view-library": 20,
-        "zyx/zyx-phpmailer": 20
+        "zyx/zyx-phpmailer": 20,
+        "lajax/yii2-language-picker": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
